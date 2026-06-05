@@ -16,7 +16,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Удобный онлайн-калькулятор физических формул. Быстрый расчет задач по механике, термодинамике, электричеству и других разделов физики. Без рекламы.">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon128.png">
-    <title>PhysCalc - физический калькулятор онлайн: расчет формул по физике бесплатно.</title></title>
+    <title>PhysCalc - физический калькулятор онлайн: расчет формул по физике бесплатно.</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -30,8 +30,6 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .dark ::-webkit-scrollbar-track { background: #1e2235; }
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        
-        /* Скрытие стандартного скроллбара категорий для мобилок (для красоты) */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -65,24 +63,25 @@
         </div>
     </header>
 
-    <main class="max-w-7xl w-full mx-auto px-4 py-4 md:py-6 flex flex-col md:flex-row gap-4 md:gap-6 md:h-[calc(100vh-140px)] md:overflow-hidden flex-1">
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex flex-col md:flex-row gap-6 h-auto md:h-[calc(100vh-140px)] overflow-visible md:overflow-hidden">
         
-        <section class="w-full md:w-80 flex flex-col gap-4 shrink-0 md:overflow-y-auto">
-            <div class="bg-white p-3 rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 space-y-2 shadow-sm transition-colors duration-200">
-                <span class="text-[10px] sm:text-xs font-semibold text-slate-400 dark:text-slate-400 px-1 uppercase tracking-wider block">Разделы физики</span>
-                <div class="flex overflow-x-auto md:flex-col gap-1.5 pb-1 md:pb-0 hide-scrollbar snap-x snap-mandatory" id="category-filters">
-                    <button data-cat="all" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all">Все модули</button>
-                    <button data-cat="Механика" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">Механика</button>
-                    <button data-cat="МКТ" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">МКТ</button>
-                    <button data-cat="Термодинамика" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">Термодинамика</button>
-                    <button data-cat="Электродинамика" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">Электродинамика</button>
-                    <button data-cat="Оптика" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">Оптика</button>
-                    <button data-cat="Квантовая физика" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">Квантовая и ядерная физика</button>
-                    <button data-cat="СТО" class="cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all">СТО</button>
+        <section class="w-full md:w-80 flex flex-col gap-4 shrink-0 overflow-visible md:overflow-y-auto">
+            <div class="bg-white p-3 rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 space-y-1 shadow-sm transition-colors duration-200">
+                <span class="text-xs font-semibold text-slate-400 dark:text-slate-400 px-2 uppercase tracking-wider block mb-1">Разделы физики</span>
+                
+                <div class="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible gap-1 pb-1 md:pb-0 hide-scrollbar snap-x snap-mandatory md:snap-none" id="category-filters">
+                    <button data-cat="all" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Все модули</button>
+                    <button data-cat="Механика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Механика</button>
+                    <button data-cat="МКТ" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">МКТ</button>
+                    <button data-cat="Термодинамика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Термодинамика</button>
+                    <button data-cat="Электродинамика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Электродинамика</button>
+                    <button data-cat="Оптика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Оптика</button>
+                    <button data-cat="Квантовая физика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Квантовая и ядерная физика</button>
+                    <button data-cat="СТО" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">СТО</button>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 flex-1 flex flex-col max-h-[350px] md:max-h-none overflow-hidden shadow-sm dark:shadow-inner transition-colors duration-200">
+            <div class="bg-white rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 h-[340px] md:h-auto md:flex-1 flex flex-col overflow-hidden shadow-sm dark:shadow-inner transition-colors duration-200">
                 <div class="p-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
                     <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Список формул</span>
                     <span id="counter" class="text-xs bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
@@ -91,61 +90,61 @@
             </div>
         </section>
 
-        <section class="flex-1 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 p-4 sm:p-6 flex flex-col shadow-lg dark:shadow-2xl md:sticky md:self-start min-h-[200px] rounded-2xl transition-colors duration-200" id="calculator-zone">
+        <section class="flex-1 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 p-6 flex flex-col shadow-lg dark:shadow-2xl md:sticky md:self-start min-h-[200px] rounded-2xl transition-colors duration-200" id="calculator-zone">
             
-            <div id="empty-state" class="flex flex-col items-center justify-center text-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl h-full py-12 md:py-6 transition-colors duration-200">
-                <div class="w-12 h-12 sm:w-16 sm:h-16 text-slate-300 dark:text-slate-600 mb-4">
+            <div id="empty-state" class="flex flex-col items-center justify-center text-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl h-full transition-colors duration-200">
+                <div class="w-16 h-16 text-slate-300 dark:text-slate-600 mb-4">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
                 </div>
-                <h3 class="text-base sm:text-lg font-medium text-slate-700 dark:text-slate-300 mb-1">Вычислительный блок готов</h3>
-                <p class="text-xs sm:text-sm text-slate-400 dark:text-slate-500 max-w-xs">Выберите нужную физическую величину или закон из списка для мгновенного интерактивного расчета.</p>
+                <h3 class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-1">Вычислительный блок готов</h3>
+                <p class="text-sm text-slate-400 dark:text-slate-500 max-w-xs">Выберите нужную физическую величину или закон из списка слева для мгновенного интерактивного расчета.</p>
             </div>
 
-            <div id="calc-content" class="hidden space-y-4 sm:space-y-6 flex-1 flex flex-col justify-between">
-                <div class="space-y-4 sm:space-y-6">
+            <div id="calc-content" class="hidden space-y-6 flex-1 flex flex-col justify-between">
+                <div class="space-y-6">
                     <div class="border-b border-slate-200 dark:border-slate-700 pb-4">
-                        <span id="calc-category" class="text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-500/20">Категория</span>
-                        <h2 id="calc-title" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight mt-2">Название формулы</h2>
-                        <p id="calc-description" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed"></p>
+                        <span id="calc-category" class="text-xs font-semibold px-2.5 py-0.5 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-full border border-indigo-500/20">Категория</span>
+                        <h2 id="calc-title" class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight mt-2">Название формулы</h2>
+                        <p id="calc-description" class="text-sm text-slate-500 dark:text-slate-400 mt-1 leading-relaxed"></p>
                     </div>
 
-                    <div class="bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:border-slate-700/50 rounded-xl p-3 sm:p-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
-                        <span class="text-[10px] font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Математическая модель</span>
-                        <div id="calc-formula" class="text-lg sm:text-2xl font-mono font-bold text-indigo-600 dark:text-indigo-400 tracking-wide break-all"></div>
+                    <div class="bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:border-slate-700/50 rounded-xl p-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
+                        <span class="text-xs font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Математическая модель</span>
+                        <div id="calc-formula" class="text-xl sm:text-2xl font-mono font-bold text-indigo-600 dark:text-indigo-400 tracking-wide"></div>
                     </div>
 
-                    <div class="bg-slate-50 border border-slate-200 dark:bg-slate-900/30 dark:border-slate-700/40 rounded-xl p-4 sm:p-5 transition-colors duration-200">
-                        <h4 class="text-[10px] sm:text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-3 sm:mb-4">Входные параметры</h4>
-                        <div id="dynamic-inputs-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"></div>
+                    <div class="bg-slate-50 border border-slate-200 dark:bg-slate-900/30 dark:border-slate-700/40 rounded-xl p-5 transition-colors duration-200">
+                        <h4 class="text-xs font-bold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-4">Входные параметры</h4>
+                        <div id="dynamic-inputs-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                     </div>
                 </div>
 
-                <div class="mt-4 sm:mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
                     <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shadow-lg">
                         <div>
                             <span class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest block">Автоматический расчет</span>
-                            <div id="calc-result" class="text-base sm:text-lg font-bold text-white mt-0.5 font-mono break-all"></div>
+                            <div id="calc-result" class="text-lg font-bold text-white mt-0.5 font-mono"></div>
                         </div>
-                        <div class="text-[10px] text-indigo-300 font-medium bg-indigo-800/40 px-2 py-1 rounded-md border border-indigo-500/20 shrink-0">Реактивный режим</div>
+                        <div class="text-[10px] text-indigo-300 font-medium bg-indigo-800/40 px-2 py-1 rounded-md border border-indigo-500/20">Реактивный режим</div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 dark:bg-slate-800 dark:border-slate-700 py-3 sm:py-4 shadow-inner transition-colors duration-200 z-50">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col lg:flex-row items-center justify-between gap-3 text-xs">
+    <footer class="bg-white border-t border-slate-200 dark:bg-slate-800 dark:border-slate-700 py-3 mt-auto shadow-inner transition-colors duration-200 z-50">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
             
-            <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400 text-center lg:text-left">
-                <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 font-bold text-[11px] shrink-0">!</span>
-                <p>Нашли ошибку? <span class="font-semibold text-indigo-600 dark:text-indigo-400">Напишите нам</span> — мы сразу исправим.</p>
+            <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400 text-center sm:text-left">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 font-bold text-[11px] animate-pulse">!</span>
+                <p>Нашли ошибку в расчетах или интерфейсе? Пожалуйста, <span class="font-semibold text-indigo-600 dark:text-indigo-400">напишите нам</span> — мы сразу исправим.</p>
             </div>
             
-            <div class="flex flex-wrap items-center justify-center gap-4 sm:gap-5 shrink-0">
+            <div class="flex items-center gap-5 shrink-0">
                 <span class="text-slate-400 dark:text-slate-500 font-medium">Обратная связь:</span>
                 
                 <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 font-semibold text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors group">
-                    <img src="icons8-telegram-48.png" alt="Telegram" class="w-4 h-4 sm:w-5 sm:h-5 object-contain group-hover:scale-110 transition-transform">
+                    <img src="icons8-telegram-48.png" alt="Telegram" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform">
                     Telegram
                 </a>
                 
@@ -154,6 +153,7 @@
                     ВКонтакте
                 </a>
             </div>
+            
         </div>
     </footer>
 
@@ -166,7 +166,7 @@
             { id:"m2", title:"Путь при равномерном движении", category:"Механика", description:"Путь, пройденный телом при неизменной скорости движения v.", formula:"S = v · t", inputs:[{id:"v", label:"скорость тела v (м/с)", val:10}, {id:"t", label:"Время t (с)", val:10}], calc:(w) => `Путь S = ${(w.v * w.t).toFixed(2)} м` },
             { id:"m3", title:"Путь при равноускоренном движении", category:"Механика", description:"Перемещение тела с постоянным ускорением a.", formula:"S = v₀ · t + a · t² / 2", inputs:[{id:"v0", label:"v₀ (м/с)", val:3}, {id:"t", label:"t (с)", val:15}, {id:"a", label:"a (м/с²)", val:3}], calc:(w) => "Путь S = " + (w.v0 * w.t + w.a * (w.t * w.t) / 2).toFixed(2) + " м" },
             { id:"m4", title:"Путь при равноускоренном движении (без времени)", category:"Механика", description:"Перемещение через разность квадратов скоростей.", formula:"S = (v² - v₀²) / (2a)", inputs:[{id:"v0", label:"v₀ (м/с)", val:3}, {id:"v", label:"v (м/с)", val:15}, {id:"a", label:"a (м/с²)", val:3}], calc:(w) => w.a===0 ? "Ошибка: a=0":"Путь S = " + ((w.v*w.v - w.v0*w.v0)/(2*w.a)).toFixed(2) + " м" },
-            { id:"m5", title:"Максимальная высота подъема тела", category:"Механика", description:"Высота взлета тела, брошенного вертикально вверх.", formula:"h_max = v₀² / (2g)", inputs:[{id:"v0", label:"Начальная скорость v₀ (м/с)",  val:15}, {id:"g", label:"Ускорение свободного падения (м/с²)",  val:9.80665}], calc:(w) => w.g<0 ? "Ошибка: g < 0":`Высота h_max = ${(w.v0 * w.v0 / (2 * w.g)).toFixed(2)} м` },
+            { id:"m5", title:"Максимальная высота подъема тела", category:"Механика", description:"Высота взлета тела, брошенного вертикально вверх.", formula:"h_max = v₀² / (2g)", inputs:[{id:"v0", label:"Начальная скорость v₀ (м/с)",  val:15}, {id:"g", label:"Ускорение свободного падения g (м/с²)",  val:9.80665}], calc:(w) => w.g<0 ? "Ошибка: g < 0":`Высота h_max = ${(w.v0 * w.v0 / (2 * w.g)).toFixed(2)} м` },
             { id:"m6", title:"Дальность броска", category:"Механика", description:"Расстояние L, пройденное телом, брошенным под углом к горизонту.", formula:"L = v₀ · t · cos α", inputs:[{id:"v0", label:"скорость тела v₀ (м/с)", val:10}, {id:"t", label:"Время t (с)", val:10}, { id: "a", label: "Угол броска α (градусы)", val: 60 }], calc:(w) => `Расстояние L = ${(w.v0 * w.t * Math.cos((w.a * Math.PI) / 180)).toFixed(2)} м` },
             { id:"m7", title:"Координата при равноускоренном движении", category:"Механика", description:"Позиция тела с учетом постоянного ускорения.", formula:"x = x₀ + v₀·t + (a·t²)/2", inputs:[{id:"x0", label:"x₀ (м)", val:0}, {id:"v0", label:"v₀ (м/с)", val:4}, {id:"a", label:"a (м/с²)", val:2}, {id:"t", label:"t (с)", val:5}], calc:(w) => `Координата x = ${(w.x0 + w.v0*w.t + 0.5*w.a*w.t*w.t).toFixed(2)} м` },
             { id:"m8", title:"Координата при равномерном движении", category:"Механика", description:"Позиция тела при неизменной скорости движения.", formula:"x = x₀ + v · t", inputs:[{id:"x0", label:"Начальная координата x₀ (м)", val:0}, {id:"v", label:"Скорость v (м/с)", val:5}, {id:"t", label:"Время t (с)", val:10}], calc:(w) => `Координата x = ${(w.x0 + w.v * w.t).toFixed(2)} м` },
@@ -384,7 +384,7 @@
             { id:"s2",title:"Относительность расстояний",category:"СТО",description:"Сокращение линейного размера предмета вдоль направления его движения относительно наблюдателя.",formula:"l = l_0 · √(1 - v²/c²)",inputs:[{id:"l0",label:"Собственная длина покоящегося тела (м)",val:10},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.l0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Релятивистская длина l = "+(w.l0*Math.sqrt(1-w.v*w.v/(w.c*w.c))).toFixed(4)+" м" },
             { id:"s3",title:"Относительность промежутков времени",category:"СТО",description:"Замедление течения времени в движущейся системе отсчета с позиции покоящегося наблюдателя.",formula:"τ = τ_0 / √(1 - v²/c²)",inputs:[{id:"t0",label:"Собственное время в покоящейся системе τ_0 (с)",val:1},{id:"v",label:"Скорость движения системы отсчета (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.t0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Релятивистское время τ = "+(w.t0/Math.sqrt(1-w.v*w.v/(w.c*w.c))).toFixed(4)+" с" },
             { id:"s4",title:"Релятивистское сложение скоростей",category:"СТО",description:"Закон определения скорости тела относительно неподвижной системы отсчета, исключающий превышение скорости света.",formula:"v_res = (v_1 + v) / (1 + (v_1 · v) / c²)",inputs:[{id:"v1",label:"Скорость тела относительно движущейся системы отсчета (м/с)",val:2e8},{id:"v",label:"Скорость движения самой системы отсчета (м/с)",val:1.5e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.v1<0||w.v<0||w.c<=0||w.v1>w.c||w.v>w.c?"Ошибка":"Результирующая скорость v_res = "+((w.v1+w.v)/(1+(w.v1*w.v)/(w.c*w.c))).toExponential(4)+" м/с" },
-            { id:"s5",title:"Релятивистская кинетическая энергия",category:"СТО",description:"Разность между полной энергией движущегося тела и его энергией покоя.",formula:"E_kin = m_0 · c² · (1 / √(1 - v²/c²) - 1)",inputs:[{id:"m0",label:"Масса покоя тела (кг)",val:1},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.m0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Кинетическая энергия E_kin = "+(w.m0*w.c*w.c*(1/Math.sqrt(1-w.v*w.v/(w.c*w.c))-1)).toExponential(4)+" Дж" },
+            { id:"s5",title:"Релятивистская кинетическая энергия",category:"СТО",description:"Разность между полной энергией движущегося тела и его энергия покоя.",formula:"E_kin = m_0 · c² · (1 / √(1 - v²/c²) - 1)",inputs:[{id:"m0",label:"Масса покоя тела (кг)",val:1},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.m0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Кинетическая энергия E_kin = "+(w.m0*w.c*w.c*(1/Math.sqrt(1-w.v*w.v/(w.c*w.c))-1)).toExponential(4)+" Дж" },
             { id:"s6",title:"Связь релятивистского импульса и энергии",category:"СТО",description:"Инвариантное соотношение, связывающее полную энергию, импульс и массу покоя движущегося объекта.",formula:"E = √(p² · c² + m_0² · c⁴)",inputs:[{id:"p",label:"Релятивистский импульс тела (кг·м/с)",val:2e-19},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8},{id:"m0",label:"Масса покоя тела (кг)",val:9.109e-31}],calc:(w)=>w.p<0||w.c<=0||w.m0<0?"Ошибка":"Полная энергия E = "+Math.sqrt(w.p*w.p*w.c*w.c + w.m0*w.m0*Math.pow(w.c,4)).toExponential(4)+" Дж" },
         ];
 
@@ -424,7 +424,12 @@
                         </div>
                         <span class="font-mono bg-slate-200 text-slate-600 dark:bg-slate-900 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[10px] shrink-0 font-bold">${f.formula}</span>
                     `;
-                    btn.onclick = () => loadCalculator(f);
+                    btn.onclick = () => {
+                        loadCalculator(f);
+                        if (window.innerWidth < 768) {
+                            document.getElementById('calculator-zone').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    };
                     formulasList.appendChild(btn);
                 }
             });
@@ -509,7 +514,6 @@
                 updateTooltip();
                 inputEl.addEventListener('input', updateTooltip);
 
-                
                 const qButton = div.querySelector('button');
                 qButton.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -529,11 +533,6 @@
             };
 
             runCalculation();
-
-            
-            if (window.innerWidth < 768) {
-                document.getElementById('calculator-zone').scrollIntoView({ behavior: 'smooth' });
-            }
         }
 
         function runCalculation() {
@@ -553,9 +552,9 @@
             const b = e.target.closest('button');
             if (!b) return;
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.className = "cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all";
+                btn.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none";
             });
-            b.className = "cat-btn snap-start shrink-0 text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all";
+            b.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none";
             selectedCategory = b.getAttribute('data-cat');
             renderList();
         });
@@ -586,8 +585,7 @@
                 localStorage.setItem('color-theme', 'dark');
             }
         });
-        
-        
+
         document.addEventListener('click', () => {
             document.querySelectorAll('[id^="tooltip-"] > div').forEach(box => {
                 if (!box.classList.contains('hidden') && window.innerWidth < 768) {
