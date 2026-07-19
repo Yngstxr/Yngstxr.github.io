@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квант-Хаб | Кротовая нора</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #020206;
+            --glass-bg: rgba(3, 3, 8, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-green: #00ff66; 
+            --accent-purple: #a124ff;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --font-ui: 'Inter', sans-serif;
+            --font-log: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            z-index: 10;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .top-bar {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse-green 1.5s infinite alternate;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            font-family: var(--font-ui);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-green);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.5);
+        }
+        .btn-back a {
+            text-decoration: none;
+            color: inherit; 
+            display: block; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-back:hover a {
+            color: #000;
+        }
+
+        .controls-panel {
+            top: 110px;
+            left: 20px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .controls-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .slider-value {
+            font-family: var(--font-log);
+            color: var(--accent-green);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .telemetry-panel {
+            top: 110px;
+            right: 20px;
+            width: 350px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .telemetry-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        #log-container {
+            flex-grow: 1;
+            font-family: var(--font-log);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--accent-green);
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        .log-entry.critical { color: #ff0044; }
+        .log-entry.purple { color: var(--accent-purple); }
+
+        .bottom-bar {
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-log);
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 30px;
+        }
+
+        .bottom-bar span strong {
+            color: var(--text-main);
+            font-weight: normal;
+        }
+
+        @keyframes pulse-green {
+            from { box-shadow: 0 0 5px var(--accent-green); opacity: 0.8; }
+            to { box-shadow: 0 0 20px var(--accent-green); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 1;
+            pointer-events: none;
+            perspective: 1000px;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div id="canvas-container"></div>
+
+    <div class="glass-panel top-bar">
+        <h1>
+            <div class="status-indicator"></div>
+            Объект: Мост Эйнштейна-Розена
+        </h1>
+        <button class="btn-back" id="btn-back"><a href="index.html">НАЗАД В ХАБ</a></button>
+    </div>
+
+    <div class="glass-panel controls-panel">
+        <h2>Навигация перехода</h2>
+        
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Скорость перехода (c)</span>
+                <span class="slider-value" id="val-speed">1.0</span>
+            </div>
+            <input type="range" id="slider-speed" min="0.1" max="5.0" step="0.1" value="1.0">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Кривизна пространства</span>
+                <span class="slider-value" id="val-curve">5.0</span>
+            </div>
+            <input type="range" id="slider-curve" min="0.0" max="10.0" step="0.1" value="5.0">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Искажение спектра</span>
+                <span class="slider-value" id="val-distortion">2.0</span>
+            </div>
+            <input type="range" id="slider-distortion" min="0.0" max="5.0" step="0.1" value="2.0">
+        </div>
+    </div>
+
+    <div class="glass-panel telemetry-panel">
+        <h2>Квантовый Сенсор</h2>
+        <div id="log-container"></div>
+    </div>
+
+    <div class="glass-panel bottom-bar">
+        <span>Топология: Многосвязная</span>
+        <span>Стабилизация: Экзотическая материя</span>
+        <span id="fps-counter">FPS: <strong>60</strong></span>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import { ShaderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/ShaderPass.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        let scene, camera, renderer, composer;
+        let tunnelMesh, particleSystem;
+        let tubeGeometry, path;
+        
+        let clock = new THREE.Clock();
+        let cameraTravelPos = 0;
+        
+        // Состояние, привязанное к UI
+        let state = {
+            speed: 1.0,
+            curve: 5.0,
+            distortion: 2.0
+        };
+
+        const container = document.getElementById('canvas-container');
+        const sliderSpeed = document.getElementById('slider-speed');
+        const sliderCurve = document.getElementById('slider-curve');
+        const sliderDistortion = document.getElementById('slider-distortion');
+        const logContainer = document.getElementById('log-container');
+        const fpsCounter = document.getElementById('fps-counter');
+
+        // Кастомный сплайн для туннеля (меняется от slider-curve)
+        class CustomSinCurve extends THREE.Curve {
+            constructor(scale = 1, curveMultiplier = 1) {
+                super();
+                this.scale = scale;
+                this.curveMultiplier = curveMultiplier;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+                const tx = Math.cos(t * Math.PI * 4) * this.curveMultiplier;
+                const ty = Math.sin(t * Math.PI * 4) * this.curveMultiplier;
+                const tz = t * 100; // Длина туннеля
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+
+        function initScene() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020206, 0.01);
+
+            // Широкоугольная камера для эффекта скорости
+            camera = new THREE.PerspectiveCamera(85, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            container.appendChild(renderer.domElement);
+
+            // Постобработка
+            const renderScene = new RenderPass(scene, camera);
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.5, 0.5, 0.2);
+            
+            // Кастомный шейдер для эффекта хроматической аберрации (искажение спектра)
+            const rgbShiftShader = {
+                uniforms: {
+                    tDiffuse: { value: null },
+                    amount: { value: 0.005 },
+                    angle: { value: 0.0 }
+                },
+                vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform sampler2D tDiffuse;
+                    uniform float amount;
+                    uniform float angle;
+                    varying vec2 vUv;
+                    void main() {
+                        vec2 offset = amount * vec2( cos(angle), sin(angle));
+                        vec4 cr = texture2D(tDiffuse, vUv + offset);
+                        vec4 cga = texture2D(tDiffuse, vUv);
+                        vec4 cb = texture2D(tDiffuse, vUv - offset);
+                        gl_FragColor = vec4(cr.r, cga.g, cb.b, cga.a);
+                    }
+                `
+            };
+            
+            window.rgbPass = new ShaderPass(rgbShiftShader);
+            window.rgbPass.uniforms['amount'].value = state.distortion * 0.005;
+
+            composer = new EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+            composer.addPass(window.rgbPass);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function createTunnel() {
+            if(tunnelMesh) scene.remove(tunnelMesh);
+            if(particleSystem) scene.remove(particleSystem);
+
+            path = new CustomSinCurve(10, state.curve);
+            tubeGeometry = new THREE.TubeGeometry(path, 150, 4, 32, false);
+
+            // Сетка туннеля
+            const wireMaterial = new THREE.MeshBasicMaterial({
+                color: 0x002211,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.15
+            });
+            tunnelMesh = new THREE.Mesh(tubeGeometry, wireMaterial);
+            scene.add(tunnelMesh);
+
+            // Частицы внутри туннеля (поток экзотической материи)
+            const particleCount = 10000;
+            const particleGeo = new THREE.BufferGeometry();
+            const particlePos = new Float32Array(particleCount * 3);
+            const particleColors = new Float32Array(particleCount * 3);
+            const particleOffsets = new Float32Array(particleCount); // Для анимации в шейдере
+
+            const colorGreen = new THREE.Color(0x00ff66);
+            const colorPurple = new THREE.Color(0xa124ff);
+
+            for(let i=0; i<particleCount; i++) {
+                // Располагаем частицы вдоль пути
+                const t = Math.random();
+                const pt = path.getPoint(t);
+                
+                // Смещаем от центра, образуя цилиндр с шумом
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 1 + Math.random() * 3.5; // Внутри туннеля радиусом 4
+
+                particlePos[i*3] = pt.x + Math.cos(angle) * radius;
+                particlePos[i*3+1] = pt.y + Math.sin(angle) * radius;
+                particlePos[i*3+2] = pt.z;
+
+                // Цвета (смесь зеленого и фиолетового)
+                const mixedColor = colorGreen.clone().lerp(colorPurple, Math.random());
+                particleColors[i*3] = mixedColor.r;
+                particleColors[i*3+1] = mixedColor.g;
+                particleColors[i*3+2] = mixedColor.b;
+
+                particleOffsets[i] = t; // Положение на кривой от 0 до 1
+            }
+
+            particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+            particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+            particleGeo.setAttribute('aOffset', new THREE.BufferAttribute(particleOffsets, 1));
+
+            // Кастомный шейдер для частиц (анимация полета вдоль туннеля)
+            const particleMat = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTime: { value: 0 },
+                    uSpeed: { value: state.speed }
+                },
+                vertexShader: `
+                    uniform float uTime;
+                    uniform float uSpeed;
+                    attribute vec3 color;
+                    attribute float aOffset;
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        vColor = color;
+                        
+                        // Логика перемещения частиц: они "падают" назад, создавая иллюзию движения камеры вперед
+                        vec3 pos = position;
+                        
+                        // Псевдо-анимация вдоль оси Z (зависит от того, как генерировался путь)
+                        // Для упрощения, просто растягиваем и сдвигаем по Z относительно камеры
+                        pos.z -= uTime * 100.0 * uSpeed;
+                        
+                        // Цикличность
+                        if(pos.z < -100.0) {
+                            pos.z += 1000.0; // переносим вперед
+                        }
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        
+                        // Размер зависит от скорости и расстояния (motion blur effect)
+                        gl_PointSize = (15.0 * uSpeed) / -mvPosition.z;
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    void main() {
+                        // Мягкий круг
+                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+                        float ll = length(xy);
+                        if (ll > 0.5) discard;
+                        
+                        // Свечение от центра к краю
+                        float alpha = (0.5 - ll) * 2.0;
+                        gl_FragColor = vec4(vColor, alpha * 0.8);
+                    }
+                `,
+                transparent: true,
+                depthWrite: false,
+                blending: THREE.AdditiveBlending
+            });
+
+            particleSystem = new THREE.Points(particleGeo, particleMat);
+            scene.add(particleSystem);
+        }
+
+        function setupInteractions() {
+            sliderSpeed.addEventListener('input', (e) => {
+                state.speed = parseFloat(e.target.value);
+                document.getElementById('val-speed').textContent = state.speed.toFixed(1);
+                if(particleSystem) particleSystem.material.uniforms.uSpeed.value = state.speed;
+                // Увеличиваем FOV при скорости для эффекта гиперпрыжка
+                gsap.to(camera, { fov: 70 + state.speed * 15, duration: 0.5, onUpdate: () => camera.updateProjectionMatrix() });
+            });
+
+            sliderCurve.addEventListener('input', (e) => {
+                state.curve = parseFloat(e.target.value);
+                document.getElementById('val-curve').textContent = state.curve.toFixed(1);
+                createTunnel(); // Пересоздаем туннель с новой кривизной
+            });
+
+            sliderDistortion.addEventListener('input', (e) => {
+                state.distortion = parseFloat(e.target.value);
+                document.getElementById('val-distortion').textContent = state.distortion.toFixed(1);
+                if(window.rgbPass) {
+                    window.rgbPass.uniforms['amount'].value = state.distortion * 0.005;
+                }
+            });
+
+            // Параллакс / отклонение камеры от мыши
+            let mouseX = 0; let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 - 1;
+            });
+
+            // Плавное обновление смещения мыши
+            setInterval(() => {
+                if(camera) {
+                    camera.rotation.x += (mouseY * 0.2 - camera.rotation.x) * 0.1;
+                    camera.rotation.y += (-mouseX * 0.2 - camera.rotation.y) * 0.1;
+                }
+            }, 16);
+
+            document.getElementById('btn-back').addEventListener('click', () => {
+                gsap.to(document.body, {
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power2.inOut",
+                    onComplete: () => window.location.href = '../index.html'
+                });
+            });
+        }
+
+        function generateTelemetry() {
+            const logs = [
+                () => `> Метрика пространства: Искажена`,
+                () => `> Градиент времени: ${(Math.random() * 0.5 + 0.5).toFixed(4)} s/s`,
+                () => `> Тензор энергии-импульса: Флуктуации обнаружены`,
+                () => `> Координата Z: ${(cameraTravelPos * 1000).toFixed(0)} млн км`,
+                () => `> Синхронизация с целевой браной: ${Math.floor(Math.random() * 100)}%`,
+                () => `> Плотность экзотической материи: ${(state.speed * 1.2).toFixed(2)} ТэВ/см³`,
+                () => `> Сигнал червоточины: Устойчивый`
+            ];
+
+            setInterval(() => {
+                const logEl = document.createElement('div');
+                logEl.className = 'log-entry';
+                
+                const randomLogObj = logs[Math.floor(Math.random() * logs.length)];
+                logEl.textContent = randomLogObj();
+
+                const randType = Math.random();
+                if(randType > 0.9) logEl.classList.add('critical');
+                else if(randType > 0.7) logEl.classList.add('purple');
+
+                logContainer.appendChild(logEl);
+
+                if (logContainer.children.length > 20) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+                
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, 1200);
+        }
+
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+            const delta = clock.getDelta();
+
+            if (particleSystem) {
+                particleSystem.material.uniforms.uTime.value = elapsedTime;
+                tunnelMesh.rotation.z = elapsedTime * 0.1 * state.speed;
+            }
+            
+            // Движение камеры вдоль пути
+            cameraTravelPos += 0.001 * state.speed;
+            if (cameraTravelPos >= 1) cameraTravelPos = 0; // Зацикливаем полет
+
+            if(path) {
+                // Получаем позицию и точку, куда смотреть
+                const camPos = path.getPointAt(cameraTravelPos);
+                // Немного впереди для взгляда
+                const lookAtPos = path.getPointAt((cameraTravelPos + 0.05) % 1); 
+                
+                camera.position.copy(camPos);
+                
+                // Базовый поворот вдоль кривой
+                const targetRotation = new THREE.Vector3().subVectors(lookAtPos, camPos).normalize();
+                
+                // Вращение (крены) камеры для эффекта бочки (barrel roll)
+                camera.rotation.z = elapsedTime * 0.5 * state.speed;
+            }
+            
+            // Динамический угол искажения RGB
+            if(window.rgbPass) {
+                window.rgbPass.uniforms['angle'].value = elapsedTime;
+            }
+
+            composer.render();
+
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                fpsCounter.innerHTML = `FPS: <strong>${frameCount}</strong>`;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = () => {
+            initScene();
+            createTunnel();
+            setupInteractions();
+            generateTelemetry();
+            animate();
+            
+            gsap.from(".glass-panel", {
+                y: 30,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        };
+    </script>
+</body>
+</html>

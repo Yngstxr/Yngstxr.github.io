@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квант-Хаб | Пульсар</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #020206;
+            --glass-bg: rgba(3, 3, 8, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #00ffff;
+            --accent-blue: #0055ff;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --font-ui: 'Inter', sans-serif;
+            --font-log: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            z-index: 10;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .top-bar {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-cyan);
+            animation: pulse-indicator 1s infinite alternate;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            font-family: var(--font-ui);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-cyan);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+        .btn-back a {
+            text-decoration: none;
+            color: inherit; 
+            display: block; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-back:hover a {
+            color: #000;
+        }
+
+        .controls-panel {
+            top: 110px;
+            left: 20px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .controls-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .slider-value {
+            font-family: var(--font-log);
+            color: var(--accent-cyan);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-cyan);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .telemetry-panel {
+            top: 110px;
+            right: 20px;
+            width: 350px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .telemetry-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        #log-container {
+            flex-grow: 1;
+            font-family: var(--font-log);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--accent-cyan);
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        .log-entry.warning { color: #ffb700; }
+        .log-entry.critical { color: #ff4b00; }
+        .log-entry.blue { color: var(--accent-blue); }
+
+        .bottom-bar {
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-log);
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 30px;
+        }
+
+        .bottom-bar span strong {
+            color: var(--text-main);
+            font-weight: normal;
+        }
+
+        @keyframes pulse-indicator {
+            from { box-shadow: 0 0 5px var(--accent-cyan); opacity: 0.8; }
+            to { box-shadow: 0 0 20px var(--accent-cyan); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 1;
+            pointer-events: none;
+            perspective: 1000px;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Верхний бар -->
+    <div class="glass-panel top-bar">
+        <h1>
+            <div class="status-indicator"></div>
+            Объект: PSR B1919+21 (Пульсар)
+        </h1>
+        <button class="btn-back" id="btn-back"><a href="index.html">НАЗАД В ХАБ</a></button>
+    </div>
+
+    <!-- Левая панель параметров -->
+    <div class="glass-panel controls-panel">
+        <h2>Магнитосфера</h2>
+        
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Частота пульсации (Hz)</span>
+                <span class="slider-value" id="val-freq">5.0</span>
+            </div>
+            <input type="range" id="slider-freq" min="0.5" max="20" step="0.1" value="5.0">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Мощность джетов (ПэВ)</span>
+                <span class="slider-value" id="val-jets">10.0</span>
+            </div>
+            <input type="range" id="slider-jets" min="1" max="20" step="0.5" value="10.0">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Магнитное поле (TG)</span>
+                <span class="slider-value" id="val-mag">2.5</span>
+            </div>
+            <input type="range" id="slider-mag" min="0.5" max="5.0" step="0.1" value="2.5">
+        </div>
+    </div>
+
+    <!-- Правая панель логов -->
+    <div class="glass-panel telemetry-panel">
+        <h2>Радио-Телеметрия</h2>
+        <div id="log-container"></div>
+    </div>
+
+    <!-- Нижняя панель метрик -->
+    <div class="glass-panel bottom-bar">
+        <span>B = 1.04 × 10¹² Gauss</span>
+        <span>Ось наклона: 22°</span>
+        <span id="fps-counter">FPS: <strong>60</strong></span>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        let scene, camera, renderer, composer, controls;
+        let pulsarGroup, magneticGroup, coreMesh, jetParticles;
+        let clock = new THREE.Clock();
+        
+        let state = {
+            freq: 5.0,
+            jetsPower: 10.0,
+            magneticField: 2.5
+        };
+
+        const container = document.getElementById('canvas-container');
+        const sliderFreq = document.getElementById('slider-freq');
+        const sliderJets = document.getElementById('slider-jets');
+        const sliderMag = document.getElementById('slider-mag');
+        const logContainer = document.getElementById('log-container');
+        const fpsCounter = document.getElementById('fps-counter');
+
+        function initScene() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020206, 0.008);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 15, 40);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.5;
+            container.appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 150;
+            controls.minDistance = 10;
+            controls.enablePan = false;
+
+            const renderScene = new RenderPass(scene, camera);
+            // Bloom для ярких рентгеновских и гамма лучей
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.5, 0.2);
+            
+            composer = new EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function createPulsar() {
+            pulsarGroup = new THREE.Group();
+            magneticGroup = new THREE.Group();
+            
+            // 1. Ядро нейтронной звезды
+            const coreGeo = new THREE.SphereGeometry(2, 64, 64);
+            const coreMat = new THREE.MeshStandardMaterial({ 
+                color: 0xffffff,
+                emissive: 0x00ffff,
+                emissiveIntensity: 2.0,
+                roughness: 0.2,
+                metalness: 0.8
+            });
+            coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            pulsarGroup.add(coreMesh);
+
+            // 2. Магнитные силовые линии (уравнение диполя)
+            createMagneticField();
+
+            // 3. Полярные джеты (система частиц)
+            createJets();
+
+            // Магнитная ось смещена относительно оси вращения (эффект пульсара)
+            magneticGroup.rotation.z = THREE.MathUtils.degToRad(22); // 22 градуса наклон
+            pulsarGroup.add(magneticGroup);
+            
+            scene.add(pulsarGroup);
+
+            // Освещение (самосветящееся ядро, но добавим немного рассеянного)
+            const ambient = new THREE.AmbientLight(0x002244, 1.0);
+            scene.add(ambient);
+            const pointLight = new THREE.PointLight(0x00ffff, 5.0, 100);
+            pulsarGroup.add(pointLight);
+
+            createBackgroundStars();
+        }
+
+        function createMagneticField() {
+            const lineCount = 30;
+            const segments = 100;
+            const mat = new THREE.LineBasicMaterial({
+                color: 0x0055ff,
+                transparent: true,
+                opacity: 0.4,
+                blending: THREE.AdditiveBlending
+            });
+
+            for (let i = 0; i < lineCount; i++) {
+                const points = [];
+                const phi = (i / lineCount) * Math.PI * 2;
+                // Размах линий зависит от силы поля
+                const rMax = 8 + (i % 3) * 4; 
+
+                for (let j = 0; j <= segments; j++) {
+                    const theta = (j / segments) * Math.PI;
+                    // Уравнение дипольного поля: r = R_max * sin^2(theta)
+                    // Избегаем 0 на полюсах для визуальной плавности, добавляя минимальный радиус ядра
+                    let r = rMax * Math.pow(Math.sin(theta), 2);
+                    if (r < 2.0) r = 2.0;
+
+                    const x = r * Math.sin(theta) * Math.cos(phi);
+                    const z = r * Math.sin(theta) * Math.sin(phi);
+                    const y = r * Math.cos(theta);
+
+                    points.push(new THREE.Vector3(x, y, z));
+                }
+                
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const line = new THREE.Line(geo, mat);
+                magneticGroup.add(line);
+            }
+        }
+
+        function createJets() {
+            const particleCount = 20000;
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const randoms = new Float32Array(particleCount);
+            
+            for(let i = 0; i < particleCount; i++) {
+                // Изначально все частицы в центре
+                positions[i*3] = (Math.random() - 0.5) * 0.5;
+                positions[i*3+1] = 0;
+                positions[i*3+2] = (Math.random() - 0.5) * 0.5;
+                
+                // Случайные параметры для скорости и смещения
+                randoms[i] = Math.random();
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTime: { value: 0 },
+                    uPower: { value: state.jetsPower }
+                },
+                vertexShader: `
+                    uniform float uTime;
+                    uniform float uPower;
+                    attribute float aRandom;
+                    varying float vAlpha;
+
+                    void main() {
+                        vec3 pos = position;
+                        
+                        // Определяем направление: половина вверх, половина вниз
+                        float dir = (aRandom > 0.5) ? 1.0 : -1.0;
+                        
+                        // Скорость частицы зависит от мощности и случайного фактора
+                        float speed = (20.0 + aRandom * 30.0) * (uPower / 10.0);
+                        
+                        // Движение по оси Y со сбросом при достижении предела
+                        float distance = mod(uTime * speed + aRandom * 100.0, 60.0);
+                        pos.y += distance * dir;
+                        
+                        // Коническое расширение джета
+                        float spread = distance * 0.05 * (uPower / 10.0);
+                        pos.x += (aRandom - 0.5) * spread;
+                        pos.z += (fract(aRandom * 10.0) - 0.5) * spread;
+
+                        // Затухание к концу струи
+                        vAlpha = smoothstep(60.0, 0.0, distance) * (1.0 - smoothstep(0.0, 5.0, distance));
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_PointSize = (40.0 / -mvPosition.z) * (aRandom * 2.0 + 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying float vAlpha;
+                    
+                    void main() {
+                        // Мягкий круг
+                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+                        float ll = length(xy);
+                        if(ll > 0.5) discard;
+                        
+                        // Цвет: циановый ядро, синий по краям
+                        vec3 color = mix(vec3(0.0, 1.0, 1.0), vec3(0.0, 0.3, 1.0), ll * 2.0);
+                        
+                        gl_FragColor = vec4(color, vAlpha * (1.0 - ll * 2.0));
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            jetParticles = new THREE.Points(geometry, material);
+            magneticGroup.add(jetParticles); // Джеты выходят из магнитных полюсов
+        }
+
+        function createBackgroundStars() {
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 4000;
+            const starPos = new Float32Array(starCount * 3);
+            for(let i=0; i<starCount * 3; i++) {
+                starPos[i] = (Math.random() - 0.5) * 600;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({
+                color: 0x88ccff,
+                size: 0.6,
+                transparent: true,
+                opacity: 0.5
+            });
+            scene.add(new THREE.Points(starGeo, starMat));
+        }
+
+        function setupInteractions() {
+            sliderFreq.addEventListener('input', (e) => {
+                state.freq = parseFloat(e.target.value);
+                document.getElementById('val-freq').textContent = state.freq.toFixed(1);
+            });
+
+            sliderJets.addEventListener('input', (e) => {
+                state.jetsPower = parseFloat(e.target.value);
+                document.getElementById('val-jets').textContent = state.jetsPower.toFixed(1);
+                if (jetParticles) {
+                    jetParticles.material.uniforms.uPower.value = state.jetsPower;
+                }
+            });
+
+            sliderMag.addEventListener('input', (e) => {
+                state.magneticField = parseFloat(e.target.value);
+                document.getElementById('val-mag').textContent = state.magneticField.toFixed(1);
+                // Изменение масштаба магнитного поля (визуально)
+                const s = state.magneticField / 2.5;
+                magneticGroup.scale.set(s, s, s);
+            });
+
+            let mouseX = 0; let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            setInterval(() => {
+                if(scene) {
+                    scene.rotation.x += (mouseY * 0.03 - scene.rotation.x) * 0.1;
+                    scene.rotation.y += (mouseX * 0.03 - scene.rotation.y) * 0.1;
+                }
+            }, 16);
+
+            document.getElementById('btn-back').addEventListener('click', () => {
+                gsap.to(document.body, {
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power2.inOut",
+                    onComplete: () => window.location.href = '../index.html'
+                });
+            });
+        }
+
+        function generateTelemetry() {
+            const logs = [
+                () => `> Детектирование радиоимпульса... [СИНХРОНИЗАЦИЯ]`,
+                () => `> Период вращения: ${(1 / state.freq).toFixed(4)} s`,
+                () => `> Энергия джетов: ${(state.jetsPower * 1.5).toFixed(1)} PeV`,
+                () => `> Магнитная индукция: ${(state.magneticField * 1.04).toFixed(2)} TeraGauss`,
+                () => `> Синхротронное излучение: Активно`,
+                () => `> Потеря массы: ${(state.jetsPower * 2.3e-12).toExponential(2)} M_sun/yr`,
+                () => `> Температура поверхности: 1.2e6 K`,
+                () => `> Ускорение электронов в полярной шапке... [ОК]`
+            ];
+
+            setInterval(() => {
+                const logEl = document.createElement('div');
+                logEl.className = 'log-entry';
+                
+                const randomLogObj = logs[Math.floor(Math.random() * logs.length)];
+                logEl.textContent = randomLogObj();
+
+                const randType = Math.random();
+                if(randType > 0.9) logEl.classList.add('critical');
+                else if(randType > 0.7) logEl.classList.add('warning');
+                else if(randType > 0.5) logEl.classList.add('blue');
+
+                logContainer.appendChild(logEl);
+
+                if (logContainer.children.length > 20) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+                
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, 1200);
+        }
+
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Вращение всего пульсара (ось вращения)
+            // Скорость вращения привязана к частоте (Hz = обороты в секунду)
+            if (pulsarGroup) {
+                pulsarGroup.rotation.y = elapsedTime * state.freq * Math.PI * 2 * 0.1; // *0.1 для визуальной плавности
+            }
+
+            // Пульсация яркости ядра
+            if (coreMesh) {
+                // Осцилляция светимости
+                const pulse = Math.sin(elapsedTime * state.freq * Math.PI * 2) * 0.5 + 1.5;
+                coreMesh.material.emissiveIntensity = pulse;
+                // Легкое изменение размера
+                const scale = 1.0 + Math.sin(elapsedTime * state.freq * Math.PI * 2) * 0.05;
+                coreMesh.scale.set(scale, scale, scale);
+            }
+
+            // Обновление времени для шейдера джетов
+            if (jetParticles) {
+                jetParticles.material.uniforms.uTime.value = elapsedTime;
+            }
+
+            controls.update();
+            composer.render();
+
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                fpsCounter.innerHTML = `FPS: <strong>${frameCount}</strong>`;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = () => {
+            initScene();
+            createPulsar();
+            setupInteractions();
+            generateTelemetry();
+            animate();
+            
+            gsap.from(".glass-panel", {
+                y: 30,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квант-Хаб | Черная Дыра</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #020206;
+            --glass-bg: rgba(3, 3, 8, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-purple: #a124ff;
+            --accent-cyan: #00f0ff;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --font-ui: 'Inter', sans-serif;
+            --font-log: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow: hidden; 
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            z-index: 10;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .top-bar {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-purple);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-purple);
+            animation: pulse 2s infinite;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--accent-purple);
+            color: var(--accent-purple);
+            font-family: var(--font-ui);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-purple);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(161, 36, 255, 0.5);
+        }
+        .btn-back a {
+            text-decoration: none;
+            color: inherit; 
+            display: block; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-back:hover a {
+            color: #000;
+        }
+
+        .controls-panel {
+            top: 110px;
+            left: 20px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .controls-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .slider-value {
+            font-family: var(--font-log);
+            color: var(--accent-cyan);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-purple);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+        .telemetry-panel {
+            top: 110px;
+            right: 20px;
+            width: 350px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .telemetry-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        #log-container {
+            flex-grow: 1;
+            font-family: var(--font-log);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--accent-cyan);
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        .log-entry.warning { color: #ffb700; }
+        .log-entry.critical { color: #ff4b00; }
+        .log-entry.purple { color: var(--accent-purple); }
+
+        .bottom-bar {
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-log);
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 30px;
+        }
+
+        .bottom-bar span strong {
+            color: var(--text-main);
+            font-weight: normal;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(161, 36, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(161, 36, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(161, 36, 255, 0); }
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 1;
+            pointer-events: none;
+            perspective: 1000px;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div id="canvas-container"></div>
+
+    <!-- Верхний бар -->
+    <div class="glass-panel top-bar">
+        <h1>
+            <div class="status-indicator"></div>
+            Объект: XTE J1550-564 (Черная Дыра)
+        </h1>
+        <button class="btn-back" id="btn-back"><a href="index.html">НАЗАД В ХАБ</a></button>
+    </div>
+
+    <!-- Левая панель параметров -->
+    <div class="glass-panel controls-panel">
+        <h2>Параметры системы</h2>
+        
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Масса (M_sun)</span>
+                <span class="slider-value" id="val-mass">10.5</span>
+            </div>
+            <input type="range" id="slider-mass" min="1" max="50" step="0.1" value="10.5">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Скорость вращения (a)</span>
+                <span class="slider-value" id="val-spin">0.92</span>
+            </div>
+            <input type="range" id="slider-spin" min="0.1" max="1.0" step="0.01" value="0.92">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Радиус аккреции (AU)</span>
+                <span class="slider-value" id="val-radius">15.0</span>
+            </div>
+            <input type="range" id="slider-radius" min="5" max="30" step="0.5" value="15.0">
+        </div>
+    </div>
+
+    <!-- Правая панель логов -->
+    <div class="glass-panel telemetry-panel">
+        <h2>Терминал Телеметрии</h2>
+        <div id="log-container">
+            <!-- Логи будут добавляться динамически -->
+        </div>
+    </div>
+
+    <!-- Нижняя панель метрик -->
+    <div class="glass-panel bottom-bar">
+        <span>G = 6.67430(15)×10⁻¹¹ m³⋅kg⁻¹⋅s⁻²</span>
+        <span>c = 299 792 458 m/s</span>
+        <span id="fps-counter">FPS: <strong>60</strong></span>
+    </div>
+
+    <script type="module">
+        // Подключаем модули Three.js, эффекты постобработки и GSAP через CDN
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        // Базовые переменные
+        let scene, camera, renderer, composer, controls;
+        let accretionDisk, singularity, photonSphere;
+        let particleCount = 150000;
+        let clock = new THREE.Clock();
+        
+        // Переменные состояния из UI
+        let state = {
+            mass: 10.5,
+            spin: 0.92,
+            radiusScale: 15.0
+        };
+
+        // DOM элементы
+        const container = document.getElementById('canvas-container');
+        const sliderMass = document.getElementById('slider-mass');
+        const sliderSpin = document.getElementById('slider-spin');
+        const sliderRadius = document.getElementById('slider-radius');
+        const valMass = document.getElementById('val-mass');
+        const valSpin = document.getElementById('val-spin');
+        const valRadius = document.getElementById('val-radius');
+        const logContainer = document.getElementById('log-container');
+        const fpsCounter = document.getElementById('fps-counter');
+
+        function initScene() {
+            scene = new THREE.Scene();
+            // Легкий космический туман
+            scene.fog = new THREE.FogExp2(0x020206, 0.015);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 10, 35);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            // Используем ACESFilmic для кинематографичной цветопередачи
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+            container.appendChild(renderer.domElement);
+
+            // Настройка орбитального контроля
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 100;
+            controls.minDistance = 5;
+            controls.enablePan = false;
+
+            // Настройка постобработки (Bloom эффект для свечения плазмы)
+            const renderScene = new RenderPass(scene, camera);
+            // Параметры Bloom: разрешение, сила, радиус, порог (чтобы черная дыра не светилась)
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.5, 0.8, 0.1);
+            
+            composer = new EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function createBlackHole() {
+            // 1. Сингулярность (Абсолютно черная сфера)
+            const sphereGeo = new THREE.SphereGeometry(2, 64, 64);
+            const sphereMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            singularity = new THREE.Mesh(sphereGeo, sphereMat);
+            scene.add(singularity);
+
+            // 2. Фотонная сфера (ореол вокруг горизонта событий)
+            const auraGeo = new THREE.SphereGeometry(2.3, 64, 64);
+            const auraMat = new THREE.MeshBasicMaterial({
+                color: 0xa124ff,
+                transparent: true,
+                opacity: 0.15,
+                blending: THREE.AdditiveBlending,
+                side: THREE.BackSide
+            });
+            photonSphere = new THREE.Mesh(auraGeo, auraMat);
+            scene.add(photonSphere);
+
+            // 3. Аккреционный диск (Система частиц с кастомным шейдером)
+            const diskGeo = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const angles = new Float32Array(particleCount);
+            const radii = new Float32Array(particleCount);
+            const sizes = new Float32Array(particleCount);
+            const colors = new Float32Array(particleCount * 3);
+
+            const colorPurple = new THREE.Color(0xa124ff);
+            const colorCyan = new THREE.Color(0x00f0ff);
+            const tempColor = new THREE.Color();
+
+            for (let i = 0; i < particleCount; i++) {
+                // Распределение частиц: гуще ближе к центру
+                const radiusDist = Math.random();
+                // Базовый радиус от 2.5 до ~20
+                const r = 2.5 + Math.pow(radiusDist, 3) * 18.0; 
+                radii[i] = r;
+
+                // Случайный начальный угол
+                angles[i] = Math.random() * Math.PI * 2;
+
+                // Вариативность размера частиц
+                sizes[i] = Math.random() * 2.0 + 0.5;
+
+                // Начальная позиция (X и Z вычисляются в шейдере, здесь задаем Y-смещение)
+                // Чем ближе к центру, тем тоньше диск
+                const thickness = (r > 5.0) ? (Math.random() - 0.5) * (r * 0.1) : (Math.random() - 0.5) * 0.5;
+                positions[i * 3] = 0;
+                positions[i * 3 + 1] = thickness;
+                positions[i * 3 + 2] = 0;
+
+                // Градиент цвета: циановый внутри (горячее), фиолетовый снаружи (холоднее)
+                const lerpFactor = Math.min((r - 2.5) / 10.0, 1.0);
+                tempColor.copy(colorCyan).lerp(colorPurple, lerpFactor);
+                colors[i * 3] = tempColor.r;
+                colors[i * 3 + 1] = tempColor.g;
+                colors[i * 3 + 2] = tempColor.b;
+            }
+
+            diskGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            diskGeo.setAttribute('aAngle', new THREE.BufferAttribute(angles, 1));
+            diskGeo.setAttribute('aRadius', new THREE.BufferAttribute(radii, 1));
+            diskGeo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+            diskGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const diskMat = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTime: { value: 0.0 },
+                    uSpin: { value: state.spin },
+                    uRadiusScale: { value: state.radiusScale / 15.0 } // нормализация
+                },
+                vertexShader: `
+                    uniform float uTime;
+                    uniform float uSpin;
+                    uniform float uRadiusScale;
+                    attribute float aAngle;
+                    attribute float aRadius;
+                    attribute float aSize;
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        vColor = color;
+                        
+                        // Масштабируем радиус орбиты через UI
+                        float r = aRadius * uRadiusScale;
+                        
+                        // Кеплеровская скорость: угловая скорость ~ 1 / r^1.5
+                        // Добавляем влияние спина (uSpin) черной дыры (увлечение инерциальных систем)
+                        float angularVelocity = (12.0 / pow(r, 1.5)) * uSpin;
+                        
+                        // Текущий угол поворота с течением времени
+                        float currentAngle = aAngle - uTime * angularVelocity;
+                        
+                        vec3 pos = position; // Берем Y-смещение
+                        
+                        // Вычисляем новые X и Z
+                        pos.x = cos(currentAngle) * r;
+                        pos.z = sin(currentAngle) * r;
+
+                        // Гравитационное искажение (эффект седла/линзирования)
+                        // Слегка искривляем пространство по оси Y со временем
+                        float warp = sin(r * 0.8 - uTime * 2.0) * 0.3;
+                        pos.y += warp * smoothstep(10.0, 2.0, r); // Сильнее гнется у центра
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        gl_Position = projectionMatrix * mvPosition;
+                        
+                        // Перспективное затухание размера
+                        gl_PointSize = aSize * (40.0 / -mvPosition.z);
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        // Создаем круглую частицу с мягкими краями вместо квадрата
+                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+                        float ll = length(xy);
+                        if(ll > 0.5) discard;
+                        
+                        // Интенсивность свечения (ближе к центру частицы ярче)
+                        float intensity = 1.0 - (ll * 2.0);
+                        intensity = pow(intensity, 1.5); // Нелинейное затухание
+                        
+                        gl_FragColor = vec4(vColor * intensity, intensity);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false,
+                transparent: true,
+                vertexColors: true
+            });
+
+            accretionDisk = new THREE.Points(diskGeo, diskMat);
+            // Наклоняем диск для красивого ракурса по умолчанию
+            accretionDisk.rotation.x = 0.2;
+            scene.add(accretionDisk);
+
+            // Создаем фоновые звезды
+            createBackgroundStars();
+        }
+
+        function createBackgroundStars() {
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 3000;
+            const starPos = new Float32Array(starCount * 3);
+            for(let i=0; i<starCount * 3; i++) {
+                starPos[i] = (Math.random() - 0.5) * 400;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.5,
+                transparent: true,
+                opacity: 0.6
+            });
+            const stars = new THREE.Points(starGeo, starMat);
+            scene.add(stars);
+        }
+
+        function setupInteractions() {
+            // Обработчики ползунков
+            sliderMass.addEventListener('input', (e) => {
+                state.mass = parseFloat(e.target.value);
+                valMass.textContent = state.mass.toFixed(1);
+                
+                // Масса влияет на размер горизонта событий
+                const newRadius = 1.0 + (state.mass * 0.1);
+                gsap.to(singularity.scale, { x: newRadius, y: newRadius, z: newRadius, duration: 0.5 });
+                gsap.to(photonSphere.scale, { x: newRadius, y: newRadius, z: newRadius, duration: 0.5 });
+            });
+
+            sliderSpin.addEventListener('input', (e) => {
+                state.spin = parseFloat(e.target.value);
+                valSpin.textContent = state.spin.toFixed(2);
+                // Обновляем uniform в шейдере диска
+                if(accretionDisk) accretionDisk.material.uniforms.uSpin.value = state.spin;
+            });
+
+            sliderRadius.addEventListener('input', (e) => {
+                state.radiusScale = parseFloat(e.target.value);
+                valRadius.textContent = state.radiusScale.toFixed(1);
+                // Нормализуем относительно базового значения 15.0
+                if(accretionDisk) accretionDisk.material.uniforms.uRadiusScale.value = state.radiusScale / 15.0;
+            });
+
+            // Легкий параллакс эффект от мыши для всей сцены
+            let mouseX = 0; let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            // Интеграция с циклом рендера
+            setInterval(() => {
+                if(scene) {
+                    scene.rotation.x += (mouseY * 0.05 - scene.rotation.x) * 0.1;
+                    scene.rotation.y += (mouseX * 0.05 - scene.rotation.y) * 0.1;
+                }
+            }, 16);
+
+            // Кнопка НАЗАД В ХАБ
+            document.getElementById('btn-back').addEventListener('click', () => {
+                // Плавное затухание интерфейса и WebGL перед переходом
+                gsap.to(document.body, {
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        window.location.href = '../index.html'; // Возврат на главную
+                    }
+                });
+            });
+        }
+
+        function generateTelemetry() {
+            const logs = [
+                () => `> Вычисление тензора Риччи... [OK]`,
+                () => `> R_s (Радиус Шварцшильда): ${(state.mass * 2.95).toFixed(2)} km`,
+                () => `> Спин-параметр (a*): ${state.spin.toFixed(3)}`,
+                () => `> Температура плазмы: ${(state.spin * 1.5e7).toExponential(2)} K`,
+                () => `> Магнитная индукция: ${(Math.random() * 10 + 5).toFixed(2)} Tesla`,
+                () => `> Гравитационное линзирование: Активно`,
+                () => `> Излучение Хокинга: ${(1.22e20 / state.mass).toExponential(2)} W`,
+                () => `> Увлечение инерциальных систем: ${(state.spin * 100).toFixed(1)}%`
+            ];
+
+            setInterval(() => {
+                const logEl = document.createElement('div');
+                logEl.className = 'log-entry';
+                
+                // Выбираем случайную строку лога и выполняем функцию для получения актуальных цифр
+                const randomLogObj = logs[Math.floor(Math.random() * logs.length)];
+                logEl.textContent = randomLogObj();
+
+                // Рандомизация цвета для критических/важных сообщений
+                const randType = Math.random();
+                if(randType > 0.9) logEl.classList.add('critical');
+                else if(randType > 0.7) logEl.classList.add('warning');
+                else if(randType > 0.5) logEl.classList.add('purple');
+
+                logContainer.appendChild(logEl);
+
+                // Ограничиваем количество строк, чтобы не засорять DOM
+                if (logContainer.children.length > 25) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+                
+                // Прокручиваем вниз
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, 1800);
+        }
+
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Обновляем время в шейдере аккреционного диска
+            if (accretionDisk) {
+                accretionDisk.material.uniforms.uTime.value = elapsedTime;
+            }
+
+            // Медленное вращение фотонной сферы
+            if (photonSphere) {
+                photonSphere.rotation.y = elapsedTime * 0.5;
+                photonSphere.rotation.z = elapsedTime * 0.2;
+            }
+
+            controls.update();
+            
+            // Используем Composer вместо renderer.render для работы Bloom-эффекта
+            composer.render();
+
+            // Подсчет FPS
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                fpsCounter.innerHTML = `FPS: <strong>${frameCount}</strong>`;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Запуск системы после загрузки DOM
+        window.onload = () => {
+            initScene();
+            createBlackHole();
+            setupInteractions();
+            generateTelemetry();
+            animate();
+            
+            // Вступительная анимация (появление)
+            gsap.from(".glass-panel", {
+                y: 50,
+                opacity: 0,
+                duration: 1.5,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        };
+    </script>
+</body>
+</html>

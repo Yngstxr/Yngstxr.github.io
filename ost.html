@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квант-Хаб | Остаток Сверхновой</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #020206;
+            --glass-bg: rgba(3, 3, 8, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-orange: #ff4b00; 
+            --accent-yellow: #ffb700;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --font-ui: 'Inter', sans-serif;
+            --font-log: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(255, 75, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 75, 0, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 1;
+            pointer-events: none;
+            perspective: 1000px;
+            transform: scale(1.1);
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            z-index: 10;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .top-bar {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-orange);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-orange);
+            animation: pulse-orange 1.5s infinite alternate;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--accent-orange);
+            color: var(--accent-orange);
+            font-family: var(--font-ui);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-orange);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 75, 0, 0.5);
+        }
+        .btn-back a {
+            text-decoration: none;
+            color: inherit; 
+            display: block; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-back:hover a {
+            color: #000;
+        }
+
+        .controls-panel {
+            top: 110px;
+            left: 20px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .controls-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .slider-value {
+            font-family: var(--font-log);
+            color: var(--accent-orange);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-orange);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-orange);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .telemetry-panel {
+            top: 110px;
+            right: 20px;
+            width: 350px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .telemetry-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        #log-container {
+            flex-grow: 1;
+            font-family: var(--font-log);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--accent-yellow);
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        .log-entry.critical { color: #ff0044; }
+        .log-entry.orange { color: var(--accent-orange); }
+
+        .bottom-bar {
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-log);
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 30px;
+        }
+
+        .bottom-bar span strong {
+            color: var(--text-main);
+            font-weight: normal;
+        }
+
+        @keyframes pulse-orange {
+            from { box-shadow: 0 0 5px var(--accent-orange); opacity: 0.8; }
+            to { box-shadow: 0 0 20px var(--accent-orange); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div id="canvas-container"></div>
+
+    <div class="glass-panel top-bar">
+        <h1>
+            <div class="status-indicator"></div>
+            Объект: SN 1054 (Крабовидная туманность)
+        </h1>
+        <button class="btn-back" id="btn-back"><a href="index.html">НАЗАД В ХАБ</a></button>
+    </div>
+
+    <div class="glass-panel controls-panel">
+        <h2>Термоядерный взрыв</h2>
+        
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Энергия (10⁵¹ erg)</span>
+                <span class="slider-value" id="val-energy">1.5</span>
+            </div>
+            <input type="range" id="slider-energy" min="0.5" max="10.0" step="0.1" value="1.5">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Возраст остатка (лет)</span>
+                <span class="slider-value" id="val-age">970</span>
+            </div>
+            <input type="range" id="slider-age" min="10" max="5000" step="10" value="970">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Скорость расширения (10³ km/s)</span>
+                <span class="slider-value" id="val-speed">1.5</span>
+            </div>
+            <input type="range" id="slider-speed" min="0.1" max="5.0" step="0.1" value="1.5">
+        </div>
+    </div>
+
+    <div class="glass-panel telemetry-panel">
+        <h2>Спектрометрия</h2>
+        <div id="log-container"></div>
+    </div>
+
+    <div class="glass-panel bottom-bar">
+        <span>Масса прародителя: ~10 M_sun</span>
+        <span>Тип сверхновой: II</span>
+        <span id="fps-counter">FPS: <strong>60</strong></span>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        let scene, camera, renderer, composer, controls;
+        let supernovaParticles, stellarCore;
+        let clock = new THREE.Clock();
+        
+        // Состояние системы, связанное с UI
+        let state = {
+            energy: 1.5,
+            age: 970,
+            speed: 1.5
+        };
+
+        const container = document.getElementById('canvas-container');
+        const sliderEnergy = document.getElementById('slider-energy');
+        const sliderAge = document.getElementById('slider-age');
+        const sliderSpeed = document.getElementById('slider-speed');
+        const valEnergy = document.getElementById('val-energy');
+        const valAge = document.getElementById('val-age');
+        const valSpeed = document.getElementById('val-speed');
+        const logContainer = document.getElementById('log-container');
+        const fpsCounter = document.getElementById('fps-counter');
+
+        function initScene() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020206, 0.003);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.set(0, 0, 180);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.3;
+            container.appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 500;
+            controls.minDistance = 20;
+            // Медленное автоматическое вращение
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.5;
+
+            const renderScene = new RenderPass(scene, camera);
+            // Интенсивный Bloom для эффекта раскаленной плазмы
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.5, 0.6, 0.1);
+            
+            composer = new EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function createSupernova() {
+            // 1. Оставшееся ядро (нейтронная звезда/пульсар)
+            const coreGeo = new THREE.SphereGeometry(1.5, 32, 32);
+            const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            stellarCore = new THREE.Mesh(coreGeo, coreMat);
+            scene.add(stellarCore);
+
+            // 2. Газопылевое облако (остаток сверхновой)
+            const particleCount = 250000;
+            const geometry = new THREE.BufferGeometry();
+            
+            const positions = new Float32Array(particleCount * 3);
+            const velocities = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            const randoms = new Float32Array(particleCount * 3);
+
+            for (let i = 0; i < particleCount; i++) {
+                // Распределение точек в сфере
+                const r = Math.pow(Math.random(), 0.3); // Распределение для плотного центра
+                const theta = Math.random() * 2 * Math.PI;
+                const phi = Math.acos(2 * Math.random() - 1);
+                
+                // Единичный вектор направления выброса (базовая форма)
+                const nx = Math.sin(phi) * Math.cos(theta);
+                const ny = Math.sin(phi) * Math.sin(theta);
+                const nz = Math.cos(phi);
+                
+                // Хаотичные флуктуации скорости (создают фрактальность)
+                const speedMult = 0.2 + Math.random() * 0.8 + Math.pow(Math.random(), 5) * 2.0;
+
+                velocities[i*3] = nx * speedMult;
+                velocities[i*3+1] = ny * speedMult;
+                velocities[i*3+2] = nz * speedMult;
+
+                // Начальная позиция (возле ядра)
+                positions[i*3] = nx * 2.0;
+                positions[i*3+1] = ny * 2.0;
+                positions[i*3+2] = nz * 2.0;
+
+                sizes[i] = Math.random() * 2.5 + 0.5;
+
+                // Уникальные случайные значения для шума в шейдере
+                randoms[i*3] = Math.random();
+                randoms[i*3+1] = Math.random();
+                randoms[i*3+2] = Math.random();
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('aVelocity', new THREE.BufferAttribute(velocities, 3));
+            geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
+            geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 3));
+
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTime: { value: 0 },
+                    uEnergy: { value: state.energy },
+                    uAge: { value: state.age },
+                    uSpeed: { value: state.speed }
+                },
+                vertexShader: `
+                    uniform float uTime;
+                    uniform float uEnergy;
+                    uniform float uAge;
+                    uniform float uSpeed;
+                    
+                    attribute vec3 aVelocity;
+                    attribute float aSize;
+                    attribute vec3 aRandom;
+                    
+                    varying vec3 vColor;
+                    varying float vDistance;
+
+                    // Псевдо-шум для турбулентности
+                    vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+                    vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
+                    vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+
+                    void main() {
+                        // Масштаб расширения (Нормализован для визуализации)
+                        // Чем больше возраст и скорость, тем дальше улетают частицы
+                        float expansionFactor = (uAge * 0.1) * uSpeed * uEnergy;
+                        
+                        // Базовое расширение от центра
+                        vec3 pos = position + aVelocity * expansionFactor;
+
+                        // Добавляем нелинейную турбулентность, зависящую от времени и энергии
+                        float noise = sin(pos.x * 0.1 + uTime * uSpeed) * 
+                                      cos(pos.y * 0.1 - uTime * uSpeed) * 
+                                      sin(pos.z * 0.1 + aRandom.x * 10.0);
+                        
+                        pos += aVelocity * noise * (uEnergy * 2.0);
+
+                        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
+                        
+                        // Вычисляем расстояние от центра для цвета
+                        vDistance = length(pos);
+                        
+                        // Цветовая палитра: Белый (центр) -> Желтый -> Оранжевый -> Красный -> Фиолетовый (края)
+                        // Чем выше энергия, тем ярче и "синее" спектр, но сохраняем оранжевый профиль
+                        vec3 colorCore = vec3(1.0, 0.9, 0.8);
+                        vec3 colorMid = vec3(1.0, 0.3, 0.0); // Ярко-оранжевый
+                        vec3 colorEdge = vec3(0.3, 0.0, 0.4); // Темно-фиолетовый
+                        
+                        // Нормализуем дистанцию относительно максимального радиуса облака
+                        float maxDist = expansionFactor * 2.5; 
+                        float normalizedDist = clamp(vDistance / maxDist, 0.0, 1.0);
+                        
+                        // Смешивание цветов
+                        vec3 finalColor = mix(colorCore, colorMid, smoothstep(0.0, 0.4, normalizedDist));
+                        finalColor = mix(finalColor, colorEdge, smoothstep(0.4, 1.0, normalizedDist));
+                        
+                        vColor = finalColor * (1.0 + uEnergy * 0.1); // Смещение яркости от энергии
+
+                        // Размер частицы зависит от камеры и изначального размера
+                        gl_PointSize = aSize * (150.0 / -mvPosition.z) * (1.0 + uEnergy * 0.5);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    varying float vDistance;
+                    
+                    void main() {
+                        // Мягкие частицы
+                        vec2 xy = gl_PointCoord.xy - vec2(0.5);
+                        float ll = length(xy);
+                        if(ll > 0.5) discard;
+                        
+                        // Затухание к краям
+                        float alpha = (0.5 - ll) * 2.0;
+                        
+                        // Чем дальше от центра, тем прозрачнее газ
+                        alpha *= clamp(1.5 - (vDistance / 150.0), 0.1, 1.0);
+
+                        gl_FragColor = vec4(vColor, alpha);
+                    }
+                `,
+                transparent: true,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+
+            supernovaParticles = new THREE.Points(geometry, material);
+            scene.add(supernovaParticles);
+
+            createBackgroundStars();
+        }
+
+        function createBackgroundStars() {
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 5000;
+            const starPos = new Float32Array(starCount * 3);
+            for(let i=0; i<starCount * 3; i++) {
+                starPos[i] = (Math.random() - 0.5) * 1000;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({
+                color: 0x88ccff,
+                size: 0.8,
+                transparent: true,
+                opacity: 0.4
+            });
+            scene.add(new THREE.Points(starGeo, starMat));
+        }
+
+        function setupInteractions() {
+            // Обработчики для ползунков - мгновенно обновляют uniforms шейдера
+            sliderEnergy.addEventListener('input', (e) => {
+                state.energy = parseFloat(e.target.value);
+                valEnergy.textContent = state.energy.toFixed(1);
+                if(supernovaParticles) supernovaParticles.material.uniforms.uEnergy.value = state.energy;
+            });
+
+            sliderAge.addEventListener('input', (e) => {
+                state.age = parseFloat(e.target.value);
+                valAge.textContent = state.age.toFixed(0);
+                if(supernovaParticles) supernovaParticles.material.uniforms.uAge.value = state.age;
+            });
+
+            sliderSpeed.addEventListener('input', (e) => {
+                state.speed = parseFloat(e.target.value);
+                valSpeed.textContent = state.speed.toFixed(1);
+                if(supernovaParticles) supernovaParticles.material.uniforms.uSpeed.value = state.speed;
+            });
+
+            // Параллакс от мыши
+            let mouseX = 0; let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            setInterval(() => {
+                if(scene) {
+                    scene.position.x += (mouseX * 5 - scene.position.x) * 0.05;
+                    scene.position.y += (mouseY * 5 - scene.position.y) * 0.05;
+                }
+            }, 16);
+
+            document.getElementById('btn-back').addEventListener('click', () => {
+                gsap.to(document.body, {
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power2.inOut",
+                    onComplete: () => window.location.href = '../index.html'
+                });
+            });
+        }
+
+        function generateTelemetry() {
+            const logs = [
+                () => `> Анализ ударной волны... [СТАБИЛЬНО]`,
+                () => `> Выделенная энергия: ${(state.energy * 10).toFixed(1)}e50 erg`,
+                () => `> Скорость фронта: ${(state.speed * 3000).toFixed(0)} km/s`,
+                () => `> Радиус остатка: ${((state.age * state.speed * 0.003)).toFixed(2)} pc`,
+                () => `> Температура плазмы: ${(state.energy * 2.5e6).toExponential(2)} K`,
+                () => `> Плотность частиц: Оптически тонкая`,
+                () => `> Синхротронное излучение электронов: Обнаружено`,
+                () => `> Масса выброшенного газа: ~5.8 M_sun`
+            ];
+
+            setInterval(() => {
+                const logEl = document.createElement('div');
+                logEl.className = 'log-entry';
+                
+                const randomLogObj = logs[Math.floor(Math.random() * logs.length)];
+                logEl.textContent = randomLogObj();
+
+                const randType = Math.random();
+                if(randType > 0.9) logEl.classList.add('critical');
+                else if(randType > 0.6) logEl.classList.add('orange');
+
+                logContainer.appendChild(logEl);
+
+                if (logContainer.children.length > 20) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+                
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, 1500);
+        }
+
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Передаем время в шейдер
+            if (supernovaParticles) {
+                supernovaParticles.material.uniforms.uTime.value = elapsedTime;
+            }
+
+            // Пульсация центрального ядра (нейтронной звезды)
+            if (stellarCore) {
+                const pulse = Math.sin(elapsedTime * 10) * 0.2 + 1.2;
+                stellarCore.scale.set(pulse, pulse, pulse);
+            }
+
+            controls.update();
+            composer.render();
+
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                fpsCounter.innerHTML = `FPS: <strong>${frameCount}</strong>`;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = () => {
+            initScene();
+            createSupernova();
+            setupInteractions();
+            generateTelemetry();
+            animate();
+            
+            // Плавное появление интерфейса
+            gsap.from(".glass-panel", {
+                y: 30,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        };
+    </script>
+</body>
+</html>

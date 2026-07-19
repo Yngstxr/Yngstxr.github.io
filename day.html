@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Квант-Хаб | Сфера Дайсона</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #020206;
+            --glass-bg: rgba(3, 3, 8, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-gold: #ffb700;
+            --accent-orange: #ff4b00;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --font-ui: 'Inter', sans-serif;
+            --font-log: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-ui);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            z-index: 10;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .top-bar {
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 30px;
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-gold);
+            animation: pulse-gold 2s infinite alternate;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            font-family: var(--font-ui);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 183, 0, 0.5);
+        }
+        .btn-back a {
+            text-decoration: none;
+            color: inherit; 
+            display: block; 
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn-back:hover a {
+            color: #000;
+        }
+
+        .controls-panel {
+            top: 110px;
+            left: 20px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .controls-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 10px;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .slider-value {
+            font-family: var(--font-log);
+            color: var(--accent-gold);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px var(--accent-gold);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .telemetry-panel {
+            top: 110px;
+            right: 20px;
+            width: 350px;
+            height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .telemetry-panel h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+        }
+
+        #log-container {
+            flex-grow: 1;
+            font-family: var(--font-log);
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--accent-gold);
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+        }
+
+        .log-entry {
+            margin-bottom: 4px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: slideUp 0.3s forwards;
+        }
+
+        .log-entry.critical { color: #ff0044; }
+        .log-entry.orange { color: var(--accent-orange); }
+
+        .bottom-bar {
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-log);
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 30px;
+        }
+
+        .bottom-bar span strong {
+            color: var(--text-main);
+            font-weight: normal;
+        }
+
+        @keyframes pulse-gold {
+            from { box-shadow: 0 0 5px var(--accent-gold); opacity: 0.8; }
+            to { box-shadow: 0 0 20px var(--accent-gold); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bg-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: 
+                linear-gradient(rgba(255, 183, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 183, 0, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
+            z-index: 1;
+            pointer-events: none;
+            perspective: 1000px;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+    <div id="canvas-container"></div>
+
+    <div class="glass-panel top-bar">
+        <h1>
+            <div class="status-indicator"></div>
+            Объект: Мегаструктура Дайсона (Тип II)
+        </h1>
+        <button class="btn-back" id="btn-back"><a href="index.html">НАЗАД В ХАБ</a></button>
+    </div>
+
+    <div class="glass-panel controls-panel">
+        <h2>Управление конструкцией</h2>
+        
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Плотность покрытия (%)</span>
+                <span class="slider-value" id="val-density">45</span>
+            </div>
+            <input type="range" id="slider-density" min="5" max="100" step="1" value="45">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Радиус сферы (AU)</span>
+                <span class="slider-value" id="val-radius">1.2</span>
+            </div>
+            <input type="range" id="slider-radius" min="0.5" max="2.5" step="0.1" value="1.2">
+        </div>
+
+        <div class="slider-group">
+            <div class="slider-header">
+                <span>Светимость звезды (L_sun)</span>
+                <span class="slider-value" id="val-lum">1.0</span>
+            </div>
+            <input type="range" id="slider-lum" min="0.1" max="5.0" step="0.1" value="1.0">
+        </div>
+    </div>
+
+    <div class="glass-panel telemetry-panel">
+        <h2>Терминал Энергосбора</h2>
+        <div id="log-container"></div>
+    </div>
+
+    <div class="glass-panel bottom-bar">
+        <span>Класс Кардашева: II</span>
+        <span>Звезда: Желтый карлик (G2V)</span>
+        <span id="fps-counter">FPS: <strong>60</strong></span>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+        import { EffectComposer } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/postprocessing/UnrealBloomPass.js';
+        import gsap from 'https://cdn.skypack.dev/gsap';
+
+        let scene, camera, renderer, composer, controls;
+        let starMesh, starLight, dysonGroup, panelsMesh;
+        let ring1, ring2, ring3;
+        
+        let clock = new THREE.Clock();
+        
+        // Состояние, привязанное к UI
+        let state = {
+            density: 0.45,
+            radius: 1.2,
+            luminosity: 1.0
+        };
+
+        const container = document.getElementById('canvas-container');
+        const sliderDensity = document.getElementById('slider-density');
+        const sliderRadius = document.getElementById('slider-radius');
+        const sliderLum = document.getElementById('slider-lum');
+        const logContainer = document.getElementById('log-container');
+        const fpsCounter = document.getElementById('fps-counter');
+
+        function initScene() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x020206, 0.005);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+            camera.position.set(0, 30, 80);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.0;
+            container.appendChild(renderer.domElement);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxDistance = 300;
+            controls.minDistance = 25;
+            controls.autoRotate = true;
+            controls.autoRotateSpeed = 0.3;
+
+            // Постобработка: Bloom для сияния звезды и панелей
+            const renderScene = new RenderPass(scene, camera);
+            const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.5);
+            
+            composer = new EffectComposer(renderer);
+            composer.addPass(renderScene);
+            composer.addPass(bloomPass);
+
+            // Освещение (помимо звезды)
+            const ambient = new THREE.AmbientLight(0x222233, 1.0);
+            scene.add(ambient);
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function createStar() {
+            const starGeo = new THREE.SphereGeometry(10, 64, 64);
+            // Используем кастомный шейдер для эффекта кипящей плазмы на звезде
+            const starMat = new THREE.MeshStandardMaterial({
+                color: 0xffaa00,
+                emissive: 0xff7700,
+                emissiveIntensity: 2.0,
+                roughness: 0.8
+            });
+            
+            starMesh = new THREE.Mesh(starGeo, starMat);
+            scene.add(starMesh);
+
+            starLight = new THREE.PointLight(0xffb700, 5.0, 500);
+            scene.add(starLight);
+        }
+
+        function createDysonStructure() {
+            dysonGroup = new THREE.Group();
+            const baseRadius = 25; // Базовый размер структуры (относительный масштаб)
+
+            // 1. Технологические кольца (Каркас)
+            const ringGeo = new THREE.TorusGeometry(baseRadius + 0.5, 0.3, 16, 100);
+            const ringMat = new THREE.MeshStandardMaterial({
+                color: 0x555555,
+                metalness: 0.9,
+                roughness: 0.2,
+                emissive: 0xffb700,
+                emissiveIntensity: 0.2
+            });
+
+            ring1 = new THREE.Mesh(ringGeo, ringMat);
+            ring2 = new THREE.Mesh(ringGeo, ringMat);
+            ring3 = new THREE.Mesh(ringGeo, ringMat);
+
+            ring1.rotation.x = Math.PI / 2;
+            ring2.rotation.y = Math.PI / 2;
+            ring3.rotation.z = Math.PI / 4;
+            ring3.rotation.x = Math.PI / 4;
+
+            dysonGroup.add(ring1);
+            dysonGroup.add(ring2);
+            dysonGroup.add(ring3);
+
+            // 2. Геодезические панели (Солнечные батареи)
+            // Создаем икосаэдр с детализацией
+            const icosahedron = new THREE.IcosahedronGeometry(baseRadius, 3);
+            
+            // Конвертируем в non-indexed для независимой работы с каждым треугольником (панелью)
+            const nonIndexedGeo = icosahedron.toNonIndexed();
+            const positions = nonIndexedGeo.attributes.position.array;
+            const faceCount = positions.length / 9; // 3 вершины по 3 координаты
+            
+            // Массив случайных значений для каждого треугольника (чтобы управлять их видимостью)
+            const randoms = new Float32Array(faceCount * 3); // по 1 значению на вершину
+            
+            for (let i = 0; i < faceCount; i++) {
+                // Одно случайное значение на всю панель (треугольник)
+                const randValue = Math.random(); 
+                randoms[i * 3] = randValue;
+                randoms[i * 3 + 1] = randValue;
+                randoms[i * 3 + 2] = randValue;
+            }
+
+            nonIndexedGeo.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1));
+
+            // Кастомный шейдер для панелей, поддерживающий освещение от звезды
+            const panelsMat = new THREE.ShaderMaterial({
+                uniforms: {
+                    uDensity: { value: state.density },
+                    ...THREE.UniformsLib['common'],
+                    ...THREE.UniformsLib['lights']
+                },
+                vertexShader: `
+                    attribute float aRandom;
+                    varying float vRandom;
+                    varying vec3 vNormal;
+                    varying vec3 vViewPosition;
+
+                    void main() {
+                        vRandom = aRandom;
+                        vNormal = normalize(normalMatrix * normal);
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        vViewPosition = -mvPosition.xyz;
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    uniform float uDensity;
+                    varying float vRandom;
+                    varying vec3 vNormal;
+                    varying vec3 vViewPosition;
+
+                    struct PointLight {
+                        vec3 position;
+                        vec3 color;
+                        float distance;
+                        float decay;
+                    };
+                    uniform PointLight pointLights[NUM_POINT_LIGHTS];
+
+                    void main() {
+                        // Если "рандомный ID" панели больше чем плотность - панель еще не построена
+                        if (vRandom > uDensity) {
+                            discard;
+                        }
+
+                        // Базовый цвет панели - технологический сине-черный
+                        vec3 baseColor = vec3(0.05, 0.05, 0.1);
+                        
+                        // Простейший расчет освещения от звезды (которая находится в центре)
+                        vec3 addedLight = vec3(0.0);
+                        for(int l = 0; l < NUM_POINT_LIGHTS; l++) {
+                            vec3 lightDirection = normalize(vViewPosition); // т.к. звезда в центре
+                            float diff = max(dot(vNormal, lightDirection), 0.0);
+                            addedLight += pointLights[l].color * diff;
+                        }
+                        
+                        // Золотистый отблеск на краях панелей
+                        vec3 edgeGlow = vec3(1.0, 0.7, 0.0) * (0.1 + pow(1.0 - max(dot(vNormal, vec3(0.0, 0.0, 1.0)), 0.0), 3.0));
+
+                        vec3 finalColor = baseColor + addedLight * 0.2 + edgeGlow * 0.5;
+                        
+                        gl_FragColor = vec4(finalColor, 1.0);
+                    }
+                `,
+                side: THREE.DoubleSide,
+                lights: true, // Включаем поддержку освещения Three.js в кастомном шейдере
+                wireframe: false
+            });
+
+            panelsMesh = new THREE.Mesh(nonIndexedGeo, panelsMat);
+            dysonGroup.add(panelsMesh);
+
+            // 3. Тонкий проволочный каркас всей сферы (Wireframe)
+            const wireMat = new THREE.MeshBasicMaterial({
+                color: 0x333333,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.3
+            });
+            const wireMesh = new THREE.Mesh(icosahedron, wireMat);
+            dysonGroup.add(wireMesh);
+
+            scene.add(dysonGroup);
+            createBackgroundStars();
+        }
+
+        function createBackgroundStars() {
+            const starGeo = new THREE.BufferGeometry();
+            const starCount = 3000;
+            const starPos = new Float32Array(starCount * 3);
+            for(let i=0; i<starCount * 3; i++) {
+                starPos[i] = (Math.random() - 0.5) * 800;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const starMat = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.7,
+                transparent: true,
+                opacity: 0.4
+            });
+            scene.add(new THREE.Points(starGeo, starMat));
+        }
+
+        function setupInteractions() {
+            sliderDensity.addEventListener('input', (e) => {
+                state.density = parseFloat(e.target.value) / 100;
+                document.getElementById('val-density').textContent = e.target.value;
+                if(panelsMesh) panelsMesh.material.uniforms.uDensity.value = state.density;
+            });
+
+            sliderRadius.addEventListener('input', (e) => {
+                state.radius = parseFloat(e.target.value);
+                document.getElementById('val-radius').textContent = state.radius.toFixed(1);
+                // Масштабируем мегаструктуру, звезда остается прежнего размера
+                const scale = state.radius / 1.2;
+                dysonGroup.scale.set(scale, scale, scale);
+            });
+
+            sliderLum.addEventListener('input', (e) => {
+                state.luminosity = parseFloat(e.target.value);
+                document.getElementById('val-lum').textContent = state.luminosity.toFixed(1);
+                
+                // Меняем яркость звезды и света
+                starMesh.material.emissiveIntensity = 2.0 * state.luminosity;
+                starLight.intensity = 5.0 * state.luminosity;
+            });
+
+            // Параллакс от мыши
+            let mouseX = 0; let mouseY = 0;
+            document.addEventListener('mousemove', (e) => {
+                mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+            });
+
+            setInterval(() => {
+                if(scene) {
+                    scene.position.x += (mouseX * 2 - scene.position.x) * 0.05;
+                    scene.position.y += (mouseY * 2 - scene.position.y) * 0.05;
+                }
+            }, 16);
+
+            document.getElementById('btn-back').addEventListener('click', () => {
+                gsap.to(document.body, {
+                    opacity: 0,
+                    duration: 1.5,
+                    ease: "power2.inOut",
+                    onComplete: () => window.location.href = '../index.html'
+                });
+            });
+        }
+
+        function generateTelemetry() {
+            const logs = [
+                () => `> Сбор энергии: ${(state.density * state.luminosity * 3.8e26).toExponential(2)} Watts`,
+                () => `> Состояние каркаса... [СТАБИЛЬНО]`,
+                () => `> Развернуто панелей: ${(state.density * 100).toFixed(1)}% от плана`,
+                () => `> Температура на панелях: ${(400 * Math.pow(state.luminosity, 0.25) / Math.sqrt(state.radius)).toFixed(0)} K`,
+                () => `> Орбитальная синхронизация: Оптимальная`,
+                () => `> Интеграция метаматериалов: Завершена`,
+                () => `> Гравитационные напряжения: В пределах нормы`,
+                () => `> Давление солнечного ветра: Компенсировано`
+            ];
+
+            setInterval(() => {
+                const logEl = document.createElement('div');
+                logEl.className = 'log-entry';
+                
+                const randomLogObj = logs[Math.floor(Math.random() * logs.length)];
+                logEl.textContent = randomLogObj();
+
+                const randType = Math.random();
+                if(randType > 0.9) logEl.classList.add('critical');
+                else if(randType > 0.7) logEl.classList.add('orange');
+
+                logContainer.appendChild(logEl);
+
+                if (logContainer.children.length > 20) {
+                    logContainer.removeChild(logContainer.firstChild);
+                }
+                
+                logContainer.scrollTop = logContainer.scrollHeight;
+            }, 1800);
+        }
+
+        let frameCount = 0;
+        let lastTime = performance.now();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Вращение элементов структуры Дайсона с разными скоростями
+            if (dysonGroup) {
+                // Вращение всей сферы панелей
+                panelsMesh.rotation.y = elapsedTime * 0.02;
+                panelsMesh.rotation.z = elapsedTime * 0.01;
+                
+                // Вращение ортогональных колец
+                ring1.rotation.z = elapsedTime * 0.05;
+                ring2.rotation.x = elapsedTime * -0.04;
+                ring3.rotation.y = elapsedTime * 0.03;
+            }
+            
+            // Легкая пульсация поверхности звезды (эффект конвекции)
+            if (starMesh) {
+                const pulse = 1.0 + Math.sin(elapsedTime * 2.0) * 0.02;
+                starMesh.scale.set(pulse, pulse, pulse);
+                starMesh.rotation.y = elapsedTime * 0.1;
+            }
+
+            controls.update();
+            composer.render();
+
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime - lastTime >= 1000) {
+                fpsCounter.innerHTML = `FPS: <strong>${frameCount}</strong>`;
+                frameCount = 0;
+                lastTime = currentTime;
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            composer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.onload = () => {
+            initScene();
+            createStar();
+            createDysonStructure();
+            setupInteractions();
+            generateTelemetry();
+            animate();
+            
+            gsap.from(".glass-panel", {
+                y: 30,
+                opacity: 0,
+                duration: 1.2,
+                stagger: 0.2,
+                ease: "power3.out"
+            });
+        };
+    </script>
+</body>
+</html>
