@@ -180,16 +180,16 @@
         </section>
     </main>
 
-    <footer class="bg-white border-t border-slate-200 dark:bg-slate-800 dark:border-slate-700 py-3 mt-auto shadow-inner transition-colors duration-200 z-50">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+    <footer class="bg-white border-t border-slate-200 dark:bg-slate-800 dark:border-slate-700 py-4 mt-auto shadow-inner transition-colors duration-200 z-50">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs">
             
-            <div class="flex items-center gap-2.5 text-slate-500 dark:text-slate-400 text-center sm:text-left">
-                <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 font-bold text-[11px] animate-pulse">!</span>
+            <div class="flex items-center justify-center md:justify-start gap-2.5 text-slate-500 dark:text-slate-400 text-center md:text-left order-1 md:order-1">
+                <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 font-bold text-[11px] animate-pulse shrink-0">!</span>
                 <p>Нашли ошибку в расчетах или интерфейсе? Пожалуйста, <span class="font-semibold text-indigo-600 dark:text-indigo-400">напишите нам</span> — мы сразу исправим.</p>
             </div>
             
-            <div class="flex items-center gap-5 shrink-0">
-                <span class="text-slate-400 dark:text-slate-500 font-medium">Обратная связь:</span>
+            <div class="flex items-center justify-center md:justify-end gap-4 shrink-0 order-2 md:order-3">
+                <span class="text-slate-400 dark:text-slate-500 font-medium hidden lg:inline">Обратная связь:</span>
                 
                 <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 font-semibold text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors group">
                     <img src="icons8-telegram-48.png" alt="Telegram" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform">
@@ -202,6 +202,9 @@
                 </a>
             </div>
             
+            <div class="text-slate-400 dark:text-slate-500 font-medium text-center order-3 md:order-2">
+                &copy; 2026 <span class="font-semibold text-slate-700 dark:text-slate-300">PhysCalc</span>. Все права защищены.
+            </div>
         </div>
     </footer>
 
