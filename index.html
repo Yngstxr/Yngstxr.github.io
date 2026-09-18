@@ -32,6 +32,20 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @media screen and (min-width: 1024px) {
+          html, body {
+            height: 100vh;
+            overflow: hidden;
+          }
+        }
+    
+        @media screen and (max-width: 1023px) {
+          html, body {
+            overflow: auto;
+            height: auto;
+          }
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 h-screen overflow-hidden flex flex-col antialiased font-sans transition-colors duration-200">
