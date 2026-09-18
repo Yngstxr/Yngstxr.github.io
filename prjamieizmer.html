@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Калькулятор погрешностей измерений</title>
-    
-    <!-- Подключение Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -13,7 +11,6 @@
         }
     </script>
 
-    <!-- Библиотека KaTeX -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
@@ -51,21 +48,18 @@
 <body class="bg-gradient-to-br from-indigo-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 min-h-screen text-slate-800 dark:text-slate-100 p-3 sm:p-6 flex justify-center items-start font-sans transition-colors duration-200">
 
     <div class="w-full max-w-5xl flex flex-col gap-4">
-        <!-- HEADER -->
         <header class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-1">
             <div class="text-center sm:text-left">
                 <h1 class="text-xl sm:text-2xl font-bold text-indigo-950 dark:text-white tracking-tight">Калькулятор погрешностей</h1>
                 <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-indigo-700 dark:text-indigo-300 bg-white/70 dark:bg-slate-800/80 backdrop-blur px-3 py-1 rounded-full shadow-sm border border-indigo-100 dark:border-slate-700 inline-block mt-1">Расчет прямой и косвенной погрешности</p>
             </div>
 
-            <!-- Правая группа кнопок -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                 <a href="index.html" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                     <span class="hidden sm:inline">На главную</span>
                 </a>
 
-                <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
                 <button id="theme-toggle" type="button" class="p-2 sm:p-2.5 rounded-xl bg-white/80 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-sm shrink-0 cursor-pointer" title="Переключить тему">
                     <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8 8 0 1010.586 10.586z"></path></svg>
                     <svg id="theme-toggle-light-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
@@ -415,7 +409,6 @@
     </div>
 
     <script>
-        // ИНИЦИАЛИЗАЦИЯ И ПЕРЕКЛЮЧЕНИЕ ТЕМЫ (ТЕМНАЯ / СВЕТЛАЯ)
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
@@ -455,7 +448,6 @@
 
         const initialDirectValues = [10.2, 10.5, 10.1, 10.4];
         
-        // Таблица коэффициентов Стьюдента для df от 1 до 30
         const studentTable = {
             0.90: {
                 1: 6.314, 2: 2.920, 3: 2.353, 4: 2.132, 5: 2.015,
@@ -971,9 +963,6 @@
             return `${lhs} = ${str}`;
         }
 
-        // ==========================================
-        // ЛОГИКА 1: ПРЯМЫЕ ИЗМЕРЕНИЯ
-        // ==========================================
         const listContainer = document.getElementById('measurements-list');
         const addBtn = document.getElementById('add-btn');
         const clearDirectBtn = document.getElementById('clear-direct-btn');
@@ -1107,9 +1096,6 @@
             document.getElementById('results-direct-container').style.display = 'flex';
         }
 
-        // ==========================================
-        // ЛОГИКА 2: КОСВЕННЫЕ ИЗМЕРЕНИЯ
-        // ==========================================
         const indVarsContainer = document.getElementById('ind-vars-container');
         const indAddVarBtn = document.getElementById('ind-add-var-btn');
         const clearIndirectBtn = document.getElementById('clear-indirect-btn');
