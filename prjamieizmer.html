@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/png" sizes="32x32" href="icons8-atom-96.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2196f3">
     <title>Калькулятор погрешностей измерений</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -1389,6 +1391,11 @@
             autoSyncVariablesWithFormula();
             initKaTeX();
         });
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('PhysCalc PWA работает!'))
+                .catch((err) => console.error('Ошибка регистрации PWA:', err));
+        }
     </script>
 </body>
 </html>
