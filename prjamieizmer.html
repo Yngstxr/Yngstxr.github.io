@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Калькулятор погрешностей измерений</title>
+    
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <!-- Библиотека KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.03); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+        .preview-text .katex { font-size: 1rem !important; }
+        .preview-text .katex-display { margin: 0 !important; }
+        .final-result-card .formula .katex { font-size: 1.05rem !important; }
+        .tooltip-formula .katex { color: #ffffff !important; font-size: 1.05rem !important; }
+
+        .info-icon:hover .tooltip-box,
+        .info-icon.active .tooltip-box {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .tooltip-box::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -6px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #0f172a transparent transparent transparent;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 min-h-screen text-slate-800 dark:text-slate-100 p-3 sm:p-6 flex justify-center items-start font-sans transition-colors duration-200">
+
+    <div class="w-full max-w-5xl flex flex-col gap-4">
+        <!-- HEADER -->
+        <header class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-1">
+            <div class="text-center sm:text-left">
+                <h1 class="text-xl sm:text-2xl font-bold text-indigo-950 dark:text-white tracking-tight">Калькулятор погрешностей</h1>
+                <p id="header-subtitle" class="text-xs sm:text-sm font-semibold text-indigo-700 dark:text-indigo-300 bg-white/70 dark:bg-slate-800/80 backdrop-blur px-3 py-1 rounded-full shadow-sm border border-indigo-100 dark:border-slate-700 inline-block mt-1">Расчет прямой и косвенной погрешности</p>
+            </div>
+
+            <!-- Правая группа кнопок -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <a href="index.html" class="p-2 sm:px-3 sm:py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all text-xs sm:text-sm font-semibold flex items-center gap-1.5 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    <span class="hidden sm:inline">На главную</span>
+                </a>
+
+                <!-- КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ -->
+                <button id="theme-toggle" type="button" class="p-2 sm:p-2.5 rounded-xl bg-white/80 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-sm shrink-0 cursor-pointer" title="Переключить тему">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8 8 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- НАВИГАЦИЯ ВКЛАДОК -->
+        <div class="tabs-nav flex flex-col min-[480px]:flex-row gap-1.5 bg-indigo-100/70 dark:bg-slate-800/80 p-1.5 rounded-xl backdrop-blur-md border border-indigo-100 dark:border-slate-700">
+            <button type="button" class="tab-btn active flex-1 py-2.5 px-3 rounded-lg text-sm font-bold bg-white dark:bg-indigo-600 text-indigo-950 dark:text-white shadow-sm transition-all min-h-[42px] flex items-center justify-center cursor-pointer hover:bg-white/50 dark:hover:bg-slate-700/50" onclick="switchTab('direct')">1. Прямые измерения</button>
+            <button type="button" class="tab-btn flex-1 py-2.5 px-3 rounded-lg text-sm font-semibold text-indigo-700 dark:text-indigo-300 transition-all min-h-[42px] flex items-center justify-center cursor-pointer hover:bg-white/50 dark:hover:bg-slate-700/50" onclick="switchTab('indirect')">2. Косвенные измерения</button>
+        </div>
+
+        <!-- ВКЛАДКА 1: ПРЯМЫЕ ИЗМЕРЕНИЯ -->
+        <div id="tab-direct" class="tab-content active grid grid-cols-1 min-[820px]:grid-cols-2 gap-4 sm:gap-5 items-stretch">
+            <section class="card bg-white/95 dark:bg-slate-800/90 backdrop-blur-md border border-white/80 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between gap-4 h-full transition-colors duration-200">
+                <div>
+                    <h2 class="card-title text-base sm:text-lg font-bold text-indigo-900 dark:text-indigo-300 border-b-2 border-indigo-100 dark:border-slate-700 pb-2 mb-3.5">Параметры и данные</h2>
+
+                    <div class="form-group flex flex-col gap-1.5 mb-3.5">
+                        <label for="confidence-level" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Доверительная вероятность (P):</label>
+                        <select id="confidence-level" class="w-full min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 dark:text-slate-100 min-h-[42px] cursor-pointer transition-all">
+                            <option value="0.90">0.90 (90%)</option>
+                            <option value="0.95" selected>0.95 (95%)</option>
+                            <option value="0.98">0.98 (98%)</option>
+                            <option value="0.99">0.99 (99%)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group flex flex-col gap-1.5 mb-3.5">
+                        <label for="device-value" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Цена деления прибора (ω):</label>
+                        <input type="text" id="device-value" value="0.1" placeholder="Например: 0.1" inputmode="decimal" class="w-full min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 dark:text-slate-100 min-h-[42px] transition-all">
+                    </div>
+
+                    <div class="form-group flex flex-col gap-1.5">
+                        <label class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Измерения (x<sub>i</sub>):</label>
+                        <div id="measurements-list" class="measurements-list flex flex-col gap-2 h-[200px] overflow-y-auto pr-1 scroll-smooth"></div>
+                        
+                        <div class="btn-group-row flex gap-2 mt-1">
+                            <button type="button" id="add-btn" class="btn btn-secondary inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all gap-1.5 flex-1 min-h-[42px] whitespace-nowrap bg-indigo-100 hover:bg-indigo-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-200 active:scale-[0.98]">
+                                + Измерение
+                            </button>
+                            <button type="button" id="clear-direct-btn" class="btn btn-outline-danger inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl cursor-pointer transition-all gap-1.5 flex-1 min-h-[42px] whitespace-nowrap bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 active:scale-[0.98]">
+                                🗑 Очистить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="calculate-direct-btn" class="btn btn-primary inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all gap-1.5 w-full min-h-[42px] bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 dark:shadow-indigo-900/40 active:scale-[0.98] mt-3">
+                    Рассчитать
+                </button>
+            </section>
+
+            <section class="card bg-white/95 dark:bg-slate-800/90 backdrop-blur-md border border-white/80 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between gap-4 h-full transition-colors duration-200">
+                <h2 class="card-title text-base sm:text-lg font-bold text-indigo-900 dark:text-indigo-300 border-b-2 border-indigo-100 dark:border-slate-700 pb-2 mb-1">Результаты прямых измерений</h2>
+                
+                <div id="placeholder-direct" class="results-placeholder text-center text-slate-400 dark:text-slate-500 py-10 px-2 italic text-sm my-auto">
+                    Введите данные и нажмите «Рассчитать»
+                </div>
+
+                <div id="results-direct-container" class="results-grid flex flex-col gap-2 justify-between h-full" style="display: none;">
+                    
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Число измерений (<i>n</i>):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Число измерений</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="n"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Количество проведенных прямых измерений.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-n" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Среднее арифметическое(⟨x⟩):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Среднее арифметическое</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\langle x \rangle = \frac{\sum x_i}{n}"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Наиболее вероятное значение измеряемой величины.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-mean" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">СКО среднего (S<sub>⟨x⟩</sub>):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Стандартная погрешность</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="S_{\langle x \rangle} = \sqrt{\frac{\sum (x_i - \langle x \rangle)^2}{n(n - 1)}}"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Среднее квадратическое отклонение среднего.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-std-mean" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Коэффициент Стьюдента (α):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Коэффициент Стьюдента</div>
+                                    <div id="tooltip-alpha-formula" class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\alpha(P, df)"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Табличный коэффициент для выбранного P и df = n - 1.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-alpha" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Случайная погрешность (Δx<sub>сл</sub>):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Случайная погрешность</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\Delta x_{\text{сл}} = S_{\langle x \rangle} \cdot \alpha"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Погрешность, вызываемая случайными факторами.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-random" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Погрешность прибора (Δx<sub>пр</sub>):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Приборная погрешность</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\Delta x_{\text{пр}} = \frac{\omega}{2}"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Половина цены деления прибора (ω).</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-device" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Полная погрешность (Δx):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Полная погрешность</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\Delta x = \sqrt{(\Delta x_{\text{сл}})^2 + (\Delta x_{\text{пр}})^2}"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Итоговая абсолютная погрешность.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-total" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                    </div>
+
+                    <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                        <div class="label-wrapper flex items-center gap-1.5">
+                            <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Относительная погрешность(ε<sub>x</sub>):</span>
+                            <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                    <div class="font-bold text-indigo-300 text-xs mb-1">Относительная погрешность</div>
+                                    <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\varepsilon_x = \frac{\Delta x}{|\langle x \rangle|} \cdot 100\%"></div>
+                                    <div class="text-[11px] leading-snug text-slate-200">Точность измерений в процентах.</div>
+                                </span>
+                            </span>
+                        </div>
+                        <span id="res-relative" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0%</span>
+                    </div>
+
+                    <div class="final-result-card bg-indigo-100 dark:bg-slate-900/90 rounded-xl p-3 text-center mt-auto overflow-x-auto border border-indigo-200 dark:border-slate-700">
+                        <div id="res-final-title" class="title text-[11px] font-bold text-indigo-800 dark:text-indigo-400 uppercase tracking-wider mb-1">Итоговый результат</div>
+                        <div id="res-final" class="formula text-base sm:text-lg font-bold text-indigo-950 dark:text-white">x = ⟨x⟩ ± Δx</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ВКЛАДКА 2: КОСВЕННЫЕ ИЗМЕРЕНИЯ -->
+        <div id="tab-indirect" class="tab-content hidden grid-cols-1 min-[820px]:grid-cols-2 gap-4 sm:gap-5 items-stretch">
+            <section class="card bg-white/95 dark:bg-slate-800/90 backdrop-blur-md border border-white/80 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between gap-4 h-full transition-colors duration-200">
+                <div>
+                    <h2 class="card-title text-base sm:text-lg font-bold text-indigo-900 dark:text-indigo-300 border-b-2 border-indigo-100 dark:border-slate-700 pb-2 mb-3.5">Формула и переменные</h2>
+
+                    <div class="form-group flex flex-col gap-1.5 mb-2">
+                        <label for="ind-formula" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Формула искомой величины (f):</label>
+                        <input type="text" id="ind-formula" value="log2(k) * x^2 / 2" placeholder="Например: log2(k) * x^2 / 2" class="w-full min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 dark:text-slate-100 min-h-[42px] transition-all">
+                        
+                        <div id="live-formula-box" class="live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-emerald-300 bg-emerald-50/50 dark:border-emerald-600/50 dark:bg-emerald-950/20">
+                            <span id="status-badge" class="status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-emerald-700 dark:text-emerald-400">✓ Формула корректна</span>
+                            <div id="preview-text" class="preview-text text-xs sm:text-sm text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/80 p-2 rounded-lg border border-slate-200 dark:border-slate-700 min-h-[65px] max-h-[75px] overflow-auto flex items-center justify-center text-center"></div>
+                        </div>
+
+                        <button type="button" class="help-toggle-btn bg-transparent text-indigo-600 dark:text-indigo-400 text-xs font-semibold hover:underline inline-flex items-center gap-1 py-1 min-h-[32px] cursor-pointer" onclick="toggleMathHelp()">
+                            <span>? Полная справка по формулам и логарифмам</span>
+                        </button>
+                    </div>
+
+                    <div class="form-group flex flex-col gap-1.5">
+                        <label class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Входящие переменные:</label>
+                        
+                        <div class="var-header-row flex gap-2 text-xs font-semibold text-slate-500 dark:text-slate-400 px-0.5 -mb-1">
+                            <span class="w-[58px] text-center">Имя</span>
+                            <span class="flex-1">Значение (⟨x⟩)</span>
+                            <span class="flex-1">Погрешность (Δx)</span>
+                            <span class="w-[38px]"></span>
+                        </div>
+
+                        <div id="ind-vars-container" class="measurements-list flex flex-col gap-2 h-[130px] overflow-y-auto pr-1 scroll-smooth"></div>
+                        
+                        <div class="btn-group-row flex gap-2 mt-1">
+                            <button type="button" id="ind-add-var-btn" class="btn btn-secondary inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all gap-1.5 flex-1 min-h-[42px] whitespace-nowrap bg-indigo-100 hover:bg-indigo-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-indigo-700 dark:text-indigo-200 active:scale-[0.98]">
+                                + Переменная
+                            </button>
+                            <button type="button" id="clear-indirect-btn" class="btn btn-outline-danger inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl cursor-pointer transition-all gap-1.5 flex-1 min-h-[42px] whitespace-nowrap bg-transparent hover:bg-rose-50 dark:hover:bg-rose-950/30 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 active:scale-[0.98]">
+                                🗑 Очистить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="calculate-indirect-btn" class="btn btn-primary inline-flex items-center justify-center px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl border-0 cursor-pointer transition-all gap-1.5 w-full min-h-[42px] bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 dark:shadow-indigo-900/40 active:scale-[0.98] mt-3">
+                    Рассчитать
+                </button>
+            </section>
+
+            <section class="card bg-white/95 dark:bg-slate-800/90 backdrop-blur-md border border-white/80 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-xl flex flex-col justify-between gap-4 h-full transition-colors duration-200">
+                <h2 class="card-title text-base sm:text-lg font-bold text-indigo-900 dark:text-indigo-300 border-b-2 border-indigo-100 dark:border-slate-700 pb-2 mb-1">Результаты косвенных измерений</h2>
+                
+                <div id="placeholder-indirect" class="results-placeholder text-center text-slate-400 dark:text-slate-500 py-10 px-2 italic text-sm my-auto">
+                    Введите формулу и переменные, затем нажмите «Рассчитать»
+                </div>
+
+                <div id="results-indirect-container" class="results-grid flex flex-col gap-2 justify-between h-full" style="display: none;">
+                    <div class="flex flex-col gap-2">
+                        <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                            <div class="label-wrapper flex items-center gap-1.5">
+                                <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Значение (⟨f⟩):</span>
+                                <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                    <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                        <div class="font-bold text-indigo-300 text-xs mb-1">Среднее значение функции</div>
+                                        <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="f(\langle x_1 \rangle, \langle x_2 \rangle, \dots)"></div>
+                                        <div class="text-[11px] leading-snug text-slate-200">Результат вычисления по средним значениям.</div>
+                                    </span>
+                                </span>
+                            </div>
+                            <span id="res-ind-val" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                        </div>
+
+                        <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                            <div class="label-wrapper flex items-center gap-1.5">
+                                <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Абсолютная погрешность (Δf):</span>
+                                <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                    <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                        <div class="font-bold text-indigo-300 text-xs mb-1">Абсолютная погрешность</div>
+                                        <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\Delta f = \sqrt{\sum \left( \frac{\partial f}{\partial x_i} \cdot \Delta x_i \right)^2}"></div>
+                                        <div class="text-[11px] leading-snug text-slate-200">Вычислена через частные производные.</div>
+                                    </span>
+                                </span>
+                            </div>
+                            <span id="res-ind-abs" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0</span>
+                        </div>
+
+                        <div class="result-item flex justify-between items-center py-1.5 border-b border-dashed border-slate-200 dark:border-slate-700 gap-2">
+                            <div class="label-wrapper flex items-center gap-1.5">
+                                <span class="result-label text-xs sm:text-sm text-slate-600 dark:text-slate-300">Относительная погрешность (ε<sub>f</sub>):</span>
+                                <span class="info-icon inline-flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 text-xs font-bold cursor-pointer relative shrink-0 select-none">?
+                                    <span class="tooltip-box invisible opacity-0 w-[280px] max-w-[85vw] bg-slate-900 dark:bg-slate-950 text-white rounded-xl p-3 absolute z-[1000] bottom-[135%] left-1/2 -translate-x-1/2 shadow-2xl transition-all duration-200 font-normal pointer-events-none text-left">
+                                        <div class="font-bold text-indigo-300 text-xs mb-1">Относительная погрешность</div>
+                                        <div class="tooltip-formula bg-white/10 p-1.5 rounded-lg mb-1.5 min-h-[38px] flex items-center justify-center" data-katex="\varepsilon_f = \frac{\Delta f}{|\langle f \rangle|} \cdot 100\%"></div>
+                                        <div class="text-[11px] leading-snug text-slate-200">Отношение ошибки к значению функции.</div>
+                                    </span>
+                                </span>
+                            </div>
+                            <span id="res-ind-relative" class="result-value font-semibold text-slate-900 dark:text-white font-mono text-xs sm:text-sm text-right break-all">0%</span>
+                        </div>
+
+                        <div class="breakdown-box bg-white/70 dark:bg-slate-900/50 rounded-xl p-3 text-xs text-slate-700 dark:text-slate-300 flex flex-col gap-1.5 mt-2 border border-slate-200 dark:border-slate-700">
+                            <strong class="text-indigo-900 dark:text-indigo-300">Вклад переменных в ошибку:</strong>
+                            <div id="ind-breakdown-list" class="flex flex-col gap-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="final-result-card bg-indigo-100 dark:bg-slate-900/90 rounded-xl p-3 text-center mt-auto overflow-x-auto border border-indigo-200 dark:border-slate-700">
+                        <div class="title text-[11px] font-bold text-indigo-800 dark:text-indigo-400 uppercase tracking-wider mb-1">Итоговая запись результатов</div>
+                        <div id="res-ind-final" class="formula text-base sm:text-lg font-bold text-indigo-950 dark:text-white">f = ⟨f⟩ ± Δf</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО СПРАВКИ -->
+    <div id="math-help-modal" class="modal-overlay fixed inset-0 w-screen h-screen bg-slate-900/60 backdrop-blur-sm z-[1000] justify-center items-center p-3 hidden" onclick="closeMathHelp(event)">
+        <div class="modal-content bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[88vh] overflow-y-auto shadow-2xl relative border border-slate-200 dark:border-slate-700" onclick="event.stopPropagation()">
+            <div class="modal-header flex justify-between items-center mb-3 border-b border-slate-200 dark:border-slate-700 pb-2.5">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Справка по формулам и логарифмам</h3>
+                <button type="button" class="modal-close text-2xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 leading-none cursor-pointer" onclick="toggleMathHelp()">&times;</button>
+            </div>
+
+            <div class="help-rules bg-indigo-50 dark:bg-slate-900/80 p-3 rounded-xl mb-3 font-medium text-xs sm:text-sm leading-relaxed border border-indigo-100 dark:border-slate-700">
+                📌 <b>Правила использования логарифмов:</b><br>
+                • <b>Натуральный (основание e):</b> <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">ln(x)</span><br>
+                • <b>Десятичный (основание 10):</b> <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">lg(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">log10(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">log(x)</span><br>
+                • <b>Двоичный (основание 2):</b> <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">log2(x)</span><br>
+                • <b>Произвольное основание:</b> <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">log(a, x)</span> или <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">log_a(x)</span>
+            </div>
+
+            <div class="w-full overflow-x-auto">
+                <table class="w-full border-collapse text-xs sm:text-sm min-w-[320px]">
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Квадратный корень (√x)</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">sqrt(x)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Кубический корень (∛x)</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">cbrt(x)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Корень n-й степени (ⁿ√x)</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">root(n, x)</span> или <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">root_n(x)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Степень (x², xⁿ)</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">x^2</span> или <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">x**2</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Модуль (|x|)</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">abs(x)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Тригонометрия</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">sin(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">cos(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">tan(x)</span></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Константы (π, e)</b></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">pi</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">e</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ИНИЦИАЛИЗАЦИЯ И ПЕРЕКЛЮЧЕНИЕ ТЕМЫ (ТЕМНАЯ / СВЕТЛАЯ)
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            if (themeToggleLightIcon) themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            if (themeToggleDarkIcon) themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function() {
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
+        }
+
+        const initialDirectValues = [10.2, 10.5, 10.1, 10.4];
+        
+        // Таблица коэффициентов Стьюдента для df от 1 до 30
+        const studentTable = {
+            0.90: {
+                1: 6.314, 2: 2.920, 3: 2.353, 4: 2.132, 5: 2.015,
+                6: 1.943, 7: 1.895, 8: 1.860, 9: 1.833, 10: 1.812,
+                11: 1.796, 12: 1.782, 13: 1.771, 14: 1.761, 15: 1.753,
+                16: 1.746, 17: 1.740, 18: 1.734, 19: 1.729, 20: 1.725,
+                21: 1.721, 22: 1.717, 23: 1.714, 24: 1.711, 25: 1.708,
+                26: 1.706, 27: 1.703, 28: 1.701, 29: 1.699, 30: 1.697
+            },
+            0.95: {
+                1: 12.706, 2: 4.303, 3: 3.182, 4: 2.776, 5: 2.571,
+                6: 2.447, 7: 2.365, 8: 2.306, 9: 2.262, 10: 2.228,
+                11: 2.201, 12: 2.179, 13: 2.160, 14: 2.145, 15: 2.131,
+                16: 2.120, 17: 2.110, 18: 2.101, 19: 2.093, 20: 2.086,
+                21: 2.080, 22: 2.074, 23: 2.069, 24: 2.064, 25: 2.060,
+                26: 2.056, 27: 2.052, 28: 2.048, 29: 2.045, 30: 2.042
+            },
+            0.98: {
+                1: 31.821, 2: 6.965, 3: 4.541, 4: 3.747, 5: 3.365,
+                6: 3.143, 7: 2.998, 8: 2.896, 9: 2.821, 10: 2.764,
+                11: 2.718, 12: 2.681, 13: 2.650, 14: 2.624, 15: 2.602,
+                16: 2.583, 17: 2.567, 18: 2.552, 19: 2.539, 20: 2.528,
+                21: 2.518, 22: 2.508, 23: 2.500, 24: 2.492, 25: 2.485,
+                26: 2.479, 27: 2.473, 28: 2.467, 29: 2.462, 30: 2.457
+            },
+            0.99: {
+                1: 63.657, 2: 9.925, 3: 5.841, 4: 4.604, 5: 4.032,
+                6: 3.707, 7: 3.499, 8: 3.355, 9: 3.250, 10: 3.169,
+                11: 3.106, 12: 3.055, 13: 3.012, 14: 2.977, 15: 2.947,
+                16: 2.921, 17: 2.898, 18: 2.878, 19: 2.861, 20: 2.845,
+                21: 2.831, 22: 2.819, 23: 2.807, 24: 2.797, 25: 2.787,
+                26: 2.779, 27: 2.771, 28: 2.763, 29: 2.756, 30: 2.750
+            }
+        };
+
+        const RESERVED_MATH = new Set([
+            'sqrt', 'cbrt', 'root', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+            'abs', 'log', 'lg', 'log10', 'log2', 'ln', 'exp', 'floor', 'ceil', 'round',
+            'pi', 'e', 'PI', 'E', 'Math', '_customLog', '_customRoot'
+        ]);
+
+        function _customRoot(n, x) {
+            if (x === undefined) {
+                x = n;
+                n = 2;
+            }
+            if (typeof n !== 'number' || typeof x !== 'number' || isNaN(n) || isNaN(x)) {
+                throw new Error("Ошибка: некорректные числовые данные в корне");
+            }
+            if (n === 0) {
+                throw new Error("Ошибка: степень корня не может быть равна 0");
+            }
+            if (x < 0) {
+                if (Math.abs(n % 2) === 1) {
+                    return -Math.pow(-x, 1 / n);
+                }
+                throw new Error("Ошибка: корень четной степени из отрицательного числа не существует");
+            }
+            return Math.pow(x, 1 / n);
+        }
+
+        function _customLog(b, x) {
+            if (x === undefined) {
+                x = b;
+                b = 10;
+            }
+            if (typeof b !== 'number' || typeof x !== 'number' || isNaN(b) || isNaN(x)) {
+                throw new Error("Ошибка: некорректные числовые данные в логарифме");
+            }
+            if (b <= 0 || b === 1) {
+                throw new Error("Ошибка: основание логарифма должно быть больше 0 и не равно 1");
+            }
+            if (x <= 0) {
+                throw new Error("Ошибка: аргумент логарифма должен быть строго больше 0");
+            }
+            return Math.log(x) / Math.log(b);
+        }
+
+        function renderMath(element, latexStr, displayMode = false) {
+            const el = typeof element === 'string' ? document.getElementById(element) : element;
+            if (!el) return;
+            if (window.katex) {
+                try {
+                    katex.render(latexStr, el, { throwOnError: false, displayMode: displayMode });
+                } catch (e) {
+                    el.textContent = latexStr;
+                }
+            } else {
+                el.textContent = latexStr;
+            }
+        }
+
+        function renderAllKatexTooltips() {
+            document.querySelectorAll('[data-katex]').forEach(el => {
+                renderMath(el, el.getAttribute('data-katex'), true);
+            });
+        }
+
+        function initKaTeX() {
+            if (window.katex) {
+                renderAllKatexTooltips();
+                validateAndPreviewFormula();
+            } else {
+                window.addEventListener('load', () => {
+                    if (window.katex) {
+                        renderAllKatexTooltips();
+                        validateAndPreviewFormula();
+                    }
+                });
+            }
+        }
+
+        function formatNum(num, maxDecimals = 4) {
+            if (typeof num !== 'number' || isNaN(num)) return '0';
+            if (!isFinite(num)) return num > 0 ? '∞' : '-∞';
+            if (num === 0) return '0';
+            
+            const absNum = Math.abs(num);
+            if (absNum < 1e-4 || absNum >= 1e6) {
+                return num.toExponential(maxDecimals);
+            }
+            
+            const fixed = num.toFixed(maxDecimals);
+            return parseFloat(fixed).toString();
+        }
+
+        function updateHeaderSubtitle() {
+            const confidenceSelect = document.getElementById('confidence-level');
+            const selectedP = confidenceSelect ? confidenceSelect.value : '0.95';
+            document.getElementById('header-subtitle').textContent = 
+                `Расчет прямой и косвенной погрешности (P = ${selectedP})`;
+        }
+
+        function switchTab(tabName) {
+            const btns = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+
+            btns.forEach(btn => {
+                btn.classList.remove('active', 'bg-white', 'dark:bg-indigo-600', 'text-indigo-950', 'dark:text-white', 'shadow-sm', 'font-bold');
+                btn.classList.add('text-indigo-700', 'dark:text-indigo-300', 'font-semibold');
+            });
+
+            contents.forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('grid');
+            });
+
+            if (tabName === 'direct') {
+                btns[0].classList.add('active', 'bg-white', 'dark:bg-indigo-600', 'text-indigo-950', 'dark:text-white', 'shadow-sm', 'font-bold');
+                btns[0].classList.remove('text-indigo-700', 'dark:text-indigo-300', 'font-semibold');
+                const target = document.getElementById('tab-direct');
+                target.classList.remove('hidden');
+                target.classList.add('grid');
+            } else {
+                btns[1].classList.add('active', 'bg-white', 'dark:bg-indigo-600', 'text-indigo-950', 'dark:text-white', 'shadow-sm', 'font-bold');
+                btns[1].classList.remove('text-indigo-700', 'dark:text-indigo-300', 'font-semibold');
+                const target = document.getElementById('tab-indirect');
+                target.classList.remove('hidden');
+                target.classList.add('grid');
+            }
+        }
+
+        function toggleMathHelp() {
+            const modal = document.getElementById('math-help-modal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        function closeMathHelp(event) {
+            const modal = document.getElementById('math-help-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function parseInputNumber(val) {
+            if (typeof val !== 'string') val = String(val);
+            const normalized = val.trim().replace(',', '.');
+            if (normalized === '') return NaN;
+            return Number(normalized);
+        }
+
+        function getStudentCoefficient(df, probKey) {
+            if (df < 1) return 0;
+            const prob = parseFloat(probKey) || 0.95;
+            
+            if (studentTable[prob] && studentTable[prob][df]) {
+                return studentTable[prob][df];
+            }
+
+            const zMap = { 0.90: 1.644853, 0.95: 1.959964, 0.98: 2.326348, 0.99: 2.575829 };
+            const z = zMap[prob] || 1.959964;
+            
+            return z + (Math.pow(z, 3) + z) / (4 * df) + 
+                   (5 * Math.pow(z, 5) + 16 * Math.pow(z, 3) + 3 * z) / (96 * Math.pow(df, 2));
+        }
+
+        function translateJsError(err) {
+            const msg = err.message || String(err);
+            if (msg.includes('Ошибка:')) return msg;
+            if (msg.includes('Invalid or unexpected token')) return 'Синтаксическая ошибка: недопустимый символ в формуле.';
+            if (msg.includes('Unexpected token')) return 'Синтаксическая ошибка: проверьте скобки () и знаки операций.';
+            if (msg.includes('Unexpected end of input')) return 'Формула не завершена (возможно, не закрыта скобка).';
+            if (msg.includes('is not defined')) return `Неизвестная переменная или функция: "${msg.split(' ')[0]}".`;
+            return `Ошибка в формуле: ${msg}`;
+        }
+
+        function attachEnterSubmit(element, callback) {
+            element.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    callback();
+                }
+            });
+        }
+
+        function prepareJsExpression(formulaStr, varObj = {}) {
+            let expr = formulaStr.trim();
+
+            if (expr.includes('=')) {
+                expr = expr.split('=').pop().trim();
+            }
+
+            const sciNumMap = [];
+            expr = expr.replace(/\b(\d+(?:\.\d+)?)[eE]([\+\-]?\d+)\b/g, (m, mant, exp) => {
+                sciNumMap.push(`${mant}e${exp}`);
+                return `__SCI_NUM_${sciNumMap.length - 1}__`;
+            });
+
+            expr = expr.replace(/[·•×]/g, '*');
+            expr = expr.replace(/\^/g, '**');
+
+            expr = expr.replace(/\broot_([a-zA-Z0-9_]+)\s*\(/g, '_customRoot($1, ');
+            expr = expr.replace(/\broot\s*\(/gi, '_customRoot(');
+            expr = expr.replace(/\bcbrt\s*\(/gi, 'Math.cbrt(');
+
+            expr = expr.replace(/\blog_([a-zA-Z0-9_]+)\s*\(/g, '_customLog($1, ');
+            expr = expr.replace(/\blog2\s*\(/gi, '_customLog(2, ');
+            expr = expr.replace(/\b(lg|log10)\s*\(/gi, '_customLog(10, ');
+            expr = expr.replace(/\bln\s*\(/gi, '_customLog(Math.E, ');
+            expr = expr.replace(/\blog\s*\(/gi, '_customLog(');
+
+            const otherFuncs = ['sqrt', 'cbrt', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'abs', 'exp', 'floor', 'ceil', 'round'];
+            otherFuncs.forEach(fn => {
+                const regex = new RegExp('\\b' + fn + '\\b(?=\\s*\\()', 'gi');
+                expr = expr.replace(regex, 'Math.' + fn);
+            });
+
+            expr = expr.replace(/(\d+(?:\.\d+)?)\s*([a-zA-Z_\(])/g, '$1*$2');
+            expr = expr.replace(/(\))\s*([a-zA-Z_0-9\(])/g, '$1*$2');
+
+            sciNumMap.forEach((val, i) => {
+                expr = expr.replace(`__SCI_NUM_${i}__`, val);
+            });
+
+            const hasPi = ('pi' in varObj) || ('PI' in varObj);
+            const hasE = ('e' in varObj) || ('E' in varObj);
+
+            if (!hasPi) expr = expr.replace(/\bpi\b/gi, 'Math.PI');
+            if (!hasE) expr = expr.replace(/\be\b/g, 'Math.E');
+
+            return expr;
+        }
+
+        function extractVariablesFromFormula(formulaStr) {
+            const dummyContext = { e: 1, E: 1, pi: 1, PI: 1 };
+            const transformed = prepareJsExpression(formulaStr, dummyContext);
+            
+            const cleanExpr = transformed.replace(/\b\d+(?:\.\d+)?[eE][\+\-]?\d+\b/g, '');
+            const matches = cleanExpr.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [];
+            const vars = [];
+
+            matches.forEach(m => {
+                if (!RESERVED_MATH.has(m) && !vars.includes(m)) {
+                    vars.push(m);
+                }
+            });
+
+            return vars;
+        }
+
+        function evaluateFormula(formulaStr, varObj) {
+            const jsExpr = prepareJsExpression(formulaStr, varObj);
+            const keys = Object.keys(varObj);
+            const values = keys.map(k => varObj[k]);
+
+            const func = new Function('_customLog', '_customRoot', ...keys, `return (${jsExpr});`);
+            return func(_customLog, _customRoot, ...values);
+        }
+
+        function findMatchingParen(str, openIndex) {
+            let depth = 0;
+            for (let i = openIndex; i < str.length; i++) {
+                if (str[i] === '(') depth++;
+                else if (str[i] === ')') {
+                    depth--;
+                    if (depth === 0) return i;
+                }
+            }
+            return -1;
+        }
+
+        function findTopLevelComma(str) {
+            let depth = 0;
+            for (let i = 0; i < str.length; i++) {
+                if (str[i] === '(' || str[i] === '{' || str[i] === '[') depth++;
+                else if (str[i] === ')' || str[i] === '}' || str[i] === ']') depth--;
+                else if (str[i] === ',' && depth === 0) return i;
+            }
+            return -1;
+        }
+
+        function processMathFunctionsInLatex(expr) {
+            let changed = true;
+            let guard = 0;
+
+            while (changed && guard < 50) {
+                guard++;
+                changed = false;
+
+                let matchRootSub = expr.match(/\broot_([a-zA-Z0-9_]+)\s*\(/i);
+                if (matchRootSub) {
+                    let openIdx = matchRootSub.index + matchRootSub[0].length - 1;
+                    let closeIdx = findMatchingParen(expr, openIdx);
+                    if (closeIdx !== -1) {
+                        let base = matchRootSub[1];
+                        let arg = expr.substring(openIdx + 1, closeIdx);
+                        let processedArg = processMathFunctionsInLatex(arg);
+                        let latexReplacement = `\\sqrt[${base}]{${processedArg}}`;
+                        expr = expr.substring(0, matchRootSub.index) + latexReplacement + expr.substring(closeIdx + 1);
+                        changed = true;
+                        continue;
+                    }
+                }
+
+                let matchRoot = expr.match(/\broot\s*\(/i);
+                if (matchRoot) {
+                    let openIdx = matchRoot.index + matchRoot[0].length - 1;
+                    let closeIdx = findMatchingParen(expr, openIdx);
+                    if (closeIdx !== -1) {
+                        let inner = expr.substring(openIdx + 1, closeIdx);
+                        let commaIdx = findTopLevelComma(inner);
+                        let latexFn = '';
+
+                        if (commaIdx !== -1) {
+                            let base = inner.substring(0, commaIdx).trim();
+                            let arg = inner.substring(commaIdx + 1).trim();
+                            let processedBase = processMathFunctionsInLatex(base);
+                            let processedArg = processMathFunctionsInLatex(arg);
+                            latexFn = `\\sqrt[${processedBase}]{${processedArg}}`;
+                        } else {
+                            let processedArg = processMathFunctionsInLatex(inner);
+                            latexFn = `\\sqrt{${processedArg}}`;
+                        }
+                        expr = expr.substring(0, matchRoot.index) + latexFn + expr.substring(closeIdx + 1);
+                        changed = true;
+                        continue;
+                    }
+                }
+
+                let matchLogSub = expr.match(/\blog_([a-zA-Z0-9_]+)\s*\(/i);
+                if (matchLogSub) {
+                    let openIdx = matchLogSub.index + matchLogSub[0].length - 1;
+                    let closeIdx = findMatchingParen(expr, openIdx);
+                    if (closeIdx !== -1) {
+                        let base = matchLogSub[1];
+                        let arg = expr.substring(openIdx + 1, closeIdx);
+                        let processedArg = processMathFunctionsInLatex(arg);
+                        let latexReplacement = `\\log_{${base}}\\left(${processedArg}\\right)`;
+                        expr = expr.substring(0, matchLogSub.index) + latexReplacement + expr.substring(closeIdx + 1);
+                        changed = true;
+                        continue;
+                    }
+                }
+
+                let funcRegex = /\b(log2|log10|lg|ln|sqrt|cbrt|abs|sin|cos|tan|asin|acos|atan|exp)\s*\(/i;
+                let matchFunc = expr.match(funcRegex);
+                if (matchFunc) {
+                    let openIdx = matchFunc.index + matchFunc[0].length - 1;
+                    let closeIdx = findMatchingParen(expr, openIdx);
+                    if (closeIdx !== -1) {
+                        let fnName = matchFunc[1].toLowerCase();
+                        let arg = expr.substring(openIdx + 1, closeIdx);
+                        let processedArg = processMathFunctionsInLatex(arg);
+                        let latexFn = '';
+
+                        if (fnName === 'log2') latexFn = `\\log_{2}\\left(${processedArg}\\right)`;
+                        else if (fnName === 'log10' || fnName === 'lg') latexFn = `\\lg\\left(${processedArg}\\right)`;
+                        else if (fnName === 'ln') latexFn = `\\ln\\left(${processedArg}\\right)`;
+                        else if (fnName === 'sqrt') latexFn = `\\sqrt{${processedArg}}`;
+                        else if (fnName === 'cbrt') latexFn = `\\sqrt[3]{${processedArg}}`;
+                        else if (fnName === 'abs') latexFn = `\\left|${processedArg}\\right|`;
+                        else if (fnName === 'sin') latexFn = `\\sin\\left(${processedArg}\\right)`;
+                        else if (fnName === 'cos') latexFn = `\\cos\\left(${processedArg}\\right)`;
+                        else if (fnName === 'tan') latexFn = `\\tan\\left(${processedArg}\\right)`;
+                        else if (fnName === 'asin') latexFn = `\\arcsin\\left(${processedArg}\\right)`;
+                        else if (fnName === 'acos') latexFn = `\\arccos\\left(${processedArg}\\right)`;
+                        else if (fnName === 'atan') latexFn = `\\arctan\\left(${processedArg}\\right)`;
+                        else if (fnName === 'exp') latexFn = `\\exp\\left(${processedArg}\\right)`;
+
+                        expr = expr.substring(0, matchFunc.index) + latexFn + expr.substring(closeIdx + 1);
+                        changed = true;
+                        continue;
+                    }
+                }
+
+                let matchLog = expr.match(/\blog\s*\(/i);
+                if (matchLog) {
+                    let openIdx = matchLog.index + matchLog[0].length - 1;
+                    let closeIdx = findMatchingParen(expr, openIdx);
+                    if (closeIdx !== -1) {
+                        let inner = expr.substring(openIdx + 1, closeIdx);
+                        let commaIdx = findTopLevelComma(inner);
+                        let latexFn = '';
+
+                        if (commaIdx !== -1) {
+                            let base = inner.substring(0, commaIdx).trim();
+                            let arg = inner.substring(commaIdx + 1).trim();
+                            let processedBase = processMathFunctionsInLatex(base);
+                            let processedArg = processMathFunctionsInLatex(arg);
+                            latexFn = `\\log_{${processedBase}}\\left(${processedArg}\\right)`;
+                        } else {
+                            let processedArg = processMathFunctionsInLatex(inner);
+                            latexFn = `\\lg\\left(${processedArg}\\right)`;
+                        }
+                        expr = expr.substring(0, matchLog.index) + latexFn + expr.substring(closeIdx + 1);
+                        changed = true;
+                        continue;
+                    }
+                }
+            }
+            return expr;
+        }
+
+        function stripOuterParens(s) {
+            s = s.trim();
+            while (s.startsWith('(') && s.endsWith(')')) {
+                let match = findMatchingParen(s, 0);
+                if (match === s.length - 1) {
+                    s = s.substring(1, s.length - 1).trim();
+                } else {
+                    break;
+                }
+            }
+            return s;
+        }
+
+        function convertFractions(str) {
+            let maxIter = 15;
+            while (str.includes('/') && maxIter > 0) {
+                maxIter--;
+                let slashIdx = str.indexOf('/');
+                if (slashIdx === -1) break;
+
+                let left = slashIdx - 1;
+                let depth = 0;
+                while (left >= 0) {
+                    let ch = str[left];
+                    if (ch === ')' || ch === '}' || ch === ']') depth++;
+                    else if (ch === '(' || ch === '{' || ch === '[') {
+                        if (depth > 0) depth--;
+                        else break;
+                    } else if (depth === 0) {
+                        if (['+', '-', '*', '/'].includes(ch)) break;
+                    }
+                    left--;
+                }
+                left++;
+
+                let right = slashIdx + 1;
+                depth = 0;
+                while (right < str.length) {
+                    let ch = str[right];
+                    if (ch === '(' || ch === '{' || ch === '[') depth++;
+                    else if (ch === ')' || ch === '}' || ch === ']') {
+                        if (depth > 0) depth--;
+                        else break;
+                    } else if (depth === 0) {
+                        if (['+', '-', '*', '/'].includes(ch)) break;
+                    }
+                    right++;
+                }
+
+                let numStr = str.substring(left, slashIdx).trim();
+                let denStr = str.substring(slashIdx + 1, right).trim();
+
+                numStr = stripOuterParens(numStr);
+                denStr = stripOuterParens(denStr);
+
+                if (!numStr || !denStr) break;
+
+                let fractionLatex = `\\frac{${numStr}}{${denStr}}`;
+                str = str.substring(0, left) + fractionLatex + str.substring(right);
+            }
+            return str;
+        }
+
+        function convertToLatex(rawFormula) {
+            let str = rawFormula.trim();
+            let lhs = 'f';
+
+            if (str.includes('=')) {
+                const parts = str.split('=');
+                lhs = parts[0].trim() || 'f';
+                str = parts.slice(1).join('=').trim();
+            }
+
+            str = str.replace(/\*\*/g, '^');
+            str = processMathFunctionsInLatex(str);
+            str = convertFractions(str);
+            str = str.replace(/\*/g, ' \\cdot ');
+            str = str.replace(/\bpi\b/gi, '\\pi');
+
+            return `${lhs} = ${str}`;
+        }
+
+        // ==========================================
+        // ЛОГИКА 1: ПРЯМЫЕ ИЗМЕРЕНИЯ
+        // ==========================================
+        const listContainer = document.getElementById('measurements-list');
+        const addBtn = document.getElementById('add-btn');
+        const clearDirectBtn = document.getElementById('clear-direct-btn');
+        const calculateDirectBtn = document.getElementById('calculate-direct-btn');
+        const confidenceSelect = document.getElementById('confidence-level');
+
+        function initDirect() {
+            listContainer.innerHTML = '';
+            initialDirectValues.forEach(val => createMeasurementInput(val, false));
+            updateRowNumbers();
+            updateHeaderSubtitle();
+        }
+
+        function createMeasurementInput(value = '', scrollDown = true) {
+            const row = document.createElement('div');
+            row.className = 'measurement-row flex gap-2 items-center w-full';
+            
+            row.innerHTML = `
+                <span class="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 min-w-[20px] text-right">#</span>
+                <input type="text" class="measurement-input flex-1 min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${value}" placeholder="Значение" inputmode="decimal">
+                <button type="button" class="btn-icon p-0 w-[38px] h-[38px] min-h-[38px] bg-transparent text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg shrink-0 flex items-center justify-center cursor-pointer transition-all delete-btn" title="Удалить">&#10005;</button>
+            `;
+
+            const inputEl = row.querySelector('.measurement-input');
+            attachEnterSubmit(inputEl, calculateDirect);
+
+            row.querySelector('.delete-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                row.remove();
+                updateRowNumbers();
+            });
+
+            listContainer.appendChild(row);
+            updateRowNumbers();
+
+            if (scrollDown) {
+                listContainer.scrollTop = listContainer.scrollHeight;
+                inputEl.focus();
+            }
+        }
+
+        function updateRowNumbers() {
+            const rows = listContainer.querySelectorAll('.measurement-row');
+            rows.forEach((row, index) => {
+                row.querySelector('span').textContent = `${index + 1}.`;
+            });
+        }
+
+        function clearDirect() {
+            listContainer.innerHTML = '';
+            createMeasurementInput('', false);
+            createMeasurementInput('', false);
+            document.getElementById('results-direct-container').style.display = 'none';
+            document.getElementById('placeholder-direct').style.display = 'block';
+        }
+
+        function calculateDirect(e) {
+            if (e) e.preventDefault();
+
+            const selectedP = confidenceSelect.value;
+            const deviceVal = parseInputNumber(document.getElementById('device-value').value);
+            
+            if (isNaN(deviceVal) || deviceVal <= 0) {
+                alert("Ошибка: Цена деления прибора (ω) должна быть положительным числом.");
+                return;
+            }
+
+            const rows = listContainer.querySelectorAll('.measurement-row');
+            const measurements = [];
+            let invalidEntries = 0;
+
+            rows.forEach(row => {
+                const input = row.querySelector('.measurement-input');
+                const rawVal = input.value.trim();
+                if (rawVal !== '') {
+                    const num = parseInputNumber(rawVal);
+                    if (!isNaN(num)) {
+                        measurements.push(num);
+                    } else {
+                        invalidEntries++;
+                    }
+                }
+            });
+
+            if (invalidEntries > 0) {
+                alert("Ошибка: В полях измерений содержатся некорректные символы.");
+                return;
+            }
+
+            const n = measurements.length;
+            if (n < 2) {
+                alert("Ошибка: Для вычисления погрешности необходимо минимум 2 измерения.");
+                return;
+            }
+
+            const sum = measurements.reduce((acc, curr) => acc + curr, 0);
+            const mean = sum / n;
+
+            let sumSqDiff = 0;
+            measurements.forEach(val => {
+                sumSqDiff += Math.pow(val - mean, 2);
+            });
+
+            const stdErrorMean = Math.sqrt(sumSqDiff / (n * (n - 1)));
+            const df = n - 1;
+            const alpha = getStudentCoefficient(df, selectedP);
+            const randomError = stdErrorMean * alpha;
+            const deviceError = deviceVal / 2;
+            const totalError = Math.sqrt(Math.pow(randomError, 2) + Math.pow(deviceError, 2));
+
+            let relativeText = "не определена (⟨x⟩ = 0)";
+            if (Math.abs(mean) > 1e-12) {
+                relativeText = `${formatNum((totalError / Math.abs(mean)) * 100, 2)}%`;
+            }
+
+            renderMath('tooltip-alpha-formula', `\\alpha(P=${selectedP}, df=${df})`, true);
+            document.getElementById('res-final-title').textContent = `Итоговый результат (P = ${selectedP})`;
+
+            document.getElementById('res-n').textContent = n;
+            document.getElementById('res-mean').textContent = formatNum(mean);
+            document.getElementById('res-std-mean').textContent = formatNum(stdErrorMean);
+            document.getElementById('res-alpha').textContent = formatNum(alpha, 3);
+            document.getElementById('res-random').textContent = formatNum(randomError);
+            document.getElementById('res-device').textContent = formatNum(deviceError);
+            document.getElementById('res-total').textContent = formatNum(totalError);
+            document.getElementById('res-relative').textContent = relativeText;
+            
+            renderMath('res-final', `x = ${formatNum(mean)} \\pm ${formatNum(totalError)}`, false);
+
+            document.getElementById('placeholder-direct').style.display = 'none';
+            document.getElementById('results-direct-container').style.display = 'flex';
+        }
+
+        // ==========================================
+        // ЛОГИКА 2: КОСВЕННЫЕ ИЗМЕРЕНИЯ
+        // ==========================================
+        const indVarsContainer = document.getElementById('ind-vars-container');
+        const indAddVarBtn = document.getElementById('ind-add-var-btn');
+        const clearIndirectBtn = document.getElementById('clear-indirect-btn');
+        const calculateIndirectBtn = document.getElementById('calculate-indirect-btn');
+        const indFormulaInput = document.getElementById('ind-formula');
+
+        function showFormulaError(msg) {
+            const liveBox = document.getElementById('live-formula-box');
+            const badge = document.getElementById('status-badge');
+            const previewText = document.getElementById('preview-text');
+
+            liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-rose-300 bg-rose-50/50 dark:border-rose-600/50 dark:bg-rose-950/20';
+            badge.className = 'status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-rose-700 dark:text-rose-400';
+            badge.textContent = '⚠ Ошибка в формуле';
+            previewText.textContent = msg;
+        }
+
+        function validateAndPreviewFormula() {
+            let rawFormula = indFormulaInput.value.trim();
+            const liveBox = document.getElementById('live-formula-box');
+            const badge = document.getElementById('status-badge');
+            const previewText = document.getElementById('preview-text');
+
+            if (!rawFormula) {
+                showFormulaError('Поле формулы пустое');
+                return false;
+            }
+
+            try {
+                const vars = extractVariablesFromFormula(rawFormula);
+                const testVarObj = {};
+                vars.forEach(v => { testVarObj[v] = 2; });
+
+                const testRes = evaluateFormula(rawFormula, testVarObj);
+                if (isNaN(testRes) || !isFinite(testRes)) {
+                    throw new Error("Ошибка: Результат вычисления не является числом (проверьте аргументы логарифмов и деление на ноль).");
+                }
+
+                liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-emerald-300 bg-emerald-50/50 dark:border-emerald-600/50 dark:bg-emerald-950/20';
+                badge.className = 'status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-emerald-700 dark:text-emerald-400';
+                badge.textContent = '✓ Формула корректна';
+                
+                const latex = convertToLatex(rawFormula);
+                renderMath(previewText, latex, true);
+                return true;
+
+            } catch (err) {
+                showFormulaError(translateJsError(err));
+                return false;
+            }
+        }
+
+        function autoSyncVariablesWithFormula() {
+            validateAndPreviewFormula();
+
+            const formulaStr = indFormulaInput.value;
+            const newVars = extractVariablesFromFormula(formulaStr);
+
+            const currentRows = Array.from(indVarsContainer.querySelectorAll('.var-row'));
+            const currentVars = currentRows.map(row => row.querySelector('.var-name').value.trim());
+
+            const isIdentical = newVars.length === currentVars.length && newVars.every((v, i) => v === currentVars[i]);
+            if (isIdentical) {
+                return;
+            }
+
+            const existingData = {};
+            currentRows.forEach(row => {
+                const name = row.querySelector('.var-name').value.trim();
+                if (name) {
+                    existingData[name] = {
+                        val: row.querySelector('.var-val').value,
+                        err: row.querySelector('.var-err').value
+                    };
+                }
+            });
+
+            indVarsContainer.innerHTML = '';
+            newVars.forEach(v => {
+                const prev = existingData[v] || { val: '1.0', err: '0.05' };
+                createVariableInput(v, prev.val, prev.err, false);
+            });
+        }
+
+        function createVariableInput(name = 'x', value = '1.0', error = '0.05', scrollDown = true) {
+            const row = document.createElement('div');
+            row.className = 'var-row flex gap-2 items-center w-full';
+            
+            row.innerHTML = `
+                <input type="text" class="var-name w-[58px] shrink-0 text-center font-semibold px-1 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${name}" placeholder="Имя">
+                <input type="text" class="var-val flex-1 min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${value}" placeholder="⟨x⟩" inputmode="decimal">
+                <input type="text" class="var-err flex-1 min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${error}" placeholder="Δx" inputmode="decimal">
+                <button type="button" class="btn-icon p-0 w-[38px] h-[38px] min-h-[38px] bg-transparent text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg shrink-0 flex items-center justify-center cursor-pointer transition-all delete-btn" title="Удалить">&#10005;</button>
+            `;
+
+            row.querySelectorAll('input').forEach(input => {
+                attachEnterSubmit(input, calculateIndirect);
+            });
+
+            row.querySelector('.delete-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                row.remove();
+            });
+
+            indVarsContainer.appendChild(row);
+
+            if (scrollDown) {
+                indVarsContainer.scrollTop = indVarsContainer.scrollHeight;
+            }
+        }
+
+        function clearIndirect() {
+            indFormulaInput.value = '';
+            indVarsContainer.innerHTML = '';
+            validateAndPreviewFormula();
+            document.getElementById('results-indirect-container').style.display = 'none';
+            document.getElementById('placeholder-indirect').style.display = 'block';
+        }
+
+        function calculateIndirect(e) {
+            if (e) e.preventDefault();
+
+            const formulaStr = indFormulaInput.value.trim();
+            if (!formulaStr) {
+                showFormulaError("Введите формулу расчетов.");
+                return;
+            }
+
+            const rows = indVarsContainer.querySelectorAll('.var-row');
+            const varValues = {};
+            const varErrors = {};
+            let hasError = false;
+
+            rows.forEach(row => {
+                const name = row.querySelector('.var-name').value.trim();
+                const val = parseInputNumber(row.querySelector('.var-val').value);
+                const err = parseInputNumber(row.querySelector('.var-err').value);
+
+                if (!name || isNaN(val) || isNaN(err) || err < 0) {
+                    hasError = true;
+                } else {
+                    varValues[name] = val;
+                    varErrors[name] = err;
+                }
+            });
+
+            if (hasError || Object.keys(varValues).length === 0) {
+                showFormulaError("Ошибка: Проверьте значения и погрешности (должны быть неотрицательными числами).");
+                return;
+            }
+
+            try {
+                const keys = Object.keys(varValues);
+                let f0;
+                
+                try {
+                    f0 = evaluateFormula(formulaStr, varValues);
+                } catch (errEval) {
+                    showFormulaError(translateJsError(errEval));
+                    return;
+                }
+
+                if (isNaN(f0) || !isFinite(f0)) {
+                    showFormulaError("Ошибка: Значение функции f неопределено или выходит за область допустимых значений (например, x ≤ 0 для log/sqrt).");
+                    return;
+                }
+
+                let sumSqDerivErrors = 0;
+                const breakdown = [];
+
+                for (const key of keys) {
+                    const val = varValues[key];
+                    const err = varErrors[key];
+
+                    let h = val !== 0 ? Math.abs(val) * 1e-6 : 1e-6;
+                    let deriv = NaN;
+
+                    let fPlus = NaN, fMinus = NaN;
+                    try { fPlus = evaluateFormula(formulaStr, { ...varValues, [key]: val + h }); } catch(e){}
+                    try { fMinus = evaluateFormula(formulaStr, { ...varValues, [key]: val - h }); } catch(e){}
+
+                    const plusValid = !isNaN(fPlus) && isFinite(fPlus);
+                    const minusValid = !isNaN(fMinus) && isFinite(fMinus);
+
+                    if (plusValid && minusValid) {
+                        deriv = (fPlus - fMinus) / (2 * h);
+                    } else if (plusValid) {
+                        deriv = (fPlus - f0) / h;
+                    } else if (minusValid) {
+                        deriv = (f0 - fMinus) / h;
+                    } else {
+                        h = h / 100;
+                        try { fPlus = evaluateFormula(formulaStr, { ...varValues, [key]: val + h }); } catch(e){}
+                        try { fMinus = evaluateFormula(formulaStr, { ...varValues, [key]: val - h }); } catch(e){}
+
+                        if (!isNaN(fPlus) && isFinite(fPlus)) {
+                            deriv = (fPlus - f0) / h;
+                        } else if (!isNaN(fMinus) && isFinite(fMinus)) {
+                            deriv = (f0 - fMinus) / h;
+                        }
+                    }
+
+                    if (isNaN(deriv) || !isFinite(deriv)) {
+                        showFormulaError(`Ошибка: Невозможно вычислить производную по переменной "${key}" в точке (${val}). Проверьте область определения.`);
+                        return;
+                    }
+
+                    const termError = Math.abs(deriv * err);
+                    const termSq = Math.pow(termError, 2);
+
+                    sumSqDerivErrors += termSq;
+                    breakdown.push({ name: key, termSq, termError });
+                }
+
+                const totalAbsError = Math.sqrt(sumSqDerivErrors);
+
+                let totalRelErrorText = "не определена (f = 0)";
+                if (Math.abs(f0) > 1e-12) {
+                    const relPercent = (totalAbsError / Math.abs(f0)) * 100;
+                    totalRelErrorText = `${formatNum(relPercent, 2)}%`;
+                }
+
+                document.getElementById('res-ind-val').textContent = formatNum(f0);
+                document.getElementById('res-ind-abs').textContent = formatNum(totalAbsError);
+                document.getElementById('res-ind-relative').textContent = totalRelErrorText;
+                
+                renderMath('res-ind-final', `f = ${formatNum(f0)} \\pm ${formatNum(totalAbsError)}`, false);
+
+                const breakdownList = document.getElementById('ind-breakdown-list');
+                breakdownList.innerHTML = '';
+
+                breakdown.forEach(item => {
+                    const percent = sumSqDerivErrors > 0 ? (item.termSq / sumSqDerivErrors) * 100 : 0;
+                    const el = document.createElement('div');
+                    el.className = 'breakdown-item flex justify-between gap-2 text-xs text-slate-700 dark:text-slate-300';
+                    el.innerHTML = `<span><b class="text-indigo-900 dark:text-indigo-300">${item.name}</b> (Δ=${formatNum(varErrors[item.name])}):</span> <span><b>${formatNum(percent, 1)}%</b> (±${formatNum(item.termError)})</span>`;
+                    breakdownList.appendChild(el);
+                });
+
+                document.getElementById('placeholder-indirect').style.display = 'none';
+                document.getElementById('results-indirect-container').style.display = 'flex';
+
+            } catch (errEx) {
+                showFormulaError(translateJsError(errEx));
+            }
+        }
+
+        document.addEventListener('click', (e) => {
+            const icon = e.target.closest('.info-icon');
+            if (icon) {
+                e.stopPropagation();
+                document.querySelectorAll('.info-icon').forEach(other => {
+                    if (other !== icon) other.classList.remove('active');
+                });
+                icon.classList.toggle('active');
+            } else {
+                document.querySelectorAll('.info-icon').forEach(i => i.classList.remove('active'));
+            }
+        });
+
+        indFormulaInput.addEventListener('input', autoSyncVariablesWithFormula);
+        attachEnterSubmit(indFormulaInput, calculateIndirect);
+        attachEnterSubmit(document.getElementById('device-value'), calculateDirect);
+
+        confidenceSelect.addEventListener('change', () => {
+            updateHeaderSubtitle();
+            if (document.getElementById('results-direct-container').style.display !== 'none') {
+                calculateDirect();
+            }
+        });
+
+        addBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            createMeasurementInput('', true);
+        });
+
+        clearDirectBtn.addEventListener('click', clearDirect);
+        clearIndirectBtn.addEventListener('click', clearIndirect);
+
+        indAddVarBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            createVariableInput('x', '1.0', '0.05', true);
+        });
+
+        calculateDirectBtn.addEventListener('click', calculateDirect);
+        calculateIndirectBtn.addEventListener('click', calculateIndirect);
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initDirect();
+            autoSyncVariablesWithFormula();
+            initKaTeX();
+        });
+    </script>
+</body>
+</html>
