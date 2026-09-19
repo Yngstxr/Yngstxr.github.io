@@ -2,12 +2,24 @@
 <html lang="ru" class="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="description" content="Удобный онлайн-калькулятор physcalc физических формул. Быстрый расчет задач по механике, термодинамике, электричеству и других разделов физики. Без рекламы.">
   <link rel="icon" type="image/png" sizes="32x32" href="icons8-atom-96.png">
   <link rel="manifest" href="/manifest.json?v=2">
   <title>PhysCalc — Универсальный калькулятор формул</title>
+
+  <!-- Предзагрузка критических соединений -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+  <!-- Оптимизированное подключение CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></noscript>
+
+  <!-- Скрипты с асинхронной загрузкой -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -26,14 +38,13 @@
       }
     }
   </script>
-  
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
 
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
     .math-font {
@@ -42,7 +53,8 @@
 
     #mathPreview {
       font-size: 1.25rem;
-      transition: all 0.15s ease-in-out;
+      transition: opacity 0.15s ease-in-out;
+      content-visibility: auto;
     }
 
     @media (min-width: 640px) {
@@ -62,6 +74,11 @@
     }
     input[type=number] {
       -moz-appearance: textfield;
+    }
+
+    .custom-scrollbar {
+      -webkit-overflow-scrolling: touch;
+      will-change: scroll-position;
     }
 
     .custom-scrollbar::-webkit-scrollbar {
@@ -111,22 +128,22 @@
 <body class="bg-gray-50 text-gray-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200 flex flex-col">
 
   <header class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-2.5 sm:space-x-3">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center p-2 shadow-md shrink-0 group">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md shrink-0 group">
             <svg class="w-full h-full text-white animate-[spin_8s_linear_infinite] group-hover:animate-[spin_2s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
                 <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
             </svg>
         </div>  
         <div>
-          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white leading-none">PhysCalc</h1>
+          <h1 class="text-base sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white leading-none">PhysCalc</h1>
           <p class="text-[10px] sm:text-xs text-gray-500 dark:text-slate-400 mt-0.5">Универсальный калькулятор</p>
         </div>
       </div>
 
-      <div class="flex items-center space-x-1.5 sm:space-x-2">
-        <button id="openBetaModalBtn" class="px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs font-semibold transition-all flex items-center gap-1.5 touch-btn cursor-pointer">
+      <div class="flex items-center space-x-1 sm:space-x-2">
+        <button id="openBetaModalBtn" class="min-h-[38px] px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-700 dark:text-amber-400 text-xs font-semibold transition-all flex items-center gap-1.5 touch-btn cursor-pointer">
           <span class="relative flex h-2 w-2">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
@@ -134,16 +151,16 @@
           <span>BETA</span>
         </button>
 
-        <button id="themeToggle" aria-label="Переключить тему" class="p-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors text-sm font-medium touch-btn">
+        <button id="themeToggle" aria-label="Переключить тему" class="min-h-[38px] min-w-[38px] p-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors text-sm font-medium touch-btn flex items-center justify-center">
           <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
           <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.03 9.03 0 0012 21a9.03 9.03 0 008.354-5.646z"></path></svg>
         </button>
 
-        <a href="prjamieizmer.html" class="p-2 sm:px-3 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold transition-all shadow-sm shrink-0 flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        <a href="prjamieizmer.html" aria-label="Калькулятор погрешностей" class="min-h-[38px] p-2 sm:px-3 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold transition-all shadow-sm shrink-0 flex items-center gap-1.5 touch-btn">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
             <span class="hidden sm:inline">Калькулятор погрешностей</span>
         </a>
-        <a href="index.html" class="px-2.5 sm:px-3 py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors text-xs sm:text-sm font-medium flex items-center space-x-1.5 touch-btn">
+        <a href="index.html" aria-label="На главную" class="min-h-[38px] p-2 sm:px-3 sm:py-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors text-xs sm:text-sm font-medium flex items-center space-x-1.5 touch-btn">
           <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
           <span class="hidden sm:inline">На главную</span>
         </a>
@@ -151,10 +168,10 @@
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 flex-grow w-full">
-    <div class="responsive-container grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-stretch">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-8 flex-grow w-full">
+    <div class="responsive-container grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-stretch">
       
-      <div class="block-variables lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col justify-between h-full lg:order-2">
+      <div class="block-variables lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm flex flex-col justify-between h-full lg:order-2">
         <div>
           <div class="flex items-center justify-between gap-2 mb-2">
             <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
@@ -172,38 +189,38 @@
           </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-gray-100 dark:border-slate-700/60 text-[11px] sm:text-xs text-gray-400 dark:text-slate-500">
+        <div class="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700/60 text-[11px] sm:text-xs text-gray-400 dark:text-slate-500">
           * Искомая величина автоматически исключается из этого списка.
         </div>
       </div>
 
-      <div class="lg:col-span-8 flex flex-col gap-4 sm:gap-6 justify-between lg:order-1 contents lg:flex">
+      <div class="lg:col-span-8 flex flex-col gap-3 sm:gap-6 justify-between lg:order-1 contents lg:flex">
         
-        <div class="block-formula bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm">
+        <div class="block-formula bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm">
           <div class="flex items-center justify-between mb-3 sm:mb-4">
             <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <svg class="w-5 h-5 text-brand-600 dark:text-brand-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
               Формула и целевая величина
             </h2>
 
-            <button id="openHelpBtn" title="Справка по записи формул" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-gray-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center justify-center transition-colors font-bold text-sm touch-btn">
+            <button id="openHelpBtn" aria-label="Справка по записи формул" title="Справка по записи формул" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-gray-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center justify-center transition-colors font-bold text-sm touch-btn shrink-0">
               ?
             </button>
           </div>
 
           <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2.5 sm:gap-3">
             <div class="w-full md:w-1/4">
-              <label class="block text-[11px] sm:text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Что найти:</label>
-              <input type="text" id="targetVar" value="y" class="w-full px-3 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white font-bold text-center text-base sm:text-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+              <label for="targetVar" class="block text-[11px] sm:text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Что найти:</label>
+              <input type="text" id="targetVar" value="y" autocomplete="off" autocapitalize="none" class="w-full px-3 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white font-bold text-center text-base sm:text-lg focus:ring-2 focus:ring-brand-500 outline-none transition-all">
             </div>
 
             <div class="text-xl font-bold text-gray-400 dark:text-slate-500 hidden md:block pt-5">=</div>
 
             <div class="w-full md:w-3/4">
-              <label class="block text-[11px] sm:text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Формула (выражение):</label>
+              <label for="formulaInput" class="block text-[11px] sm:text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Формула (выражение):</label>
               <div class="relative">
-                <input type="text" id="formulaInput" value="log(2, x + 8) + root(3, z)" placeholder="Например: log(2, x) + root(3, y)" class="w-full pl-3 pr-10 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white math-font text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                <button id="clearFormulaBtn" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1 text-lg touch-btn">✕</button>
+                <input type="text" id="formulaInput" value="log(2, x + 8) + root(3, z)" placeholder="Например: log(2, x) + root(3, y)" autocomplete="off" autocapitalize="none" class="w-full pl-3 pr-10 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white math-font text-base sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                <button id="clearFormulaBtn" aria-label="Очистить формулу" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 text-lg touch-btn flex items-center justify-center">✕</button>
               </div>
             </div>
           </div>
@@ -219,7 +236,7 @@
           </div>
         </div>
 
-        <div class="block-preview bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm">
+        <div class="block-preview bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm">
           <div class="flex items-center justify-between mb-2">
             <span class="text-[11px] sm:text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
               <svg class="w-4 h-4 text-brand-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-6 4h6m-6 4h6M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
@@ -234,7 +251,7 @@
           </div>
         </div>
 
-        <div class="block-solution bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm flex-grow">
+        <div class="block-solution bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm flex-grow">
           <div class="flex items-center justify-between mb-3 sm:mb-4">
             <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -242,9 +259,9 @@
             </h2>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-stretch">
             
-            <div id="resultBox" class="order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[170px] sm:min-h-[200px]">
+            <div id="resultBox" class="order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[200px]">
               
               <div class="absolute -right-8 -top-8 w-28 h-28 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500"></div>
 
@@ -255,7 +272,7 @@
                     Результат
                   </span>
                   
-                  <select id="precisionSelect" class="text-xs bg-white/80 dark:bg-slate-800/80 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 rounded-lg px-2 py-0.5 outline-none font-medium cursor-pointer hover:border-emerald-400 transition-colors">
+                  <select id="precisionSelect" aria-label="Точность округления" class="text-xs bg-white/80 dark:bg-slate-800/80 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 rounded-lg px-2 py-1 outline-none font-medium cursor-pointer hover:border-emerald-400 transition-colors">
                     <option value="auto">Точно</option>
                     <option value="2">0.00</option>
                     <option value="4">0.0000</option>
@@ -278,7 +295,7 @@
               </div>
 
               <div class="pt-3 sm:pt-4 mt-2 border-t border-emerald-500/15 dark:border-emerald-500/10">
-                <button id="copyResultBtn" class="w-full py-2 sm:py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md shadow-emerald-600/20 touch-btn">
+                <button id="copyResultBtn" class="w-full min-h-[42px] py-2 sm:py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md shadow-emerald-600/20 touch-btn">
                   <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                   <span>Копировать ответ</span>
                 </button>
@@ -297,8 +314,7 @@
 
   <div id="betaModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
     <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative custom-scrollbar">
-      
-      <button id="closeBetaBtn" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">
+      <button id="closeBetaBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">
         ✕
       </button>
 
@@ -318,7 +334,7 @@
         </p>
 
         <div class="space-y-2 pt-1">
-          <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener noreferrer" class="w-full p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/50 hover:bg-sky-100 dark:hover:bg-sky-900/40 text-sky-700 dark:text-sky-300 flex items-center justify-between font-medium transition-all group">
+          <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener noreferrer" class="w-full p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800/50 hover:bg-sky-100 dark:hover:bg-sky-900/40 text-sky-700 dark:text-sky-300 flex items-center justify-between font-medium transition-all group touch-btn">
             <span class="flex items-center gap-2.5">
               <svg class="w-5 h-5 text-sky-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.56 8.16l-1.97 9.28c-.15.68-.55.84-1.12.52l-3.05-2.25-1.47 1.42c-.16.16-.3.3-.62.3l.22-3.11 5.66-5.11c.25-.22-.05-.34-.38-.12l-7 4.41-3.02-.95c-.66-.21-.67-.66.14-.98l11.81-4.55c.55-.2 1.02.12.8 1.14z"/></svg>
               Telegram
@@ -326,7 +342,7 @@
             <span class="text-xs font-semibold group-hover:translate-x-0.5 transition-transform">@PhysCalc67 →</span>
           </a>
 
-          <a href="https://vk.com/physcalc" target="_blank" rel="noopener noreferrer" class="w-full p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-between font-medium transition-all group">
+          <a href="https://vk.com/physcalc" target="_blank" rel="noopener noreferrer" class="w-full p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-between font-medium transition-all group touch-btn">
             <span class="flex items-center gap-2.5">
               <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.644c-.624 0-.816-.495-1.939-1.619-1.023-.977-1.476-1.102-1.734-1.102-.36 0-.464.103-.464.6v1.492c0 .4-.132.629-1.2.629-1.768 0-3.73-1.072-5.11-3.064-2.083-2.937-2.656-5.14-2.656-5.592 0-.25.096-.48.6-.48h1.644c.45 0 .618.2.792.68.868 2.508 2.32 4.7 2.92 4.7.228 0 .332-.103.332-.672v-2.62c-.07-.12-.222-.22-.452-.22-.16 0-.308.06-.452.18-.112.09-.168.12-.168.04 0-.17.228-.68.828-.96.696-.324 1.584-.34 2.148-.34.72 0 .888.372.888 rounded.984v2.964c0 .324.144.444.252.444.228 0 .42-.12.852-.552 1.32-1.356 2.256-3.444 2.256-3.444.12-.252.324-.48.78-.48h1.644c.492 0 .6.252.492.6-.204.948-2.184 3.756-2.184 3.756-.18.288-.252.42 0 .756.18.24.78.768 1.188 1.236 1.056 1.188 1.488 1.836 1.668 2.184.18.348-.024.528-.48.528z"/></svg>
               ВКонтакте
@@ -337,7 +353,7 @@
       </div>
 
       <div class="mt-5 flex justify-end">
-        <button id="betaOkBtn" class="w-full sm:w-auto px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-medium transition-colors shadow-sm touch-btn">
+        <button id="betaOkBtn" class="w-full sm:w-auto min-h-[42px] px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-medium transition-colors shadow-sm touch-btn">
           Понятно
         </button>
       </div>
@@ -347,7 +363,7 @@
   <div id="helpModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
     <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto my-auto custom-scrollbar">
       
-      <button id="closeHelpBtn" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">
+      <button id="closeHelpBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">
         ✕
       </button>
 
@@ -382,7 +398,7 @@
       </div>
 
       <div class="mt-5 sm:mt-6 flex justify-end">
-        <button id="modalOkBtn" class="w-full sm:w-auto px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-sm font-medium transition-colors shadow-sm touch-btn">
+        <button id="modalOkBtn" class="w-full sm:w-auto min-h-[42px] px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-sm font-medium transition-colors shadow-sm touch-btn">
           Понятно
         </button>
       </div>
@@ -398,7 +414,9 @@
     };
 
     let rawCalculatedValue = null;
+    let debounceTimer = null;
 
+    // Кеширование элементов DOM
     const targetVarInput = document.getElementById('targetVar');
     const formulaInput = document.getElementById('formulaInput');
     const decimalWarning = document.getElementById('decimalWarning');
@@ -428,25 +446,29 @@
       'log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max'
     ]);
 
+    // Функция задержки (Debounce) для предотвращения фризов при вводе
+    function debounce(func, delay = 100) {
+      return (...args) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => func(...args), delay);
+      };
+    }
+
     themeToggle.addEventListener('click', () => {
       state.isDark = !state.isDark;
-      if (state.isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    });
+      document.documentElement.classList.toggle('dark', state.isDark);
+    }, { passive: true });
 
-    openHelpBtn.addEventListener('click', () => {
-      helpModal.classList.remove('hidden');
-      helpModal.classList.add('flex');
-    });
     const closeModal = () => {
       helpModal.classList.add('hidden');
       helpModal.classList.remove('flex');
     };
-    closeHelpBtn.addEventListener('click', closeModal);
-    modalOkBtn.addEventListener('click', closeModal);
+    openHelpBtn.addEventListener('click', () => {
+      helpModal.classList.remove('hidden');
+      helpModal.classList.add('flex');
+    }, { passive: true });
+    closeHelpBtn.addEventListener('click', closeModal, { passive: true });
+    modalOkBtn.addEventListener('click', closeModal, { passive: true });
 
     const openBetaModal = () => {
       betaModal.classList.remove('hidden');
@@ -456,9 +478,9 @@
       betaModal.classList.add('hidden');
       betaModal.classList.remove('flex');
     };
-    openBetaModalBtn.addEventListener('click', openBetaModal);
-    closeBetaBtn.addEventListener('click', closeBetaModal);
-    betaOkBtn.addEventListener('click', closeBetaModal);
+    openBetaModalBtn.addEventListener('click', openBetaModal, { passive: true });
+    closeBetaBtn.addEventListener('click', closeBetaModal, { passive: true });
+    betaOkBtn.addEventListener('click', closeBetaModal, { passive: true });
 
     [helpModal, betaModal].forEach(modal => {
       modal.addEventListener('click', (e) => {
@@ -466,7 +488,7 @@
           modal.classList.add('hidden');
           modal.classList.remove('flex');
         }
-      });
+      }, { passive: true });
     });
 
     document.addEventListener('keydown', (e) => {
@@ -481,12 +503,11 @@
       onFormulaChange();
     });
 
-    precisionSelect.addEventListener('change', () => {
-      updateResultDisplay();
-    });
+    precisionSelect.addEventListener('change', updateResultDisplay, { passive: true });
 
-    targetVarInput.addEventListener('input', onFormulaChange);
-    formulaInput.addEventListener('input', onFormulaChange);
+    const debouncedOnFormulaChange = debounce(onFormulaChange, 120);
+    targetVarInput.addEventListener('input', debouncedOnFormulaChange);
+    formulaInput.addEventListener('input', debouncedOnFormulaChange);
 
     function checkForCommaDecimals(formula) {
       let cleaned = formula;
@@ -498,17 +519,15 @@
       const hasCommaBetweenDigits = /\d+,\d*/.test(formula);
 
       let hasCommaInVars = false;
-      document.querySelectorAll('.var-input').forEach(input => {
-        if (typeof input.value === 'string' && /,\d*/.test(input.value)) {
+      const inputs = variablesContainer.getElementsByClassName('var-input');
+      for (let i = 0; i < inputs.length; i++) {
+        if (typeof inputs[i].value === 'string' && /,\d*/.test(inputs[i].value)) {
           hasCommaInVars = true;
+          break;
         }
-      });
-
-      if (hasCommaOutsideFuncs || hasCommaBetweenDigits || hasCommaInVars) {
-        decimalWarning.classList.remove('hidden');
-      } else {
-        decimalWarning.classList.add('hidden');
       }
+
+      decimalWarning.classList.toggle('hidden', !(hasCommaOutsideFuncs || hasCommaBetweenDigits || hasCommaInVars));
     }
 
     function validateFormulaSyntax(formula) {
@@ -522,9 +541,9 @@
       }
 
       let openBrackets = 0;
-      for (let char of formula) {
-        if (char === '(') openBrackets++;
-        if (char === ')') openBrackets--;
+      for (let i = 0; i < formula.length; i++) {
+        if (formula[i] === '(') openBrackets++;
+        if (formula[i] === ')') openBrackets--;
         if (openBrackets < 0) return "Ошибка: Найдена лишняя закрывающая скобка ')'.";
       }
       if (openBrackets > 0) return "Ошибка: Несбалансированные скобки — отсутствует закрывающая скобка ')'.";
@@ -562,11 +581,12 @@
     function extractVariables(formula, target) {
       const tokens = formula.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [];
       const vars = new Set();
-      tokens.forEach(tok => {
+      for (let i = 0; i < tokens.length; i++) {
+        const tok = tokens[i];
         if (!ALLOWED_FUNCTIONS.has(tok.toLowerCase()) && tok !== target) {
           vars.add(tok);
         }
-      });
+      }
       return Array.from(vars);
     }
 
@@ -592,20 +612,20 @@
       }
 
       variablesContainer.innerHTML = currentVars.map(v => `
-        <div class="flex items-center justify-between gap-2.5 bg-gray-50 dark:bg-slate-900/60 p-2.5 sm:p-3 rounded-xl border border-gray-200/60 dark:border-slate-700/60">
+        <div class="flex items-center justify-between gap-2 bg-gray-50 dark:bg-slate-900/60 p-2 sm:p-3 rounded-xl border border-gray-200/60 dark:border-slate-700/60">
           <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base w-7 flex items-center justify-between shrink-0">
             <span>${v}</span>
             <span class="text-gray-400 dark:text-slate-500 font-normal text-xs sm:text-sm">=</span>
           </label>
           
           <div class="relative w-full flex items-center">
-            <input type="text" data-var="${v}" value="${state.variables[v]}" class="var-input w-full pl-3 pr-10 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white math-font text-left text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+            <input type="text" inputmode="decimal" data-var="${v}" value="${state.variables[v]}" autocomplete="off" class="var-input w-full pl-3 pr-10 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white math-font text-left text-base sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
             
             <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
-              <button type="button" class="btn-step-up text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn" data-var="${v}">
+              <button type="button" aria-label="Увеличить" class="btn-step-up text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1.5 rounded leading-none transition-colors touch-btn" data-var="${v}">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
               </button>
-              <button type="button" class="btn-step-down text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn" data-var="${v}">
+              <button type="button" aria-label="Уменьшить" class="btn-step-down text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1.5 rounded leading-none transition-colors touch-btn" data-var="${v}">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
               </button>
             </div>
@@ -613,38 +633,43 @@
         </div>
       `).join('');
 
-      document.querySelectorAll('.var-input').forEach(input => {
+      const debouncedCalc = debounce(calculateResult, 80);
+
+      const inputs = variablesContainer.querySelectorAll('.var-input');
+      inputs.forEach(input => {
         input.addEventListener('input', (e) => {
           const varName = e.target.dataset.var;
           const numVal = parseFloat(e.target.value.replace(',', '.'));
           state.variables[varName] = isNaN(numVal) ? 0 : numVal;
           checkForCommaDecimals(formulaInput.value);
-          calculateResult();
+          debouncedCalc();
         });
       });
 
-      document.querySelectorAll('.btn-step-up').forEach(btn => {
+      const stepUpBtns = variablesContainer.querySelectorAll('.btn-step-up');
+      stepUpBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           const varName = btn.dataset.var;
-          const input = document.querySelector(`.var-input[data-var="${varName}"]`);
+          const input = variablesContainer.querySelector(`.var-input[data-var="${varName}"]`);
           const val = (parseFloat(input.value.replace(',', '.')) || 0) + 1;
           input.value = val;
           state.variables[varName] = val;
           checkForCommaDecimals(formulaInput.value);
           calculateResult();
-        });
+        }, { passive: true });
       });
 
-      document.querySelectorAll('.btn-step-down').forEach(btn => {
+      const stepDownBtns = variablesContainer.querySelectorAll('.btn-step-down');
+      stepDownBtns.forEach(btn => {
         btn.addEventListener('click', () => {
           const varName = btn.dataset.var;
-          const input = document.querySelector(`.var-input[data-var="${varName}"]`);
+          const input = variablesContainer.querySelector(`.var-input[data-var="${varName}"]`);
           const val = (parseFloat(input.value.replace(',', '.')) || 0) - 1;
           input.value = val;
           state.variables[varName] = val;
           checkForCommaDecimals(formulaInput.value);
           calculateResult();
-        });
+        }, { passive: true });
       });
     }
 
@@ -726,7 +751,7 @@
     function setErrorState(errorMessage) {
       solutionSteps.innerHTML = `<div class="text-red-500 font-semibold flex items-center gap-2 text-xs sm:text-sm"><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>${errorMessage}</div>`;
       
-      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden min-h-[170px] sm:min-h-[200px]";
+      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden min-h-[160px] sm:min-h-[200px]";
       resultLabel.className = "text-[10px] sm:text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider flex items-center gap-1.5";
       resultLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-red-500"></span>Ошибка`;
       
@@ -740,7 +765,7 @@
     }
 
     function setSuccessState() {
-      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[170px] sm:min-h-[200px]";
+      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[200px]";
       resultLabel.className = "text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5";
       resultLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Результат`;
       
@@ -794,11 +819,12 @@
         let substitutedStr = rawFormula;
         const sortedVars = Object.keys(state.variables).sort((a, b) => b.length - a.length);
 
-        sortedVars.forEach(v => {
+        for (let i = 0; i < sortedVars.length; i++) {
+          const v = sortedVars[i];
           const val = state.variables[v];
           const regex = new RegExp(`\\b${v}\\b`, 'g');
           substitutedStr = substitutedStr.replace(regex, val);
-        });
+        }
 
         const funcRegex = /(log\s*\([^)]+\)|root\s*\([^)]+\)|sqrt\s*\([^)]+\)|lg\s*\([^)]+\)|ln\s*\([^)]+\)|sin\s*\([^)]+\)|cos\s*\([^)]+\)|tg\s*\([^)]+\))/gi;
         const matchedFunctions = substitutedStr.match(funcRegex) || [];
@@ -813,7 +839,8 @@
         if (matchedFunctions.length > 0) {
           stepHtml.push(`<div class="text-brand-600 dark:text-brand-400 font-semibold mt-1">3. Промежуточный расчёт функций:</div>`);
           
-          matchedFunctions.forEach((fnCall, idx) => {
+          for (let idx = 0; idx < matchedFunctions.length; idx++) {
+            const fnCall = matchedFunctions[idx];
             const subVal = evalExpr(fnCall);
             if (!isFinite(subVal) || isNaN(subVal)) {
               hasMathError = true;
@@ -821,7 +848,7 @@
             const formattedVal = formatNumber(subVal);
             stepHtml.push(`<div class="pl-2 sm:pl-3 text-[11px] sm:text-xs"><span class="text-gray-400">• Функция ${idx + 1}:</span> ${fnCall} = <b class="text-brand-600 dark:text-brand-300">${formattedVal}</b></div>`);
             processedStr = processedStr.replace(fnCall, formattedVal);
-          });
+          }
 
           stepHtml.push(`<div><span class="text-gray-400">4. Формула после вычисления функций:</span> ${target} = ${processedStr}</div>`);
         }
@@ -879,12 +906,12 @@
         btn.classList.remove('bg-slate-800', 'dark:bg-slate-700');
         btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
       }, 1800);
-    });
+    }, { passive: true });
 
-    window.addEventListener('load', () => {
+    // Инициализация
+    window.addEventListener('DOMContentLoaded', () => {
       onFormulaChange();
     });
-    onFormulaChange();
   </script>
 </body>
 </html>
