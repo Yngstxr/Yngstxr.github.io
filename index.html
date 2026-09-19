@@ -497,6 +497,7 @@
                     `;
                     btn.onclick = () => {
                         loadCalculator(f);
+                        window.location.hash = f.id; 
                         if (window.innerWidth < 768) {
                             document.getElementById('calculator-zone').scrollIntoView({ behavior: 'smooth' });
                         }
@@ -507,16 +508,18 @@
             counterEl.textContent = count;
         }
 
-        function loadCalculator(f) {
-            emptyState.classList.add('hidden');
-            calcContent.classList.remove('hidden');
+            function loadCalculator(f) {
+                emptyState.classList.add('hidden');
+                calcContent.classList.remove('hidden');
 
-            calcCategory.textContent = f.category;
-            calcTitle.textContent = f.title;
-            calcDescription.textContent = f.description;
-            calcFormula.textContent = f.formula;
+                calcCategory.textContent = f.category;
+                calcTitle.textContent = f.title;
+                calcDescription.textContent = f.description;
+                calcFormula.textContent = f.formula;
+                window.location.hash = f.id;
+                document.title = `${f.title} — Калькулятор физических формул`;
 
-            inputsContainer.innerHTML = '';
+                inputsContainer.innerHTML = '';
 
             f.inputs.forEach(inp => {
                 const div = document.createElement('div');
@@ -669,6 +672,34 @@
                 .then(() => console.log('PhysCalc PWA работает!'))
                 .catch((err) => console.error('Ошибка регистрации PWA:', err));
         }
+        function handleUrlHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const formula = physicsFormulas.find(f => f.id === hash);
+                if (formula) {
+                    loadCalculator(formula);
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', handleUrlHash);
+
+        window.addEventListener('hashchange', handleUrlHash);
+
+        function handleUrlRouting() {
+            const id = window.location.hash.replace('#', ''); 
+            
+            if (id) {
+                const formula = physicsFormulas.find(f => f.id === id);
+                if (formula) {
+                    loadCalculator(formula);
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', handleUrlRouting);
+
+        window.addEventListener('hashchange', handleUrlRouting);
     </script>
 </body>
 </html>
