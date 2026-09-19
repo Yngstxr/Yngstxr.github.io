@@ -4,6 +4,7 @@ const ASSETS = [
   '/index.html',
   '/prjamieizmer.html',
   '/manifest.json',
+  '/index3.html',
   '/icon-192.png',
   '/icon-128.png',
   '/icon-256.png',
@@ -20,11 +21,9 @@ self.addEventListener('fetch', (e) => {
   e.respondWith(
     caches.match(e.request).then((cachedResponse) => {
       if (cachedResponse) {
-        return cachedResponse; // Отдаем из кэша, если есть
+        return cachedResponse; 
       }
-      // Если файла нет в кэше, пытаемся загрузить из сети
       return fetch(e.request).catch(() => {
-        // Если сети нет, предотвращаем выброс ошибки в консоль
         console.log('Запрос отклонен в офлайн-режиме:', e.request.url);
       });
     })
