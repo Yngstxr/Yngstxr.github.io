@@ -7,7 +7,9 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons8-atom-96.png">
   <link rel="manifest" href="/manifest.json?v=2">
   <title>PhysCalc — Универсальный калькулятор формул</title>
-
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
@@ -413,6 +415,7 @@
     let rawCalculatedValue = null;
     let debounceTimer = null;
 
+    // Кеширование элементов DOM
     const targetVarInput = document.getElementById('targetVar');
     const formulaInput = document.getElementById('formulaInput');
     const decimalWarning = document.getElementById('decimalWarning');
@@ -442,6 +445,7 @@
       'log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max'
     ]);
 
+    // Функция задержки (Debounce) для предотвращения фризов при вводе
     function debounce(func, delay = 100) {
       return (...args) => {
         clearTimeout(debounceTimer);
@@ -903,6 +907,7 @@
       }, 1800);
     }, { passive: true });
 
+    // Инициализация
     window.addEventListener('DOMContentLoaded', () => {
       onFormulaChange();
     });
