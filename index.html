@@ -20,11 +20,32 @@
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @media (max-width: 767px) {
+        
+        /* Мобильный режим включается при ширине < 1024px ИЛИ при высоте <= 960px */
+        @media (max-width: 1023px), (max-height: 960px) {
             html, body {
                 height: auto !important;
                 min-height: 100% !important;
                 overflow-y: auto !important;
+            }
+            main {
+                height: auto !important;
+                overflow: visible !important;
+                flex-direction: column !important;
+            }
+            section {
+                width: 100% !important;
+                overflow: visible !important;
+                position: static !important;
+            }
+            #category-filters {
+                flex-direction: row !important;
+                overflow-x: auto !important;
+                padding-bottom: 0.25rem !important;
+            }
+            #category-filters button {
+                white-space: nowrap !important;
+                flex-shrink: 0 !important;
             }
         }
     </style>
@@ -64,7 +85,7 @@
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/109650062" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen md:h-screen md:overflow-hidden flex flex-col antialiased font-sans transition-colors duration-200">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen lg:h-screen lg:overflow-hidden flex flex-col antialiased font-sans transition-colors duration-200">
     <header class="bg-white border-b border-slate-200 dark:bg-slate-800 dark:border-slate-700 shadow-md dark:shadow-xl sticky top-0 z-50 transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
             <div class="flex items-center gap-3 w-full sm:w-auto">
@@ -104,23 +125,23 @@
         </div>
     </header>
     
-    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex flex-col md:flex-row gap-6 h-auto md:h-[calc(100vh-140px)] overflow-visible md:overflow-hidden flex-1">    
-        <section class="w-full md:w-80 flex flex-col gap-4 shrink-0 overflow-visible md:overflow-y-auto">
+    <main class="max-w-7xl w-full mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6 h-auto lg:h-[calc(100vh-140px)] overflow-visible lg:overflow-hidden flex-1">    
+        <section class="w-full lg:w-80 flex flex-col gap-4 shrink-0 overflow-visible lg:overflow-y-auto">
             <div class="bg-white p-3 rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 space-y-1 shadow-sm transition-colors duration-200">
                 <span class="text-xs font-semibold text-slate-400 dark:text-slate-400 px-2 uppercase tracking-wider block mb-1">Разделы физики</span>
                 
-                <div class="flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible gap-1 pb-1 md:pb-0 hide-scrollbar snap-x snap-mandatory md:snap-none" id="category-filters">
-                    <button data-cat="all" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Все модули</button>
-                    <button data-cat="Механика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Механика</button>
-                    <button data-cat="МКТ" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">МКТ</button>
-                    <button data-cat="Термодинамика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Термодинамика</button>
-                    <button data-cat="Электродинамика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Электродинамика</button>
-                    <button data-cat="Оптика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Оптика</button>
-                    <button data-cat="Квантовая физика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">Квантовая и ядерная физика</button>
-                    <button data-cat="СТО" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none">СТО</button>
+                <div class="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-1 pb-1 lg:pb-0 hide-scrollbar snap-x snap-mandatory lg:snap-none" id="category-filters">
+                    <button data-cat="all" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">Все модули</button>
+                    <button data-cat="Механика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">Механика</button>
+                    <button data-cat="МКТ" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">МКТ</button>
+                    <button data-cat="Термодинамика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">Термодинамика</button>
+                    <button data-cat="Электродинамика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">Электродинамика</button>
+                    <button data-cat="Оптика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">Оптика</button>
+                    <button data-cat="Квантовая физика" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">Квантовая и ядерная физика</button>
+                    <button data-cat="СТО" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">СТО</button>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 h-[340px] md:h-auto md:flex-1 flex flex-col overflow-hidden shadow-sm dark:shadow-inner transition-colors duration-200">
+            <div class="bg-white rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 h-[340px] lg:h-auto lg:flex-1 flex flex-col overflow-hidden shadow-sm dark:shadow-inner transition-colors duration-200">
                 <div class="p-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
                     <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Список формул</span>
                     <span id="counter" class="text-xs bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
@@ -129,7 +150,7 @@
             </div>
         </section>
 
-        <section class="flex-1 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 p-6 flex flex-col shadow-lg dark:shadow-2xl md:sticky md:self-start min-h-[200px] rounded-2xl transition-colors duration-200" id="calculator-zone">
+        <section class="flex-1 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 p-6 flex flex-col shadow-lg dark:shadow-2xl lg:sticky lg:self-start min-h-[200px] rounded-2xl transition-colors duration-200" id="calculator-zone">
             <div id="empty-state" class="flex flex-col items-center justify-center text-center p-6 bg-slate-50 dark:bg-slate-800 rounded-2xl h-full transition-colors duration-200">
                 <div class="w-16 h-16 text-slate-300 dark:text-slate-600 mb-4">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
@@ -171,13 +192,13 @@
     </main>
 
     <footer class="bg-white border-t border-slate-200 dark:bg-slate-800 dark:border-slate-700 py-4 mt-auto shadow-inner transition-colors duration-200 z-50">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 items-center gap-4 text-xs">
-            <div class="flex items-center justify-center md:justify-start gap-2.5 text-slate-500 dark:text-slate-400 text-center md:text-left order-1 md:order-1">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 items-center gap-4 text-xs">
+            <div class="flex items-center justify-center lg:justify-start gap-2.5 text-slate-500 dark:text-slate-400 text-center lg:text-left order-1 lg:order-1">
                 <span class="inline-flex items-center justify-center w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 font-bold text-[11px] animate-pulse shrink-0">!</span>
                 <p>Нашли ошибку в расчетах или интерфейсе? Пожалуйста, <span class="font-semibold text-indigo-600 dark:text-indigo-400">напишите нам</span> — мы сразу исправим.</p>
             </div>
             
-            <div class="flex items-center justify-center md:justify-end gap-4 shrink-0 order-2 md:order-3">
+            <div class="flex items-center justify-center lg:justify-end gap-4 shrink-0 order-2 lg:order-3">
                 <span class="text-slate-400 dark:text-slate-500 font-medium hidden lg:inline">Обратная связь:</span>
                 <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 font-semibold text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors group">
                     <img src="icons8-telegram-48.png" alt="Telegram" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform">
@@ -189,7 +210,7 @@
                 </a>
             </div>
             
-            <div class="text-slate-400 dark:text-slate-500 font-medium text-center order-3 md:order-2">
+            <div class="text-slate-400 dark:text-slate-500 font-medium text-center order-3 lg:order-2">
                 &copy; 2026 <span class="font-semibold text-slate-700 dark:text-slate-300">PhysCalc</span>. Все права защищены.
             </div>
         </div>
@@ -480,6 +501,10 @@
         const inputsContainer = document.getElementById('dynamic-inputs-container');
         const calcResult = document.getElementById('calc-result');
 
+        function isMobileLayout() {
+            return window.innerWidth < 1024 || window.innerHeight <= 960;
+        }
+
         function renderList() {
             formulasList.innerHTML = '';
             let count = 0;
@@ -502,7 +527,7 @@
                     btn.onclick = () => {
                         loadCalculator(f);
                         window.location.hash = f.id; 
-                        if (window.innerWidth < 768) {
+                        if (isMobileLayout()) {
                             document.getElementById('calculator-zone').scrollIntoView({ behavior: 'smooth' });
                         }
                     };
@@ -512,18 +537,18 @@
             counterEl.textContent = count;
         }
 
-            function loadCalculator(f) {
-                emptyState.classList.add('hidden');
-                calcContent.classList.remove('hidden');
+        function loadCalculator(f) {
+            emptyState.classList.add('hidden');
+            calcContent.classList.remove('hidden');
 
-                calcCategory.textContent = f.category;
-                calcTitle.textContent = f.title;
-                calcDescription.textContent = f.description;
-                calcFormula.textContent = f.formula;
-                window.location.hash = f.id;
-                document.title = `${f.title} — Калькулятор физических формул`;
+            calcCategory.textContent = f.category;
+            calcTitle.textContent = f.title;
+            calcDescription.textContent = f.description;
+            calcFormula.textContent = f.formula;
+            window.location.hash = f.id;
+            document.title = `${f.title} — Калькулятор физических формул`;
 
-                inputsContainer.innerHTML = '';
+            inputsContainer.innerHTML = '';
 
             f.inputs.forEach(inp => {
                 const div = document.createElement('div');
@@ -537,7 +562,7 @@
                             <button type="button" class="flex items-center justify-center w-3.5 h-3.5 text-[10px] font-bold text-[#7b74ff] bg-[#5b53ff]/20 hover:bg-[#5b53ff]/40 rounded-full transition-colors cursor-help">
                                 ?
                             </button>
-                            <div class="absolute right-0 bottom-full mb-2 hidden group-hover:block md:group-hover:block w-64 bg-white border border-slate-200 dark:bg-[#1e2235] dark:border-none border-l-4 border-l-[#5b53ff] dark:border-l-[#5b53ff] rounded-lg p-3 shadow-xl dark:shadow-2xl z-50 pointer-events-none">
+                            <div class="absolute right-0 bottom-full mb-2 hidden group-hover:block lg:group-hover:block w-64 bg-white border border-slate-200 dark:bg-[#1e2235] dark:border-none border-l-4 border-l-[#5b53ff] dark:border-l-[#5b53ff] rounded-lg p-3 shadow-xl dark:shadow-2xl z-50 pointer-events-none">
                                 <div id="tooltip-text-${inp.id}" class="text-slate-600 dark:text-[#9aa0b9] text-xs font-sans normal-case tracking-normal leading-relaxed">
                                 </div>
                             </div>
@@ -630,9 +655,9 @@
             const b = e.target.closest('button');
             if (!b) return;
             document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none";
+                btn.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none";
             });
-            b.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start md:whitespace-normal md:shrink md:snap-none";
+            b.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none";
             selectedCategory = b.getAttribute('data-cat');
             renderList();
         });
@@ -666,7 +691,7 @@
 
         document.addEventListener('click', () => {
             document.querySelectorAll('[id^="tooltip-"] > div').forEach(box => {
-                if (!box.classList.contains('hidden') && window.innerWidth < 768) {
+                if (!box.classList.contains('hidden') && isMobileLayout()) {
                     box.classList.add('hidden');
                 }
             });
