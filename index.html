@@ -21,8 +21,13 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Мобильный режим включается при ширине < 1024px ИЛИ при высоте <= 960px */
-        @media (max-width: 1023px), (max-height: 960px) {
+        /* 
+           Адаптивный режим включается ТОЛЬКО если:
+           1. Ширина меньше 1024px (max-width: 1023px)
+           ИЛИ
+           2. Ширина >= 1024px И высота < 960px (max-height: 959px)
+        */
+        @media (max-width: 1023px), (min-width: 1024px) and (max-height: 719px) {
             html, body {
                 height: auto !important;
                 min-height: 100% !important;
@@ -46,6 +51,11 @@
             #category-filters button {
                 white-space: nowrap !important;
                 flex-shrink: 0 !important;
+            }
+            /* Фиксируем высоту блока со списком формул, чтобы прокрутка была внутри него */
+            .formulas-container {
+                height: 380px !important;
+                max-height: 50vh !important;
             }
         }
     </style>
@@ -114,7 +124,7 @@
                     </a>
                 </div>
                 <a href="prjamieizmer.html" class="p-2 sm:px-3 sm:py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold transition-all shadow-sm shrink-0 flex items-center gap-1.5">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
                     <span class="hidden sm:inline">Калькулятор погрешностей</span>
                 </a>
                 <button id="theme-toggle" class="p-2 sm:p-2.5 rounded-xl bg-slate-100 border border-slate-300 text-slate-600 dark:bg-slate-900 dark:border-slate-700 dark:text-slate-400 hover:text-indigo-500 dark:hover:text-indigo-400 transition-all shadow-sm shrink-0">
@@ -141,8 +151,9 @@
                     <button data-cat="СТО" class="cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none">СТО</button>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 h-[340px] lg:h-auto lg:flex-1 flex flex-col overflow-hidden shadow-sm dark:shadow-inner transition-colors duration-200">
-                <div class="p-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+            
+            <div class="formulas-container bg-white rounded-2xl border border-slate-200 dark:bg-slate-800 dark:border-slate-700 h-[380px] lg:h-auto lg:flex-1 flex flex-col overflow-hidden shadow-sm dark:shadow-inner transition-colors duration-200">
+                <div class="p-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50 shrink-0">
                     <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Список формул</span>
                     <span id="counter" class="text-xs bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-full font-mono">0</span>
                 </div>
@@ -502,7 +513,7 @@
         const calcResult = document.getElementById('calc-result');
 
         function isMobileLayout() {
-            return window.innerWidth < 1024 || window.innerHeight <= 960;
+            return window.innerWidth < 1024 || (window.innerWidth >= 1024 && window.innerHeight < 720);
         }
 
         function renderList() {
