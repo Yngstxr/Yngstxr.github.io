@@ -8,15 +8,12 @@
   <link rel="manifest" href="/manifest.json?v=2">
   <title>PhysCalc — Универсальный калькулятор формул</title>
 
-  <!-- Предзагрузка критических соединений -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
-  <!-- Оптимизированное подключение CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></noscript>
 
-  <!-- Скрипты с асинхронной загрузкой -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
 
@@ -120,8 +117,8 @@
       }
       .block-formula { order: 1 !important; }
       .block-preview { order: 2 !important; }
-      .block-variables { order: 3 !important; }
-      .block-solution { order: 4 !important; }
+      .block-solution { order: 4 !important; }  
+      .block-variables { order: 3 !important; } 
     }
   </style>
 </head>
@@ -416,7 +413,6 @@
     let rawCalculatedValue = null;
     let debounceTimer = null;
 
-    // Кеширование элементов DOM
     const targetVarInput = document.getElementById('targetVar');
     const formulaInput = document.getElementById('formulaInput');
     const decimalWarning = document.getElementById('decimalWarning');
@@ -446,7 +442,6 @@
       'log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max'
     ]);
 
-    // Функция задержки (Debounce) для предотвращения фризов при вводе
     function debounce(func, delay = 100) {
       return (...args) => {
         clearTimeout(debounceTimer);
@@ -908,7 +903,6 @@
       }, 1800);
     }, { passive: true });
 
-    // Инициализация
     window.addEventListener('DOMContentLoaded', () => {
       onFormulaChange();
     });
