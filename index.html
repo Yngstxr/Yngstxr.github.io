@@ -10,6 +10,10 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
     <style>
         html { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in; }
         html.ready { visibility: visible; opacity: 1; }
@@ -23,12 +27,6 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* 
-           Адаптивный режим включается ТОЛЬКО если:
-           1. Ширина меньше 1024px (max-width: 1023px)
-           ИЛИ
-           2. Ширина >= 1024px И высота < 960px (max-height: 959px)
-        */
         @media (max-width: 1023px), (min-width: 1024px) and (max-height: 719px) {
             html, body {
                 height: auto !important;
@@ -54,12 +52,14 @@
                 white-space: nowrap !important;
                 flex-shrink: 0 !important;
             }
-            /* Фиксируем высоту блока со списком формул, чтобы прокрутка была внутри него */
             .formulas-container {
                 height: 380px !important;
                 max-height: 50vh !important;
             }
         }
+
+        /* Корректировка для KaTeX в списке, чтобы не ломалась высота */
+        .katex-display { margin: 0 !important; }
     </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -182,7 +182,7 @@
 
                     <div class="bg-slate-50 border border-slate-200 dark:bg-slate-900/60 dark:border-slate-700/50 rounded-xl p-4 flex flex-col items-center justify-center text-center transition-colors duration-200">
                         <span class="text-xs font-mono text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1">Математическая модель</span>
-                        <div id="calc-formula" class="text-xl sm:text-2xl font-mono font-bold text-indigo-600 dark:text-indigo-400 tracking-wide"></div>
+                        <div id="calc-formula" class="text-xl sm:text-2xl font-bold text-indigo-600 dark:text-indigo-400 tracking-wide w-full overflow-x-auto overflow-y-hidden py-3 flex justify-center items-center"></div>
                     </div>
 
                     <div class="bg-slate-50 border border-slate-200 dark:bg-slate-900/30 dark:border-slate-700/40 rounded-xl p-5 transition-colors duration-200">
@@ -518,6 +518,32 @@
             return window.innerWidth < 1024 || (window.innerWidth >= 1024 && window.innerHeight < 720);
         }
 
+        function textToLaTeX(f) {
+            let s = f;
+            s = s.replace(/·/g, '\\cdot ');
+            s = s.replace(/₀/g, '_0').replace(/₁/g, '_1').replace(/₂/g, '_2').replace(/₃/g, '_3').replace(/₄/g, '_4');
+            s = s.replace(/²/g, '^2').replace(/³/g, '^3').replace(/⁴/g, '^4');
+            
+            const greeks = {
+                'α':'\\alpha', 'β':'\\beta', 'π':'\\pi', 'ρ':'\\rho', 'μ':'\\mu',
+                'λ':'\\lambda', 'ν':'\\nu', 'ω':'\\omega', 'φ':'\\varphi', 'τ':'\\tau',
+                'Δ':'\\Delta', 'Φ':'\\Phi', 'ε':'\\varepsilon', 'η':'\\eta'
+            };
+            for(let k in greeks) s = s.replace(new RegExp(k, 'g'), greeks[k] + ' ');
+            
+            s = s.replace(/√\(([^)]+)\)/g, '\\sqrt{$1}'); 
+            s = s.replace(/√([A-Za-z0-9_]+)/g, '\\sqrt{$1}'); 
+            
+            s = s.replace(/_([а-яА-Яa-zA-Z0-9]+)/g, '_{\\text{$1}}');
+            s = s.replace(/([а-яА-Я]+)/g, '\\text{$1}');
+            
+            s = s.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
+            s = s.replace(/(?:^|\s|\=)([A-Za-z0-9_^{\}\\]+)\s*\/\s*([A-Za-z0-9_^{\}\\]+)/g, ' \\frac{$1}{$2} ');
+            
+            s = s.replace(/ℏ/g, '\\hbar');
+            return s;
+        }
+
         function renderList() {
             formulasList.innerHTML = '';
             let count = 0;
@@ -530,12 +556,17 @@
                     count++;
                     const btn = document.createElement('button');
                     btn.className = "w-full text-left px-3 py-2.5 rounded-xl text-xs font-medium bg-slate-50 border border-slate-200 text-slate-700 hover:bg-slate-100 dark:bg-slate-800/40 dark:border-slate-700/60 dark:text-slate-300 dark:hover:bg-slate-700/50 transition-all flex justify-between items-center group";
+                    
+                    const texFormula = window.katex ? katex.renderToString(textToLaTeX(f.formula), { throwOnError: false }) : f.formula;
+                    
                     btn.innerHTML = `
                         <div class="truncate pr-2">
                             <div class="font-bold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 truncate">${f.title}</div>
                             <div class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5 truncate">${f.description}</div>
                         </div>
-                        <span class="font-mono bg-slate-200 text-slate-600 dark:bg-slate-900 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[10px] shrink-0 font-bold">${f.formula}</span>
+                        <span class="bg-slate-200/70 text-slate-700 dark:bg-slate-900/60 dark:text-indigo-300 px-2 py-1 rounded shrink-0 flex items-center justify-center min-w-[50px] overflow-hidden">
+                            ${texFormula}
+                        </span>
                     `;
                     btn.onclick = () => {
                         loadCalculator(f);
@@ -557,7 +588,16 @@
             calcCategory.textContent = f.category;
             calcTitle.textContent = f.title;
             calcDescription.textContent = f.description;
-            calcFormula.textContent = f.formula;
+            
+            if (window.katex) {
+                calcFormula.innerHTML = katex.renderToString(textToLaTeX(f.formula), { 
+                    throwOnError: false, 
+                    displayMode: true 
+                });
+            } else {
+                calcFormula.textContent = f.formula;
+            }
+
             window.location.hash = f.id;
             document.title = `${f.title} — Калькулятор физических формул`;
 
