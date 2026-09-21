@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" class="light">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -7,35 +7,47 @@
   <link rel="icon" type="image/png" sizes="32x32" href="icons8-atom-96.png">
   <link rel="manifest" href="/manifest.json?v=2">
   <title>PhysCalc — Универсальный калькулятор формул</title>
+  
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
+  
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></noscript>
 
+  <script>
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
 
   <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#f0f3ff',
-              100: '#e0e7ff',
-              500: '#4f46e5',
-              600: '#4338ca',
-              700: '#3730a3',
+    window.tailwind = {
+      config: {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#f0f3ff',
+                100: '#e0e7ff',
+                500: '#4f46e5',
+                600: '#4338ca',
+                700: '#3730a3',
+              }
             }
           }
         }
       }
-    }
+    };
   </script>
 
   <style>
@@ -62,61 +74,24 @@
       }
     }
 
-    .katex-display {
-      margin: 0 !important;
-    }
+    .katex-display { margin: 0 !important; }
 
     input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-      -webkit-appearance: none; 
-      margin: 0; 
-    }
-    input[type=number] {
-      -moz-appearance: textfield;
-    }
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
 
-    .custom-scrollbar {
-      -webkit-overflow-scrolling: touch;
-      will-change: scroll-position;
-    }
+    .custom-scrollbar { -webkit-overflow-scrolling: touch; will-change: scroll-position; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(156, 163, 175, 0.7); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(71, 85, 105, 0.5); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(100, 116, 139, 0.8); }
 
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
+    .touch-btn { touch-action: manipulation; user-select: none; }
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background-color: rgba(156, 163, 175, 0.4);
-      border-radius: 9999px;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(156, 163, 175, 0.7);
-    }
-
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-      background-color: rgba(71, 85, 105, 0.5);
-    }
-
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(100, 116, 139, 0.8);
-    }
-
-    .touch-btn {
-      touch-action: manipulation;
-      user-select: none;
-    }
-
-    /* Адаптивный порядок блоков до 1024px */
     @media (max-width: 1023px) {
-      .responsive-container {
-        display: flex !important;
-        flex-direction: column !important;
-      }
+      .responsive-container { display: flex !important; flex-direction: column !important; }
       .block-formula { order: 1 !important; }
       .block-preview { order: 2 !important; }
       .block-solution { order: 4 !important; }  
@@ -130,11 +105,11 @@
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
       <div class="flex items-center space-x-2 sm:space-x-3">
         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md shrink-0 group">
-            <svg class="w-full h-full text-white animate-[spin_8s_linear_infinite] group-hover:animate-[spin_2s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-            </svg>
-        </div>  
+          <svg class="w-full h-full text-white animate-[spin_8s_linear_infinite] group-hover:animate-[spin_2s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+              <circle cx="12" cy="12" r="3"/>
+          </svg>
+      </div>  
         <div>
           <h1 class="text-base sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white leading-none">PhysCalc</h1>
           <p class="text-[10px] sm:text-xs text-gray-500 dark:text-slate-400 mt-0.5">Универсальный калькулятор</p>
@@ -313,14 +288,10 @@
 
   <div id="betaModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
     <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl relative custom-scrollbar">
-      <button id="closeBetaBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">
-        ✕
-      </button>
+      <button id="closeBetaBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">✕</button>
 
       <div class="flex items-center space-x-3 mb-4 pr-6">
-        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold shrink-0">
-          🧪
-        </div>
+        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold shrink-0">🧪</div>
         <div>
           <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-tight">Тестовая версия</h3>
           <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">PhysCalc находится в разработке</p>
@@ -340,7 +311,6 @@
             </span>
             <span class="text-xs font-semibold group-hover:translate-x-0.5 transition-transform">@PhysCalc67 →</span>
           </a>
-
           <a href="https://vk.com/physcalc" target="_blank" rel="noopener noreferrer" class="w-full p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 hover:bg-blue-100 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 flex items-center justify-between font-medium transition-all group touch-btn">
             <span class="flex items-center gap-2.5">
               <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.644c-.624 0-.816-.495-1.939-1.619-1.023-.977-1.476-1.102-1.734-1.102-.36 0-.464.103-.464.6v1.492c0 .4-.132.629-1.2.629-1.768 0-3.73-1.072-5.11-3.064-2.083-2.937-2.656-5.14-2.656-5.592 0-.25.096-.48.6-.48h1.644c.45 0 .618.2.792.68.868 2.508 2.32 4.7 2.92 4.7.228 0 .332-.103.332-.672v-2.62c-.07-.12-.222-.22-.452-.22-.16 0-.308.06-.452.18-.112.09-.168.12-.168.04 0-.17.228-.68.828-.96.696-.324 1.584-.34 2.148-.34.72 0 .888.372.888 rounded.984v2.964c0 .324.144.444.252.444.228 0 .42-.12.852-.552 1.32-1.356 2.256-3.444 2.256-3.444.12-.252.324-.48.78-.48h1.644c.492 0 .6.252.492.6-.204.948-2.184 3.756-2.184 3.756-.18.288-.252.42 0 .756.18.24.78.768 1.188 1.236 1.056 1.188 1.488 1.836 1.668 2.184.18.348-.024.528-.48.528z"/></svg>
@@ -361,15 +331,10 @@
 
   <div id="helpModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
     <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto my-auto custom-scrollbar">
-      
-      <button id="closeHelpBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">
-        ✕
-      </button>
+      <button id="closeHelpBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">✕</button>
 
       <div class="flex items-center space-x-3 mb-3 sm:mb-4 pr-6">
-        <div class="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold shrink-0">
-          ?
-        </div>
+        <div class="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold shrink-0">?</div>
         <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-tight">Справка по записи математических функций</h3>
       </div>
 
@@ -388,10 +353,11 @@
             <span class="text-brand-500 font-bold">•</span> Поддерживаемые функции:
           </div>
           <ul class="text-xs space-y-1.5 font-mono pl-1">
-            <li><span class="text-brand-600 dark:text-brand-400 font-bold">log(2, 8)</span> → логарифм (требуется 2 аргумента через запятую)</li>
-            <li><span class="text-brand-600 dark:text-brand-400 font-bold">root(3, 27)</span> → корень любой степени (2 аргумента через запятую)</li>
-            <li><span class="text-brand-600 dark:text-brand-400 font-bold">sqrt(x), lg(x), ln(x)</span> → корень, десятичный и натуральный логарифм</li>
-            <li><span class="text-brand-600 dark:text-brand-400 font-bold">sin(x), cos(x), tg(x), ctg(x)</span> → тригонометрия</li>
+            <li><span class="text-brand-600 dark:text-brand-400 font-bold">log(2, 8)</span> → логарифм (2 аргумента через запятую)</li>
+            <li><span class="text-brand-600 dark:text-brand-400 font-bold">root(3, 27)</span> → корень любой степени (2 аргумента)</li>
+            <li><span class="text-brand-600 dark:text-brand-400 font-bold">sqrt(x), lg(x), ln(x)</span> → корень, десятичный и натур. логарифм</li>
+            <li><span class="text-brand-600 dark:text-brand-400 font-bold">sin(x), cos(x), tg(x), ctg(x)</span> → тригонометрия (в радианах)</li>
+            <li><span class="text-brand-600 dark:text-brand-400 font-bold">abs(x)</span> → модуль числа</li>
           </ul>
         </div>
       </div>
@@ -406,16 +372,14 @@
 
   <script>
     const state = {
-      targetVar: 'y',
-      formulaStr: 'log(2, x + 8) + root(3, z)',
-      variables: {},
-      isDark: false
+      variables: {}
     };
 
     let rawCalculatedValue = null;
     let debounceTimer = null;
 
-    // Кеширование элементов DOM
+    const ALLOWED_FUNCTIONS = new Set(['log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max']);
+
     const targetVarInput = document.getElementById('targetVar');
     const formulaInput = document.getElementById('formulaInput');
     const decimalWarning = document.getElementById('decimalWarning');
@@ -430,22 +394,9 @@
     const precisionSelect = document.getElementById('precisionSelect');
     const varsCount = document.getElementById('varsCount');
     const themeToggle = document.getElementById('themeToggle');
-
     const helpModal = document.getElementById('helpModal');
-    const openHelpBtn = document.getElementById('openHelpBtn');
-    const closeHelpBtn = document.getElementById('closeHelpBtn');
-    const modalOkBtn = document.getElementById('modalOkBtn');
-
     const betaModal = document.getElementById('betaModal');
-    const openBetaModalBtn = document.getElementById('openBetaModalBtn');
-    const closeBetaBtn = document.getElementById('closeBetaBtn');
-    const betaOkBtn = document.getElementById('betaOkBtn');
 
-    const ALLOWED_FUNCTIONS = new Set([
-      'log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max'
-    ]);
-
-    // Функция задержки (Debounce) для предотвращения фризов при вводе
     function debounce(func, delay = 100) {
       return (...args) => {
         clearTimeout(debounceTimer);
@@ -454,53 +405,48 @@
     }
 
     themeToggle.addEventListener('click', () => {
-      state.isDark = !state.isDark;
-      document.documentElement.classList.toggle('dark', state.isDark);
+      const htmlEl = document.documentElement;
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('color-theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('color-theme', 'dark');
+      }
     }, { passive: true });
 
-    const closeModal = () => {
-      helpModal.classList.add('hidden');
-      helpModal.classList.remove('flex');
+    const toggleModal = (modal, show) => {
+        if(show) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        } else {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
     };
-    openHelpBtn.addEventListener('click', () => {
-      helpModal.classList.remove('hidden');
-      helpModal.classList.add('flex');
-    }, { passive: true });
-    closeHelpBtn.addEventListener('click', closeModal, { passive: true });
-    modalOkBtn.addEventListener('click', closeModal, { passive: true });
 
-    const openBetaModal = () => {
-      betaModal.classList.remove('hidden');
-      betaModal.classList.add('flex');
-    };
-    const closeBetaModal = () => {
-      betaModal.classList.add('hidden');
-      betaModal.classList.remove('flex');
-    };
-    openBetaModalBtn.addEventListener('click', openBetaModal, { passive: true });
-    closeBetaBtn.addEventListener('click', closeBetaModal, { passive: true });
-    betaOkBtn.addEventListener('click', closeBetaModal, { passive: true });
+    document.getElementById('openHelpBtn').addEventListener('click', () => toggleModal(helpModal, true), { passive: true });
+    document.getElementById('closeHelpBtn').addEventListener('click', () => toggleModal(helpModal, false), { passive: true });
+    document.getElementById('modalOkBtn').addEventListener('click', () => toggleModal(helpModal, false), { passive: true });
+    
+    document.getElementById('openBetaModalBtn').addEventListener('click', () => toggleModal(betaModal, true), { passive: true });
+    document.getElementById('closeBetaBtn').addEventListener('click', () => toggleModal(betaModal, false), { passive: true });
+    document.getElementById('betaOkBtn').addEventListener('click', () => toggleModal(betaModal, false), { passive: true });
 
     [helpModal, betaModal].forEach(modal => {
       modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.add('hidden');
-          modal.classList.remove('flex');
-        }
+        if (e.target === modal) toggleModal(modal, false);
       }, { passive: true });
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeModal();
-        closeBetaModal();
-      }
+      if (e.key === 'Escape') { toggleModal(helpModal, false); toggleModal(betaModal, false); }
     });
 
     document.getElementById('clearFormulaBtn').addEventListener('click', () => {
       formulaInput.value = '';
       onFormulaChange();
-    });
+    }, { passive: true });
 
     precisionSelect.addEventListener('change', updateResultDisplay, { passive: true });
 
@@ -513,31 +459,27 @@
       while (/\([^()]*\)/.test(cleaned)) {
         cleaned = cleaned.replace(/\([^()]*\)/g, '');
       }
-
       const hasCommaOutsideFuncs = cleaned.includes(',');
-      const hasCommaBetweenDigits = /\d+,\d*/.test(formula);
+      
+      const hasCommaBetweenDigits = /\d+,\d+/.test(formula);
 
       let hasCommaInVars = false;
       const inputs = variablesContainer.getElementsByClassName('var-input');
       for (let i = 0; i < inputs.length; i++) {
-        if (typeof inputs[i].value === 'string' && /,\d*/.test(inputs[i].value)) {
-          hasCommaInVars = true;
+        if (typeof inputs[i].value === 'string' && inputs[i].value.includes(',')) {
+          hasCommaInVars = true; 
           break;
         }
       }
-
+      
       decimalWarning.classList.toggle('hidden', !(hasCommaOutsideFuncs || hasCommaBetweenDigits || hasCommaInVars));
     }
 
     function validateFormulaSyntax(formula) {
       let formulaCleaned = formula;
-      while (/\([^()]*\)/.test(formulaCleaned)) {
-        formulaCleaned = formulaCleaned.replace(/\([^()]*\)/g, '');
-      }
+      while (/\([^()]*\)/.test(formulaCleaned)) formulaCleaned = formulaCleaned.replace(/\([^()]*\)/g, '');
 
-      if (formulaCleaned.includes(',')) {
-        return "Ошибка: Для десятичных дробей используйте точку (3.14). Запятая вне функций недопустима.";
-      }
+      if (formulaCleaned.includes(',')) return "Ошибка: Для десятичных дробей используйте точку (3.14). Запятая вне функций недопустима.";
 
       let openBrackets = 0;
       for (let i = 0; i < formula.length; i++) {
@@ -554,7 +496,7 @@
         const funcRegex = new RegExp(`\\b${word}\\s*\\(`, 'g');
         if (funcRegex.test(formula)) {
           if (!ALLOWED_FUNCTIONS.has(word.toLowerCase())) {
-            return `Ошибка: Неизвестная функция "${word}". Допустимые: log, root, sqrt, sin, cos, tg, lg, ln.`;
+            return `Ошибка: Неизвестная функция "${word}". Допустимые: log, root, sqrt, sin, cos, tg, ctg, lg, ln, abs.`;
           }
         } else {
           if (ALLOWED_FUNCTIONS.has(word.toLowerCase()) && word !== target) {
@@ -569,11 +511,10 @@
           let match;
           while ((match = regex.exec(formula)) !== null) {
               if (!match[1].includes(',') && !match[1].includes(';')) {
-                  return `Ошибка в функции ${fn}: требуется 2 аргумента через запятую или точку с запятой, например ${fn}(2, 8)`;
+                  return `Ошибка в функции ${fn}: требуется 2 аргумента через запятую, например ${fn}(2, 8)`;
               }
           }
       }
-
       return null;
     }
 
@@ -605,21 +546,17 @@
         variablesContainer.innerHTML = `
           <div class="text-center py-6 text-gray-400 dark:text-slate-500 text-xs sm:text-sm">
             Переменные не обнаружены.<br>Введите формулу с переменными
-          </div>
-        `;
+          </div>`;
         return;
       }
 
       variablesContainer.innerHTML = currentVars.map(v => `
         <div class="flex items-center justify-between gap-2 bg-gray-50 dark:bg-slate-900/60 p-2 sm:p-3 rounded-xl border border-gray-200/60 dark:border-slate-700/60">
           <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base w-7 flex items-center justify-between shrink-0">
-            <span>${v}</span>
-            <span class="text-gray-400 dark:text-slate-500 font-normal text-xs sm:text-sm">=</span>
+            <span>${v}</span><span class="text-gray-400 dark:text-slate-500 font-normal text-xs sm:text-sm">=</span>
           </label>
-          
           <div class="relative w-full flex items-center">
             <input type="text" inputmode="decimal" data-var="${v}" value="${state.variables[v]}" autocomplete="off" class="var-input w-full pl-3 pr-10 py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white math-font text-left text-base sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-            
             <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
               <button type="button" aria-label="Увеличить" class="btn-step-up text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1.5 rounded leading-none transition-colors touch-btn" data-var="${v}">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
@@ -634,8 +571,7 @@
 
       const debouncedCalc = debounce(calculateResult, 80);
 
-      const inputs = variablesContainer.querySelectorAll('.var-input');
-      inputs.forEach(input => {
+      variablesContainer.querySelectorAll('.var-input').forEach(input => {
         input.addEventListener('input', (e) => {
           const varName = e.target.dataset.var;
           const numVal = parseFloat(e.target.value.replace(',', '.'));
@@ -645,38 +581,30 @@
         });
       });
 
-      const stepUpBtns = variablesContainer.querySelectorAll('.btn-step-up');
-      stepUpBtns.forEach(btn => {
+      variablesContainer.querySelectorAll('.btn-step-up').forEach(btn => {
         btn.addEventListener('click', () => {
           const varName = btn.dataset.var;
           const input = variablesContainer.querySelector(`.var-input[data-var="${varName}"]`);
           const val = (parseFloat(input.value.replace(',', '.')) || 0) + 1;
-          input.value = val;
-          state.variables[varName] = val;
-          checkForCommaDecimals(formulaInput.value);
-          calculateResult();
+          input.value = val; state.variables[varName] = val;
+          checkForCommaDecimals(formulaInput.value); calculateResult();
         }, { passive: true });
       });
 
-      const stepDownBtns = variablesContainer.querySelectorAll('.btn-step-down');
-      stepDownBtns.forEach(btn => {
+      variablesContainer.querySelectorAll('.btn-step-down').forEach(btn => {
         btn.addEventListener('click', () => {
           const varName = btn.dataset.var;
           const input = variablesContainer.querySelector(`.var-input[data-var="${varName}"]`);
           const val = (parseFloat(input.value.replace(',', '.')) || 0) - 1;
-          input.value = val;
-          state.variables[varName] = val;
-          checkForCommaDecimals(formulaInput.value);
-          calculateResult();
+          input.value = val; state.variables[varName] = val;
+          checkForCommaDecimals(formulaInput.value); calculateResult();
         }, { passive: true });
       });
     }
 
     function getNounPlural(number, one, two, five) {
-      let n = Math.abs(number);
-      n %= 100;
-      if (n >= 5 && n <= 20) return five;
-      n %= 10;
+      let n = Math.abs(number); n %= 100;
+      if (n >= 5 && n <= 20) return five; n %= 10;
       if (n === 1) return one;
       if (n >= 2 && n <= 4) return two;
       return five;
@@ -692,7 +620,9 @@
         .replace(/\bln\(([^)]+)\)/g, '\\ln\\left($1\\right)')
         .replace(/\bsin\(([^)]+)\)/g, '\\sin\\left($1\\right)')
         .replace(/\bcos\(([^)]+)\)/g, '\\cos\\left($1\\right)')
-        .replace(/\b(tan|tg)\(([^)]+)\)/g, '\\tan\\left($2\\right)');
+        .replace(/\b(?:tan|tg)\(([^)]+)\)/g, '\\tan\\left($1\\right)')
+        .replace(/\bctg\(([^)]+)\)/g, '\\cot\\left($1\\right)')
+        .replace(/\babs\(([^)]+)\)/g, '\\left|$1\\right|');
     }
 
     function renderMathPreview(syntaxError) {
@@ -715,11 +645,8 @@
       const latexExpr = `${target} = ${convertToLaTeX(rawFormula)}`;
 
       if (window.katex) {
-        try {
-          katex.render(latexExpr, mathPreview, { displayMode: true, throwOnError: false });
-        } catch (e) {
-          mathPreview.textContent = `${target} = ${rawFormula}`;
-        }
+        try { katex.render(latexExpr, mathPreview, { displayMode: true, throwOnError: false }); }
+        catch (e) { mathPreview.textContent = `${target} = ${rawFormula}`; }
       } else {
         mathPreview.textContent = `${target} = ${rawFormula}`;
       }
@@ -734,8 +661,9 @@
         .replace(/\bln\(([^)]+)\)/g, 'Math.log($1)')
         .replace(/\bsin\(([^)]+)\)/g, 'Math.sin($1)')
         .replace(/\bcos\(([^)]+)\)/g, 'Math.cos($1)')
-        .replace(/\btan\(([^)]+)\)/g, 'Math.tan($1)')
-        .replace(/\btg\(([^)]+)\)/g, 'Math.tan($1)')
+        .replace(/\b(?:tan|tg)\(([^)]+)\)/g, 'Math.tan($1)')
+        .replace(/\bctg\(([^)]+)\)/g, '(1/Math.tan($1))')
+        .replace(/\babs\(([^)]+)\)/g, 'Math.abs($1)')
         .replace(/\^/g, '**');
 
       return Function(`"use strict"; return (${jsExpr})`)();
@@ -749,15 +677,10 @@
 
     function setErrorState(errorMessage) {
       solutionSteps.innerHTML = `<div class="text-red-500 font-semibold flex items-center gap-2 text-xs sm:text-sm"><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>${errorMessage}</div>`;
-      
       resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden min-h-[160px] sm:min-h-[200px]";
-      resultLabel.className = "text-[10px] sm:text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider flex items-center gap-1.5";
       resultLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-red-500"></span>Ошибка`;
-      
-      const target = targetVarInput.value.trim() || 'y';
-      targetVarBadge.textContent = `${target} =`;
+      targetVarBadge.textContent = `${targetVarInput.value.trim() || 'y'} =`;
       targetVarBadge.className = "px-2.5 py-0.5 sm:py-1 rounded-md bg-red-500/15 text-red-800 dark:text-red-300 font-mono font-bold text-xs sm:text-sm border border-red-500/20";
-      
       finalResult.className = "text-lg sm:text-xl font-bold text-red-700 dark:text-red-300 mt-1 break-words";
       finalResult.textContent = "Ошибка";
       rawCalculatedValue = null;
@@ -765,29 +688,20 @@
 
     function setSuccessState() {
       resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[200px]";
-      resultLabel.className = "text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5";
       resultLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Результат`;
-      
-      const target = targetVarInput.value.trim() || 'y';
-      targetVarBadge.textContent = `${target} =`;
+      targetVarBadge.textContent = `${targetVarInput.value.trim() || 'y'} =`;
       targetVarBadge.className = "px-2.5 py-0.5 sm:py-1 rounded-md bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-mono font-bold text-xs sm:text-sm border border-emerald-500/20";
-      
       finalResult.className = "text-2xl sm:text-4xl font-extrabold text-emerald-900 dark:text-emerald-100 tracking-tight font-mono break-all drop-shadow-sm";
     }
 
     function updateResultDisplay() {
       if (rawCalculatedValue === null || isNaN(rawCalculatedValue)) return;
-      
       const precision = precisionSelect.value;
       let formattedVal = rawCalculatedValue;
 
-      if (precision === '2') {
-        formattedVal = parseFloat(rawCalculatedValue.toFixed(2));
-      } else if (precision === '4') {
-        formattedVal = parseFloat(rawCalculatedValue.toFixed(4));
-      } else {
-        formattedVal = formatNumber(rawCalculatedValue);
-      }
+      if (precision === '2') formattedVal = parseFloat(rawCalculatedValue.toFixed(2));
+      else if (precision === '4') formattedVal = parseFloat(rawCalculatedValue.toFixed(4));
+      else formattedVal = formatNumber(rawCalculatedValue);
 
       finalResult.textContent = formattedVal;
     }
@@ -801,11 +715,8 @@
       const syntaxError = validateFormulaSyntax(rawFormula);
       renderMathPreview(syntaxError);
 
-      if (syntaxError) {
-        setErrorState(syntaxError);
-        return;
-      }
-
+      if (syntaxError) return setErrorState(syntaxError);
+      
       if (!rawFormula) {
         solutionSteps.innerHTML = 'Введите формулу для расчёта';
         finalResult.textContent = '—';
@@ -821,11 +732,12 @@
         for (let i = 0; i < sortedVars.length; i++) {
           const v = sortedVars[i];
           const val = state.variables[v];
+          const safeVal = val < 0 ? `(${val})` : val;
           const regex = new RegExp(`\\b${v}\\b`, 'g');
-          substitutedStr = substitutedStr.replace(regex, val);
+          substitutedStr = substitutedStr.replace(regex, safeVal);
         }
 
-        const funcRegex = /(log\s*\([^)]+\)|root\s*\([^)]+\)|sqrt\s*\([^)]+\)|lg\s*\([^)]+\)|ln\s*\([^)]+\)|sin\s*\([^)]+\)|cos\s*\([^)]+\)|tg\s*\([^)]+\))/gi;
+        const funcRegex = /(log|root|sqrt|lg|ln|sin|cos|tg|ctg|tan|abs)\s*\((?:[^)(]+|\([^)(]*\))*\)/gi;
         const matchedFunctions = substitutedStr.match(funcRegex) || [];
 
         let stepHtml = [];
@@ -841,26 +753,19 @@
           for (let idx = 0; idx < matchedFunctions.length; idx++) {
             const fnCall = matchedFunctions[idx];
             const subVal = evalExpr(fnCall);
-            if (!isFinite(subVal) || isNaN(subVal)) {
-              hasMathError = true;
-            }
+            if (!isFinite(subVal) || isNaN(subVal)) hasMathError = true;
+            
             const formattedVal = formatNumber(subVal);
             stepHtml.push(`<div class="pl-2 sm:pl-3 text-[11px] sm:text-xs"><span class="text-gray-400">• Функция ${idx + 1}:</span> ${fnCall} = <b class="text-brand-600 dark:text-brand-300">${formattedVal}</b></div>`);
             processedStr = processedStr.replace(fnCall, formattedVal);
           }
-
-          stepHtml.push(`<div><span class="text-gray-400">4. Формула после вычисления функций:</span> ${target} = ${processedStr}</div>`);
+          stepHtml.push(`<div><span class="text-gray-400">4. Выражение после вычисления функций:</span> ${target} = ${processedStr}</div>`);
         }
 
         const finalVal = evalExpr(processedStr);
-        if (!isFinite(finalVal) || isNaN(finalVal)) {
-          hasMathError = true;
-        }
+        if (!isFinite(finalVal) || isNaN(finalVal)) hasMathError = true;
 
-        if (hasMathError || !isFinite(finalVal)) {
-          setErrorState("Ошибка вычисления: Деление на ноль невозможно или недопустимый аргумент функции.");
-          return;
-        }
+        if (hasMathError || !isFinite(finalVal)) return setErrorState("Ошибка вычисления: Деление на ноль невозможно или недопустимый аргумент функции.");
 
         rawCalculatedValue = finalVal;
         setSuccessState();
@@ -887,44 +792,34 @@
       const val = finalResult.textContent;
       if (val === '—' || val === 'Ошибка') return;
 
-      const textToCopy = `${target} = ${val}`;
-      navigator.clipboard.writeText(textToCopy);
+      navigator.clipboard.writeText(`${target} = ${val}`);
 
       const btn = document.getElementById('copyResultBtn');
       const originalHtml = btn.innerHTML;
-      
-      btn.innerHTML = `
-        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        <span>Скопировано!</span>
-      `;
-      btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
-      btn.classList.add('bg-slate-800', 'dark:bg-slate-700');
+      btn.innerHTML = `<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg><span>Скопировано!</span>`;
+      btn.classList.replace('bg-emerald-600', 'bg-slate-800');
+      btn.classList.replace('hover:bg-emerald-700', 'dark:bg-slate-700');
 
       setTimeout(() => {
         btn.innerHTML = originalHtml;
-        btn.classList.remove('bg-slate-800', 'dark:bg-slate-700');
-        btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+        btn.classList.replace('bg-slate-800', 'bg-emerald-600');
+        btn.classList.replace('dark:bg-slate-700', 'hover:bg-emerald-700');
       }, 1800);
     }, { passive: true });
 
     window.addEventListener('DOMContentLoaded', () => {
       onFormulaChange();
     });
+
     if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/sw.js').then((reg) => {
-                reg.update();
-              });
-            });
-        
-            let refreshing = false;
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-              if (!refreshing) {
-                refreshing = true;
-                window.location.reload();
-              }
-            });
-          }
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => reg.update());
+      });
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) { refreshing = true; window.location.reload(); }
+      });
+    }
   </script>
 </body>
 </html>
