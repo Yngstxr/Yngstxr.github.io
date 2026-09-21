@@ -15,8 +15,11 @@
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 
     <style>
-        html { visibility: hidden; opacity: 0; transition: opacity 0.2s ease-in; }
-        html.ready { visibility: visible; opacity: 1; }
+        html { background-color: #f8fafc; } 
+        html.dark { background-color: #0f172a; } 
+        
+        body { visibility: hidden; opacity: 0; }
+        body.ready { visibility: visible; opacity: 1; transition: opacity 0.2s ease-out; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -58,31 +61,43 @@
             }
         }
 
-        /* Корректировка для KaTeX в списке, чтобы не ломалась высота */
         .katex-display { margin: 0 !important; }
     </style>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         window.tailwind = {
-            config: {
-                darkMode: 'class'
-            }
+            config: { darkMode: 'class' }
         };
 
-        function showPage() {
-            document.documentElement.classList.add('ready');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
         }
 
-        if (window.tailwind) {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', showPage);
-            } else {
-                showPage();
-            }
-        } else {
-            window.addEventListener('load', showPage);
+        function showPage() {
+            if(document.body) document.body.classList.add('ready');
         }
+
+        let observer = new MutationObserver((mutations) => {
+            for (let m of mutations) {
+                for (let node of m.addedNodes) {
+                    if (node.tagName === 'STYLE' && (node.innerHTML.includes('tailwind') || node.innerHTML.includes('--tw-'))) {
+                        observer.disconnect();
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', showPage);
+                        } else {
+                            showPage();
+                        }
+                    }
+                }
+            }
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+
+        window.addEventListener('load', () => { observer.disconnect(); showPage(); });
+        setTimeout(() => { observer.disconnect(); showPage(); }, 2500);
     </script>
 
     <script type="text/javascript">
@@ -291,9 +306,9 @@
             { id:"m18", title:"Центростремительное ускорение", category:"Механика", description:"Ускорение при вращении по круговой орбите.", formula:"a_ц = v² / R", inputs:[{id:"v", label:"Скорость v (м/с)", val:10}, {id:"r", label:"Радиус R (м)", val:5}], calc:(w) => w.r<=0 ? "Ошибка":"a_ц = " + (w.v*w.v/w.r).toFixed(2) + " м/с²" },
             { id:"m19",title:"Первая космическая скорость",category:"Механика",description:"Скорость, которую необходимо сообщить телу, чтобы оно стало спутником планеты.",formula:"v₁ = √(G · M / R)",inputs:[{id:"gConst",label:"Гравитационная постоянная G (Н·м²/кг²)",val:6.674e-11},{id:"m",label:"Масса планеты M (кг)",val:5.97e24},{id:"r",label:"Радиус планеты R (м)",val:6371000}],calc:(w)=>w.m<=0||w.r<=0||w.gConst<=0?"Ошибка":"Скорость v = "+Math.sqrt((w.gConst*w.m)/w.r).toFixed(2)+" м/с" },
             { id:"m20",title:"Вторая космическая скорость",category:"Механика",description:"Минимальная скорость, которую необходимо сообщить телу, чтобы оно преодолело гравитационное притяжение планеты.",formula:"v₂ = √(2G · M / R)",inputs:[{id:"gConst",label:"Гравитационная постоянная G (Н·м²/кг²)",val:6.674e-11},{id:"m",label:"Масса планеты M (кг)",val:5.97e24},{id:"r",label:"Радиус планеты R (м)",val:6371000}],calc:(w)=>w.m<=0||w.r<=0||w.gConst<=0?"Ошибка":"Скорость v₂ = "+Math.sqrt((2*w.gConst*w.m)/w.r).toFixed(2)+" м/с" },
-            { id:"m21",title:"Третья космическая скорость",category:"Механика",description:"Минимальная скорость, которую необходимо сообщить телу у поверхности Земли, чтобы оно преодолело притяжение Солнца и покинуло Солнечную систему.",formula:"v₃ = √((√2 - 1)² · v_z² + v₂²)",inputs:[{id:"vz",label:"Орбитальная скорость планеты v_z (м/с)",val:29780},{id:"v2",label:"Вторая космическая скорость v₂ (м/с)",val:11200}],calc:(w)=>w.vz<=0||w.v2<=0?"Ошибка":"Скорость v₃ = "+Math.sqrt(Math.pow(Math.sqrt(2)-1,2)*w.vz*w.vz+w.v2*w.v2).toFixed(2)+" м/с" },
+            { id:"m21",title:"Третья космическая скорость",category:"Механика",description:"Минимальная скорость, которую необходимо сообщить телу у поверхности Земли, чтобы оно преодолело притяжение Солнца и покинуло Солнечную систему.",formula:"v₃ = √(v_z² + v₂²·(√2 - 1))²",inputs:[{id:"vz",label:"Орбитальная скорость планеты v_z (м/с)",val:29780},{id:"v2",label:"Вторая космическая скорость v₂ (м/с)",val:11200}],calc:(w)=>w.vz<=0||w.v2<=0?"Ошибка":"Скорость v₃ = "+Math.sqrt(Math.pow(Math.sqrt(2)-1,2)*w.vz*w.vz+w.v2*w.v2).toFixed(2)+" м/с" },
             { id:"m22",title:"Четвертая космическая скорость",category:"Механика",description:"Минимальная скорость, которую необходимо сообщить телу, чтобы оно преодолело притяжение галактики и покинуло её.",formula:"v₄ = √2 · v_гал",inputs:[{id:"vGal",label:"Орбитальная скорость галактики v_гал (м/с)",val:220000}],calc:(w)=>w.vGal<=0?"Ошибка":"Скорость v₄ = "+(Math.sqrt(2)*w.vGal).toFixed(2)+" м/с" },
-            { id: "m23", title: "Закон всемирного тяготения Ньютона", category: "Механика", description: "Взаимное гравитационное притяжение двух масс.", formula: "F = G · m₁ · m₂ / r²", inputs: [{ id: "m1", label: "Масса m₁ (кг)", val: 5.97e24 }, { id: "m2", label: "Масса m₂ (кг)", val: 7.34e22 }, { id: "r", label: "Дистанция r (м)", val: 3.84e8 }], calc: w => w.r <= 0 ? "Ошибка" : `Сила F = ${(CONSTS.G * w.m1 * w.m2 / (w.r * w.r)).toExponential(4)} Н` },
+            { id: "m23", title: "Закон всемирного тяготения Ньютона", category: "Механика", description: "Взаимное гравитационное притяжение двух масс.", formula: "F = G  ( m₁ · m₂ ) / r²", inputs: [{ id: "m1", label: "Масса m₁ (кг)", val: 5.97e24 }, { id: "m2", label: "Масса m₂ (кг)", val: 7.34e22 }, { id: "r", label: "Дистанция r (м)", val: 3.84e8 }], calc: w => w.r <= 0 ? "Ошибка" : `Сила F = ${(CONSTS.G * ((w.m1 * w.m2) / (w.r * w.r))).toExponential(4)} Н` },
             { id:"m24",title:"Сила тяжести",category:"Механика",description:"Сила, с которой Земля или другое астрономическое тело притягивает к себе все находящиеся вблизи него физические тела.",formula:"F = m · g",inputs:[{id:"m",label:"Масса тела m (кг)",val:5},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81}],calc:(w)=>w.m<=0||w.g<=0?"Ошибка":"Сила тяжести F = "+(w.m*w.g).toFixed(2)+" Н" },
             { id:"m25",title:"Вес тела при движении с ускорением вверх",category:"Механика",description:"Сила, с которой тело воздействует на опору или подвес при движении вертикально вверх с ускорением (перегрузка).",formula:"P = m · (g + a)",inputs:[{id:"m",label:"Масса тела m (кг)",val:5},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81},{id:"a",label:"Ускорение движения a (м/с²)",val:2}],calc:(w)=>w.m<=0||w.g<=0||w.a<0?"Ошибка":"Вес тела P = "+(w.m*(w.g+w.a)).toFixed(2)+" Н" },
             { id:"m26",title:"Вес тела при движении с ускорением вниз",category:"Механика",description:"Сила, с которой тело воздействует на опору или подвес при движении вертикально вниз с ускорением (уменьшение веса или невесомость).",formula:"P = m · (g - a)",inputs:[{id:"m",label:"Масса тела m (кг)",val:5},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81},{id:"a",label:"Ускорение движения a (м/с²)",val:2}],calc:(w)=>w.m<=0||w.g<=0||w.a<0?"Ошибка":w.a>w.g?"Тело оторвется от опоры":"Вес тела P = "+(w.m*(w.g-w.a)).toFixed(2)+" Н" },
@@ -304,21 +319,21 @@
             { id:"m33", title:"Импульс тела", category:"Механика", description:"Количество движения материальной точки.", formula:"p = m · v", inputs:[{id:"m", label:"Масса m (кг)", val:5}, {id:"v", label:"Скорость v (м/с)", val:8}], calc:(w) => `Импульс p = ${(w.m * w.v).toFixed(2)} кг·м/с` },
             { id:"m34", title:"Импульс силы", category:"Механика", description:"Мера изменения импульса тела под воздействием силы.", formula:"J = F · t", inputs:[{id:"f", label:"Сила F (Н)", val:15}, {id:"t", label:"Время действия t (с)", val:3}], calc:(w) => `Импульс силы J = ${(w.f * w.t).toFixed(2)} Н·с` },
             { id:"m35",title:"Момент импульса материальной точки",category:"Механика",description:"Мера вращательного движения тела, зависящая от его массы, скорости и расстояния до оси вращения.",formula:"L = m · v · r",inputs:[{id:"m",label:"Масса тела m (кг)",val:2},{id:"v",label:"Скорость v (м/с)",val:5},{id:"r",label:"Радиус-вектор r (м)",val:1.5}],calc:(w)=>w.m<=0||w.v<=0||w.r<=0?"Ошибка":"Момент импульса L = "+(w.m*w.v*w.r).toFixed(2)+" кг·м²/с" },
-            { id:"m36", title:"Закон сохранения импульса (2 тела, соударение)", category:"Механика", description:"Результирующая скорость абсолютно неупругого удара.", formula:"u = (m₁v₁ + m₂v₂) / (m₁ + m₂)", inputs:[{id:"m1", label:"m₁ (кг)", val:2}, {id:"v1", label:"v₁ (м/с)", val:6}, {id:"m2", label:"m₂ (кг)", val:3}, {id:"v2", label:"v₂ (м/с)", val:1}], calc:(w) => (w.m1+w.m2)<=0 ? "Ошибка":"Скорость u = " + ((w.m1*w.v1 + w.m2*w.v2)/(w.m1+w.m2)).toFixed(2) + " м/с" },
+            { id:"m36", title:"Закон сохранения импульса (2 тела, соударение)", category:"Механика", description:"Результирующая скорость абсолютно неупругого удара.", formula:"u = (m₁·v₁ + m₂·v₂) / (m₁ + m₂)", inputs:[{id:"m1", label:"m₁ (кг)", val:2}, {id:"v1", label:"v₁ (м/с)", val:6}, {id:"m2", label:"m₂ (кг)", val:3}, {id:"v2", label:"v₂ (м/с)", val:1}], calc:(w) => (w.m1+w.m2)<=0 ? "Ошибка":"Скорость u = " + ((w.m1*w.v1 + w.m2*w.v2)/(w.m1+w.m2)).toFixed(2) + " м/с" },
             { id:"m37", title:"Механическая работа силы", category:"Механика", description:"Работа постоянной силы при перемещении по вектору.", formula:"A = F · S · cos(α)", inputs:[{id:"f", label:"Сила F (Н)", val:40}, {id:"s", label:"Путь S (м)", val:5}, {id:"a", label:"Угол α (градусы)", val:0}], calc:(w) => `Работа A = ${(w.f * w.s * Math.cos(w.a * Math.PI / 180)).toFixed(2)} Дж` },
             { id:"m38", title:"Механическая мощность", category:"Механика", description:"Скорость совершения работы силой.", formula:"N = F · v", inputs:[{id:"f", label:"Сила F (Н)", val:300}, {id:"v", label:"Скорость v (м/с)", val:15}], calc:(w) => `Мощность N = ${(w.f * w.v).toFixed(2)} Вт` },
             { id:"m39",title:"Работа силы трения",category:"Механика",description:"Работа, совершаемая силой трения при перемещении тела. Знак минус показывает, что сила направлена против движения.",formula:"A = -Fтр · Δr",inputs:[{id:"fTr",label:"Сила трения Fтр (Н)",val:10},{id:"dR",label:"Перемещение Δr (м)",val:5}],calc:(w)=>w.fTr<0||w.dR<0?"Ошибка":"Работа силы трения A = "+(-Math.abs(w.fTr)*Math.abs(w.dR)).toFixed(2)+" Дж" },
             { id:"m40",title:"Механическая мощность через скорость",category:"Механика",description:"Мгновенная мощность силы, действующей на движущееся тело, выраженная через его скорость и угол между направлениями силы и скорости.",formula:"N = F · v · cos(α)",inputs:[{id:"f",label:"Сила F (Н)",val:50},{id:"v",label:"Скорость v (м/с)",val:4},{id:"aDeg",label:"Угол α (градусы)",val:0}],calc:(w)=>w.f<0||w.v<0?"Ошибка":"Мощность N = "+(w.f*w.v*Math.cos(w.aDeg*Math.PI/180)).toFixed(2)+" Вт" },
-            { id:"m41",title:"Период пружинного маятника",category:"Механика",description:"Время полного колебания груза на упругой пружине.",formula:"T = 2π · √(m / k)",inputs:[{id:"m",label:"Масса груза m (кг)",val:0.4},{id:"k",label:"Жесткость k (Н/м)",val:160}],calc:(w)=>w.k<=0||w.m<0?"Ошибка":"Период T = "+(2*Math.PI*Math.sqrt(w.m/w.k)).toFixed(3)+" с или "+(((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000)))===1?"π":((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000)))+"π")+( (Math.round(Math.sqrt(w.k/w.m)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000)))===1?"":"/"+(Math.round(Math.sqrt(w.k/w.m)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000))) )+" с" },
-            { id:"m42",title:"Период математического маятника",category:"Механика",description:"Период колебаний нитяного маятника в поле тяжести.",formula:"T = 2π · √(l / g)",inputs:[{id:"l",label:"Длина нити l (м)",val:1},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81}],calc:(w)=>w.l<0||w.g<=0?"Ошибка":"Период T = "+(2*Math.PI*Math.sqrt(w.l/w.g)).toFixed(3)+" с или "+(((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000)))===1?"π":((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000)))+"π")+( (Math.round(Math.sqrt(w.g/w.l)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000)))===1?"":"/"+(Math.round(Math.sqrt(w.g/w.l)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000))) )+" с" },
-            { id:"m43", title:"Циклическая частота пружинного маятника", category:"Механика", description:"Собственная круговая частота пружинной колебательной системы.", formula:"ω = √(k / m)", inputs:[{id:"k", label:"Жесткость k (Н/м)", val:100}, {id:"m", label:"Масса груза m (кг)", val:0.25}], calc:(w) => w.m<=0||w.k<0 ? "Ошибка":"ω = " + Math.sqrt(w.k/w.m).toFixed(2) + " рад/с" },
+            { id:"m41",title:"Период пружинного маятника",category:"Механика",description:"Время полного колебания груза на упругой пружине.",formula:"T = 2 · π · √( m / (k) )",inputs:[{id:"m",label:"Масса груза m (кг)",val:0.4},{id:"k",label:"Жесткость k (Н/м)",val:160}],calc:(w)=>w.k<=0||w.m<0?"Ошибка":"Период T = "+(2*Math.PI*Math.sqrt(w.m/w.k)).toFixed(3)+" с или "+(((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000)))===1?"π":((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000)))+"π")+( (Math.round(Math.sqrt(w.k/w.m)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000)))===1?"":"/"+(Math.round(Math.sqrt(w.k/w.m)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.k/w.m)*1000))) )+" с" },
+            { id:"m42",title:"Период математического маятника",category:"Механика",description:"Период колебаний нитяного маятника в поле тяжести.",formula:"T = 2π · √( l / (g) )",inputs:[{id:"l",label:"Длина нити l (м)",val:1},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81}],calc:(w)=>w.l<0||w.g<=0?"Ошибка":"Период T = "+(2*Math.PI*Math.sqrt(w.l/w.g)).toFixed(3)+" с или "+(((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000)))===1?"π":((2*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000)))+"π")+( (Math.round(Math.sqrt(w.g/w.l)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000)))===1?"":"/"+(Math.round(Math.sqrt(w.g/w.l)*1000)/((a,b)=>b?(function g(x,y){return y?g(y,x%y):x})(a,b):a)(2*1000,Math.round(Math.sqrt(w.g/w.l)*1000))) )+" с" },
+            { id:"m43", title:"Циклическая частота пружинного маятника", category:"Механика", description:"Собственная круговая частота пружинной колебательной системы.", formula:"ω = √( k / (m) )", inputs:[{id:"k", label:"Жесткость k (Н/м)", val:100}, {id:"m", label:"Масса груза m (кг)", val:0.25}], calc:(w) => w.m<=0||w.k<0 ? "Ошибка":"ω = " + Math.sqrt(w.k/w.m).toFixed(2) + " рад/с" },
             { id:"m44", title:"Полная энергия пружинного маятника", category:"Механика", description:"Запасаемая механическая энергия колебательной структуры.", formula:"E = k · A² / 2", inputs:[{id:"k", label:"Жесткость k (Н/м)", val:200}, {id:"a", label:"Амплитуда A (м)", val:0.05}], calc:(w) => `Энергия E = ${(0.5 * w.k * w.a * w.a).toFixed(4)} Дж` },
             { id:"m45", title:"Уравнение колебаний (смещение)", category:"Механика", description:"Мгновенная координата при синусоидальном гармоническом движении.", formula:"x = A · cos(ω · t)", inputs:[{id:"a", label:"Амплитуда A (м)", val:0.05}, {id:"w", label:"Частота ω (рад/с)", val:4}, {id:"t", label:"Время t (с)", val:2}], calc:(w) => `Смещение x = ${(w.a * Math.cos(w.w * w.t)).toFixed(4)} м` },
             { id:"m46", title:"Амплитуда скорости при колебаниях", category:"Механика", description:"Максимальная скорость в гармоническом процессе.", formula:"v_max = A · ω", inputs:[{id:"a", label:"Амплитуда A (м)", val:0.02}, {id:"w", label:"Частота ω (рад/с)", val:10}], calc:(w) => `v_max = ${(w.a * w.w).toFixed(3)} м/с` },
             { id:"m47", title:"Амплитуда ускорения при колебаниях", category:"Механика", description:"Пиковое ускорение колебательного движения.", formula:"a_max = A · ω²", inputs:[{id:"a", label:"Амплитуда A (м)", val:0.02}, {id:"w", label:"Частота ω (рад/с)", val:10}], calc:(w) => `a_max = ${(w.a * w.w * w.w).toFixed(2)} м/с²` },
             { id:"m48", title:"Длина волны через период", category:"Механика", description:"Пространственный период волны.", formula:"λ = v · T", inputs:[{id:"v", label:"Скорость v (м/с)", val:340}, {id:"t", label:"Период T (с)", val:0.002}], calc:(w) => `Длина волны λ = ${(w.v * w.t).toFixed(3)} м` },
             { id:"m49", title:"Связь скорости и длины волны", category:"Механика", description:"Скорость распространения волнового фронта.", formula:"v = λ · ν", inputs:[{id:"l", label:"Длина волны λ (м)", val:0.5}, {id:"n", label:"Частота ν (Гц)", val:680}], calc:(w) => `Скорость волны v = ${(w.l * w.n).toFixed(1)} м/с` },
-            { id:"m50", title:"Разность фаз колебаний", category:"Механика", description:"Сдвиг фаз между точками, удаленными на расстояние Δx.", formula:"Δφ = 2π · Δx / λ", inputs:[{id:"dx", label:"Расстояние Δx (м)", val:0.1}, {id:"l", label:"Длина волны λ (м)", val:0.4}], calc:(w) => w.l<=0 ? "Ошибка":"Δφ = " + ((2*Math.PI*w.dx)/w.l).toFixed(3) + " рад" },
+            { id:"m50", title:"Разность фаз колебаний", category:"Механика", description:"Сдвиг фаз между точками, удаленными на расстояние Δx.", formula:"Δφ = 2π · (Δx) / λ", inputs:[{id:"dx", label:"Расстояние Δx (м)", val:0.1}, {id:"l", label:"Длина волны λ (м)", val:0.4}], calc:(w) => w.l<=0 ? "Ошибка":"Δφ = " + ((2*Math.PI*w.dx)/w.l).toFixed(3) + " рад" },
             { id:"m41",title:"Гидростатическое давление",category:"Механика",description:"Давление, оказываемое неподвижной жидкостью, находящейся в равновесии, на любую покоящуюся в ней поверхность.",formula:"p = ρ · g · h",inputs:[{id:"rho",label:"Плотность жидкости ρ (кг/м³)",val:1000},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81},{id:"h",label:"Высота столба жидкости h (м)",val:1}],calc:(w)=>w.rho<=0||w.g<=0||w.h<0?"Ошибка":"Давление p = "+(w.rho*w.g*w.h).toFixed(2)+" Па" },
             { id:"m51", title:"Полное гидростатическое давление", category:"Механика", description:"Давление столба жидкости на глубине h с учетом атмосферного.", formula:"P = P₀ + ρ · g · h", inputs:[{id:"p0", label:"Атмосферное P₀ (Па)", val:101325},{id:"g",label:"Ускорение свободного падения g (м/с²)",val:9.81}, {id:"rho", label:"Плотность ρ (кг/м³)", val:1000}, {id:"h", label:"Глубина h (м)", val:10}], calc:(w) => `Полное давление P = ${(w.p0 + w.rho * g * w.h).toFixed(0)} Па` },
             { id:"m52", title:"Сила давления через паскали", category:"Механика", description:"Сила, действующая перпендикулярно поверхности.", formula:"F = P · S", inputs:[{id:"p", label:"Давление P (Па)", val:100000}, {id:"s", label:"Площадь S (м²)", val:0.5}], calc:(w) => `Сила давления F = ${(w.p * w.s).toFixed(1)} Н` },
@@ -326,14 +341,14 @@
             { id:"m54", title:"Сила трения скольжения", category:"Механика", description:"Сила сопротивления при относительном перемещении.", formula:"F_тр = μ · N", inputs:[{id:"mu", label:"Коэффициент трения μ", val:0.25}, {id:"n", label:"Прижимная сила N (Н)", val:200}], calc:(w) => `Сила трения F_тр = ${(w.mu * w.n).toFixed(2)} Н` },
             { id:"m55", title:"Сила упругости (Закон Гука)", category:"Механика", description:"Возникает при деформации конструкции.", formula:"F_упр = k · x", inputs:[{id:"k", label:"Жесткость k (Н/м)", val:2000}, {id:"x", label:"Смещение x (м)", val:0.02}], calc:(w) => `Сила упругости F_упр = ${(w.k * w.x).toFixed(2)} Н` },
             { id:"m56", title:"Момент силы", category:"Механика", description:"Вращательное действие силы на рычаг.", formula:"M = F · d", inputs:[{id:"f", label:"Сила F (Н)", val:50}, {id:"d", label:"Плечо силы d (м)", val:0.4}], calc:(w) => `Момент M = ${(w.f * w.d).toFixed(2)} Н·м` },
-            { id:"m57", title:"КПД механизма", category:"Механика", description:"Эффективность передачи энергии машиной.", formula:"η = (A_пол / A_затр) · 100", inputs:[{id:"a1", label:"Полезная работа (Дж)", val:450}, {id:"a2", label:"Затраченная работа (Дж)", val:600}], calc:(w) => w.a2<=0 ? "Ошибка":"КПД η = " + ((w.a1/w.a2)*100).toFixed(1) + "%" },
+            { id:"m57", title:"КПД механизма", category:"Механика", description:"Эффективность передачи энергии машиной.", formula:"η = (A_пол) / (A_затр) · 100\\%", inputs:[{id:"a1", label:"Полезная работа (Дж)", val:450}, {id:"a2", label:"Затраченная работа (Дж)", val:600}], calc:(w) => w.a2<=0 ? "Ошибка":"КПД η = " + ((w.a1/w.a2)*100).toFixed(1) + " %" },
             { id:"m58", title:"Гидравлический пресс", category:"Механика", description:"Выигрыш в силе за счет разности площадей поршней.", formula:"F₂ = F₁ · (S₂ / S₁)", inputs:[{id:"f1", label:"Сила на малый поршень F₁ (Н)", val:100}, {id:"s1", label:"Площадь малая S₁ (см²)", val:10}, {id:"s2", label:"Площадь большая S₂ (см²)", val:250}], calc:(w) => w.s1<=0 ? "Ошибка":"Сила F₂ = " + (w.f1*(w.s2/w.s1)).toFixed(1) + " Н" },
             { id:"m59", title:"Давление твердого тела", category:"Механика", description:"Сила распределенная по опорной площади.", formula:"P = F / S", inputs:[{id:"f", label:"Сила F (Н)", val:500}, {id:"s", label:"Площадь S (м²)", val:0.2}], calc:(w) => w.s<=0 ? "Ошибка":"Давление P = " + (w.f/w.s).toFixed(1) + " Па" },
             { id:"mk1", title:"Количество вещества через массы", category:"МКТ", description:"Число молей порции газа или твердого тела.", formula:"ν = m / M", inputs:[{id:"m", label:"Масса вещества m (г)", val:54}, {id:"molar", label:"Молярная масса M (г/моль)", val:18}], calc:(w) => w.molar<=0 ? "Ошибка":"ν = " + (w.m/w.molar).toFixed(3) + " моль" },
             { id:"mk2", title:"Количество вещества через число частиц", category:"МКТ", description:"Число молей через постоянную Авогадро.", formula:"ν = N / N_A", inputs:[{id:"n", label:"Абсолютное число молекул N", val:1.204e24},{id:"na", label:"Постоянная Авогадро N_a", val:6.02214e23} ], calc:(w) => `ν = ${(w.n / w.na).toFixed(3)} моль` },
-            { id:"mk3",title:"Относительная молекулярная масса",category:"МКТ",description:"Значение массы молекулы (или атома), выраженное в атомных единицах массы (а.е.м.).",formula:"Mr = m₀ / (1/12 · m₀C)",inputs:[{id:"m0",label:"Масса молекулы m₀ (кг)",val:2.99e-26},{id:"mC",label:"Масса атома углерода-12 m₀C (кг)",val:1.993e-26}],calc:(w)=>w.m0<=0||w.mC<=0?"Ошибка":"Относительная масса Mr = "+(w.m0/(w.mC/12)).toFixed(2) },
+            { id:"mk3",title:"Относительная молекулярная масса",category:"МКТ",description:"Значение массы молекулы (или атома), выраженное в атомных единицах массы (а.е.м.).",formula:"M_r = (m_0) /  ( 1/12 · m₀C )",inputs:[{id:"m0",label:"Масса молекулы m₀ (кг)",val:2.99e-26},{id:"mC",label:"Масса атома углерода-12 m₀C (кг)",val:1.993e-26}],calc:(w)=>w.m0<=0||w.mC<=0?"Ошибка":"Относительная масса Mr = "+(w.m0/(w.mC/12)).toFixed(2) },
             { id:"mk3", title:"Масса одной молекулы", category:"МКТ", description:"Абсолютная масса одиночной структурной единицы.", formula:"m₀ = M / N_A", inputs:[{id:"molar", label:"Молярная масса M (кг/моль)", val:0.032},{id:"na", label:"Постоянная Авогадро N_a", val:6.02214e23}], calc:(w) => `m₀ = ${(w.molar / w.na).toExponential(5)} кг` },
-            { id:"mk4",title:"Молярная масса через относительную массу",category:"МКТ",description:"Масса одного моля вещества, выраженная через его относительную молекулярную массу.",formula:"M = Mr · 10⁻³",inputs:[{id:"mr",label:"Относительная молекулярная масса Mr",val:18}],calc:(w)=>w.mr<=0?"Ошибка":"Молярная масса M = "+(w.mr*1e-3).toFixed(5)+" кг/моль" },
+            { id:"mk4",title:"Молярная масса через относительную массу",category:"МКТ",description:"Масса одного моля вещества, выраженная через его относительную молекулярную массу.",formula:"M = M_r · 10^{-3}",inputs:[{id:"mr",label:"Относительная молекулярная масса Mr",val:18}],calc:(w)=>w.mr<=0?"Ошибка":"Молярная масса M = "+(w.mr*1e-3).toFixed(5)+" кг/моль" },
             { id:"mk5",title:"Масса вещества через плотность",category:"МКТ",description:"Масса тела или порции вещества, выраженная через его плотность и занимаемый им объём.",formula:"m = ρ · V",inputs:[{id:"rho",label:"Плотность вещества ρ (кг/м³)",val:1.29},{id:"v",label:"Объём V (м³)",val:2}],calc:(w)=>w.rho<=0||w.v<=0?"Ошибка":"Масса m = "+(w.rho*w.v).toFixed(2)+" кг" },
             { id:"mk6",title:"Плотность вещества через концентрацию",category:"МКТ",description:"Плотность вещества, выраженная через массу одной молекулы и концентрацию (число молекул в единице объёма).",formula:"ρ = m₀ · n",inputs:[{id:"m0",label:"Масса одной молекулы m₀ (кг)",val:4.65e-26},{id:"n",label:"Концентрация молекул n (м⁻³)",val:2.7e25}],calc:(w)=>w.m0<=0||w.n<=0?"Ошибка":"Плотность ρ = "+(w.m0*w.n).toFixed(2)+" кг/м³" },
             { id:"mk7",title:"Количество вещества через объём газа",category:"МКТ",description:"Отношение общего объёма газа к молярному объёму при определенных условиях, показывающее число молей газа.",formula:"ν = V / Vm",inputs:[{id:"v",label:"Объём газа V (л)",val:44.8},{id:"vM",label:"Молярный объём Vm (л/моль)",val:22.4}],calc:(w)=>w.v<0||w.vM<=0?"Ошибка":"Количество вещества ν = "+(w.v/w.vM).toFixed(2)+" моль" },
@@ -343,7 +358,7 @@
             { id:"mk11",title:"Основное уравнение МКТ идеального газа через кинетическую энергию",category:"МКТ",description:"Связь давления газа с его концентрацией и средней кинетической энергией поступательного движения молекул.",formula:"p = 2/3 · n · E",inputs:[{id:"n",label:"Концентрация молекул n (м⁻³)",val:2.7e25},{id:"eKin",label:"Средняя кинетическая энергия E (Дж)",val:6.21e-21}],calc:(w)=>w.n<=0||w.eKin<0?"Ошибка":"Давление p = "+(2/3*w.n*w.eKin).toFixed(2)+" Па" },
             { id:"mk12",title:"Средняя квадратичная скорость молекул через массу молекулы",category:"МКТ",description:"Скорость теплового движения молекул газа, зависящая от температуры и массы одной молекулы.",formula:"v_кв = √(3 · k · T / m₀)",inputs:[{id:"t",label:"Температура T (К)",val:300},{id:"m0",label:"Масса одной молекулы m₀ (кг)",val:4.65e-26},{id:"k",label:"Постоянная Больцмана k (Дж/К)",val:1.38e-23}],calc:(w)=>w.t<0||w.m0<=0||w.k<=0?"Ошибка":"Скорость v_кв = "+Math.sqrt(3*w.k*w.t/w.m0).toFixed(2)+" м/с" },
             { id:"mk13", title:"Средняя квадратичная скорость молекулы", category:"МКТ", description:"Скорость хаотического теплового дрейфа.", formula:"v_кв = √(3 · R · T / M)", inputs:[{id:"t", label:"Температура T (К)", val:293},{id:"R", label:"Универсальная газовая постоянная R (Дж/(моль · К))", val:8.31446}, {id:"molar", label:"Молярная M (кг/моль)", val:0.028}], calc:(w) => w.molar<=0 ? "Ошибка":"v_кв = " + Math.sqrt(3*w.R*w.t/w.molar).toFixed(2) + " м/с" },
-            { id:"mk14", title:"Средняя кинетическая энергия молекул", category:"МКТ", description:"Энергия поступательного теплового хаоса частиц.", formula:"E_к = (3/2) · k · T", inputs:[{id:"k",label:"Постоянная Больцмана k (Дж/К)",val:1.38e-23},{id:"t", label:"Температура T (К)", val:300}], calc:(w) => `Энергия E_к = ${(1.5 * w.k * w.t).toExponential(4)} Дж` },
+            { id:"mk14", title:"Средняя кинетическая энергия молекул", category:"МКТ", description:"Энергия поступательного теплового хаоса частиц.", formula:"E_к = 3/2 · k · T", inputs:[{id:"k",label:"Постоянная Больцмана k (Дж/К)",val:1.38e-23},{id:"t", label:"Температура T (К)", val:300}], calc:(w) => `Энергия E_к = ${(1.5 * w.k * w.t).toExponential(4)} Дж` },
             { id:"mk15",title:"Давление газа из уравнения Менделеева-Клапейрона",category:"МКТ",description:"Выражение для давления идеального газа через его массу, молярную массу, объём и температуру.",formula:"p = (m · R · T) / (M · V)",inputs:[{id:"m",label:"Масса газа m (кг)",val:0.032},{id:"v",label:"Объём V (м³)",val:0.0224},{id:"mMass",label:"Молярная масса M (кг/моль)",val:0.032},{id:"t",label:"Температура T (К)",val:273.15},{id:"r",label:"Универсальная газовая постоянная R (Дж/(моль·К))",val:8.31}],calc:(w)=>w.m<0||w.v<=0||w.mMass<=0||w.t<0||w.r<=0?"Ошибка":"Давление p = "+((w.m*w.r*w.t)/(w.mMass*w.v)).toFixed(2)+" Па" },
             { id:"mk16",title:"Объём газа из уравнения Менделеева-Клапейрона",category:"МКТ",description:"Выражение для объёма идеального газа через его массу, молярную массу, давление и температуру.",formula:"V = (m · R · T) / (M · p)",inputs:[{id:"m",label:"Масса газа m (кг)",val:0.032},{id:"p",label:"Давление p (Па)",val:101325},{id:"mMass",label:"Молярная масса M (кг/моль)",val:0.032},{id:"t",label:"Температура T (К)",val:273.15},{id:"r",label:"Универсальная газовая постоянная R (Дж/(моль·К))",val:8.31}],calc:(w)=>w.m<0||w.p<=0||w.mMass<=0||w.t<0||w.r<=0?"Ошибка":"Объём V = "+((w.m*w.r*w.t)/(w.mMass*w.p)).toFixed(5)+" м³" },
             { id:"mk17", title:"Уравнение Менделеева-Клапейрона", category:"МКТ", description:"Связывает термодинамические параметры идеального газа.", formula:"P = (ν · R · T) / V", inputs:[{id:"v_mol", label:"Количество вещества ν (моль)", val:2},{id:"R", label:"Универсальная газовая постоянная R (Дж/(моль · К))", val:8.31446}, {id:"t_kelvin", label:"Температура T (К)", val:300}, {id:"vol", label:"Объем V (м³)", val:0.05}], calc:(w) => w.vol<=0 ? "Ошибка":"Давление P = " + (w.v_mol*w.R*w.t_kelvin/w.vol).toFixed(1) + " Па" },
@@ -351,8 +366,8 @@
             { id: "mk19", title: "Закон Бойля-Мариотта (Изотермический процесс)", category: "МКТ", description: "Оставьте 0 для искомого параметра.", formula: "p₁ · V₁ = p₂ · V₂", inputs: [{ id: "p1", label: "P₁ (Па)", val: 100000 }, { id: "v1", label: "V₁ (м³)", val: 2 }, { id: "p2", label: "P₂ (Па)", val: 0 }, { id: "v2", label: "V₂ (м³)", val: 1 }], calc: w => solveGasEq({ p1: w.p1, v1: w.v1, p2: w.p2, v2: w.v2 }, { p1: v => `P₁ = ${(v.p2 * v.v2 / v.v1).toFixed(0)} Па`, v1: v => `V₁ = ${(v.p2 * v.v2 / v.p1).toFixed(4)} м³`, p2: v => `P₂ = ${(v.p1 * v.v1 / v.v2).toFixed(0)} Па`, v2: v => `V₂ = ${(v.p1 * v.v1 / v.p2).toFixed(4)} м³` }) },
             { id:"mk20",title:"Закон Шарля (Изохорный процесс)",category:"МКТ",description:"Оставьте пустым или введите 0 для параметра, который необходимо найти. Объём и масса газа постоянны.",formula:"p₁ / T₁ = p₂ / T₂",inputs:[{id:"p1",label:"P₁ (Па)",val:100000},{id:"t1",label:"T₁ (К)",val:293},{id:"p2",label:"P₂ (Па)",val:0},{id:"t2",label:"T₂ (К)",val:350}],calc:(w)=>{const vars={p1:w.p1,t1:w.t1,p2:w.p2,t2:w.t2}; const empty=Object.keys(vars).filter(k=>!vars[k]||vars[k]<=0); if(empty.length!==1)return"Ошибка: должно быть заполнено ровно 3 параметра"; const target=empty[0],p1=w.p1,t1=w.t1,p2=w.p2,t2=w.t2; switch(target){case "p1":return "P₁ = "+((p2*t1)/t2).toFixed(0)+" Па"; case "t1":return "T₁ = "+((p1*t2)/p2).toFixed(1)+" К"; case "p2":return "P₂ = "+((p1*t2)/t1).toFixed(0)+" Па"; case "t2":return "T₂ = "+((p2*t1)/p1).toFixed(1)+" К"; default:return "Ошибка";}} },
             { id:"mk21",title:"Закон Гей-Люссака (Изобарный процесс)",category:"МКТ",description:"Оставьте пустым или введите 0 для параметра, который необходимо найти. Давление и масса газа постоянны.",formula:"V₁ / T₁ = V₂ / T₂",inputs:[{id:"v1",label:"V₁ (м³)",val:2},{id:"t1",label:"T₁ (К)",val:293},{id:"v2",label:"V₂ (м³)",val:0},{id:"t2",label:"T₂ (К)",val:350}],calc:(w)=>{const vars={v1:w.v1,t1:w.t1,v2:w.v2,t2:w.t2}; const empty=Object.keys(vars).filter(k=>!vars[k]||vars[k]<=0); if(empty.length!==1)return"Ошибка: должно быть заполнено ровно 3 параметра"; const target=empty[0],v1=w.v1,t1=w.t1,v2=w.v2,t2=w.t2; switch(target){case "v1":return "V₁ = "+((v2*t1)/t2).toFixed(4)+" м³"; case "t1":return "T₁ = "+((v1*t2)/v2).toFixed(1)+" К"; case "v2":return "V₂ = "+((v1*t2)/t1).toFixed(4)+" м³"; case "t2":return "T₂ = "+((v2*t1)/v1).toFixed(1)+" К"; default:return "Ошибка";}} },
-            { id:"mk22",title:"Относительная влажность воздуха через давление",category:"МКТ",description:"Отношение парциального давления водяного пара в воздухе к давлению насыщенного пара при той же температуре.",formula:"φ = (p / p₀) · 100%",inputs:[{id:"p",label:"Давление пара p (Па)",val:1200},{id:"p0",label:"Давление насыщенного пара p₀ (Па)",val:2330}],calc:(w)=>w.p<0||w.p0<=0?"Ошибка":"Относительная влажность φ = "+((w.p/w.p0)*100).toFixed(1)+"%" },
-            { id:"mk23",title:"Относительная влажность воздуха через плотность",category:"МКТ",description:"Отношение абсолютной влажности воздуха (плотности пара) к плотности насыщенного водяного пара при той же температуре.",formula:"φ = (ρ / ρ₀) · 100%",inputs:[{id:"rho",label:"Плотность пара ρ (г/м³)",val:9.4},{id:"rho0",label:"Плотность насыщенного пара ρ₀ (г/м³)",val:17.3}],calc:(w)=>w.rho<0||w.rho0<=0?"Ошибка":"Относительная влажность φ = "+((w.rho/w.rho0)*100).toFixed(1)+"%" },
+            { id:"mk22",title:"Относительная влажность воздуха через давление",category:"МКТ",description:"Отношение парциального давления водяного пара в воздухе к давлению насыщенного пара при той же температуре.",formula:"φ = (p / p₀) · 100\\%",inputs:[{id:"p",label:"Давление пара p (Па)",val:1200},{id:"p0",label:"Давление насыщенного пара p₀ (Па)",val:2330}],calc:(w)=>w.p<0||w.p0<=0?"Ошибка":"Относительная влажность φ = "+((w.p/w.p0)*100).toFixed(1)+"%" },
+            { id:"mk23",title:"Относительная влажность воздуха через плотность",category:"МКТ",description:"Отношение абсолютной влажности воздуха (плотности пара) к плотности насыщенного водяного пара при той же температуре.",formula:"φ = (ρ / ρ₀) · 100\\%",inputs:[{id:"rho",label:"Плотность пара ρ (г/м³)",val:9.4},{id:"rho0",label:"Плотность насыщенного пара ρ₀ (г/м³)",val:17.3}],calc:(w)=>w.rho<0||w.rho0<=0?"Ошибка":"Относительная влажность φ = "+((w.rho/w.rho0)*100).toFixed(1)+"%" },
             { id:"mk24",title:"Абсолютная влажность воздуха",category:"МКТ",description:"Масса водяного пара, содержащаяся в единице объёма воздуха (плотность водяного пара).",formula:"ρₐ = m / V",inputs:[{id:"m",label:"Масса водяного пара m (г)",val:15},{id:"v",label:"Объём воздуха V (м³)",val:1}],calc:(w)=>w.m<0||w.v<=0?"Ошибка":"Абсолютная влажность ρₐ = "+(w.m/w.v).toFixed(2)+" г/м³" },
             { id:"mk19", title:"Объемное тепловое расширение жидкостей", category:"МКТ", description:"Изменение объема жидкости при тепловом воздействии.", formula:"ΔV = β · V₀ · ΔT", inputs:[{id:"beta", label:"Коэффициент расширения β (К⁻¹)", val:2.1e-4}, {id:"v0", label:"Начальный объем V₀ (м³)", val:0.01}, {id:"dt", label:"Нагрев ΔT (К)", val:40}], calc:(w) => `Приращение объема ΔV = ${(w.beta * w.v0 * w.dt).toExponential(4)} м³` },
             { id:"t1", title:"Внутренняя энергия одноатомного газа", category:"Термодинамика", description:"Суммарная тепловая энергия идеальной газовой системы.", formula:"U = 3/2 · ν · R · T", inputs:[{id:"v", label:"Количество вещества ν (моль)", val:4}, {id:"R", label:"Универсальная газовая постоянная R (Дж/(моль · К))", val:8.31446}, {id:"t", label:"Температура T (К)", val:300}], calc:(w) => `Энергия U = ${(1.5 * w.v * w.R * w.t).toFixed(2)} Дж` },
@@ -367,9 +382,9 @@
             { id:"t10",title:"Поверхностное тепловое расширение",category:"Термодинамика",description:"Зависимость площади поверхности твердого тела от температуры при нагревании.",formula:"S = S₀ · (1 + 2 · α · t)",inputs:[{id:"s0",label:"Начальная площадь S₀ (м²)",val:5},{id:"alpha",label:"Коэффициент линейного расширения α (1/°C)",val:1.2e-5},{id:"t",label:"Температура t (°C)",val:50}],calc:(w)=>w.s0<0||w.alpha<0?"Ошибка":"Конечная площадь S = "+(w.s0*(1+2*w.alpha*w.t)).toFixed(5)+" м²" },
             { id:"t11",title:"Объёмное тепловое расширение",category:"Термодинамика",description:"Зависимость объёма твердого тела от температуры при нагревании.",formula:"V = V₀ · (1 + 3 · α · t)",inputs:[{id:"v0",label:"Начальный объём V₀ (м³)",val:0.02},{id:"alpha",label:"Коэффициент линейного расширения α (1/°C)",val:1.2e-5},{id:"t",label:"Температура t (°C)",val:50}],calc:(w)=>w.v0<0||w.alpha<0?"Ошибка":"Конечный объём V = "+(w.v0*(1+3*w.alpha*w.t)).toFixed(7)+" м³" },
             { id:"t12", title:"Первый закон термодинамики (изменение энергии)", category:"Термодинамика", description:"Закон сохранения энергии тепловой макросистемы.", formula:"ΔU = Q - A`", inputs:[{id:"q", label:"Подведенное тепло Q (Дж)", val:5000}, {id:"a", label:"Работа газа A (Дж)", val:2000}], calc:(w) => `Изменение внутренней энергии ΔU = ${(w.q - w.a).toFixed(2)} Дж` },
-            { id:"t13", title:"КПД теплового двигателя", category:"Термодинамика", description:"Термическая эффективность циклической машины.", formula:"η = (Q_нагр - Q_холод) / Q_нагр · 100", inputs:[{id:"q1", label:"Тепло от нагревателя Q₁ (Дж)", val:1000}, {id:"q2", label:"Тепло холодильнику Q₂ (Дж)", val:600}], calc:(w) => w.q1<=0 ? "Ошибка":"КПД η = " + (((w.q1-w.q2)/w.q1)*100).toFixed(1) + "%" },
-            { id:"t14", title:"Максимальный КПД идеальной машины (Карно)", category:"Термодинамика", description:"Теоретический предел термодинамической эффективности.", formula:"η_max = (T_нагр - T_холод) / T_нагр · 100", inputs:[{id:"t1", label:"Температура нагревателя T₁ (К)", val:600}, {id:"t2", label:"Температура холодильника T₂ (К)", val:300}], calc:(w) => w.t1<=0 ? "Ошибка":"Предельный КПД η_max = " + (((w.t1-w.t2)/w.t1)*100).toFixed(1) + "%" },
-            { id:"e1",title:"Закон Кулона для вакуума",category:"Электродинамика",description:"Сила взаимодействия между двумя неподвижными точечными зарядами в вакууме.",formula:"F = k · |q₁| · |q₂| / r²",inputs:[{id:"q1",label:"Заряд q₁ (Кл)",val:1e-6},{id:"q2",label:"Заряд q₂ (Кл)",val:1e-6},{id:"r",label:"Расстояние r (м)",val:0.1},{id:"k",label:"Коэффициент k (Н·м²/Кл²)",val:9e9}],calc:(w)=>w.r<=0||w.k<=0?"Ошибка":"Сила F = "+(w.k*Math.abs(w.q1)*Math.abs(w.q2)/(w.r*w.r)).toFixed(4)+" Н" },            
+            { id:"t13", title:"КПД теплового двигателя", category:"Термодинамика", description:"Термическая эффективность циклической машины.", formula:"η = (Q_нагр - Q_холод)/(Q_нагр) · 100\\%", inputs:[{id:"q1", label:"Тепло от нагревателя Q₁ (Дж)", val:1000}, {id:"q2", label:"Тепло холодильнику Q₂ (Дж)", val:600}], calc:(w) => w.q1<=0 ? "Ошибка":"КПД η = " + (((w.q1-w.q2)/w.q1)*100).toFixed(1) + "%" },
+            { id:"t14", title:"Максимальный КПД идеальной машины (Карно)", category:"Термодинамика", description:"Теоретический предел термодинамической эффективности.", formula:"η_max = (T_нагр - T_холод)/(T_нагр) · 100\\%", inputs:[{id:"t1", label:"Температура нагревателя T₁ (К)", val:600}, {id:"t2", label:"Температура холодильника T₂ (К)", val:300}], calc:(w) => w.t1<=0 ? "Ошибка":"Предельный КПД η_max = " + (((w.t1-w.t2)/w.t1)*100).toFixed(1) + "%" },
+            { id:"e1",title:"Закон Кулона для вакуума",category:"Электродинамика",description:"Сила взаимодействия между двумя неподвижными точечными зарядами в вакууме.",formula:"F = k · (|q₁| · |q₂|)/ r²",inputs:[{id:"q1",label:"Заряд q₁ (Кл)",val:1e-6},{id:"q2",label:"Заряд q₂ (Кл)",val:1e-6},{id:"r",label:"Расстояние r (м)",val:0.1},{id:"k",label:"Коэффициент k (Н·м²/Кл²)",val:9e9}],calc:(w)=>w.r<=0||w.k<=0?"Ошибка":"Сила F = "+(w.k*Math.abs(w.q1)*Math.abs(w.q2)/(w.r*w.r)).toFixed(4)+" Н" },            
             { id:"e2",title:"Заряд тела через количество частиц",category:"Электродинамика",description:"Электрический заряд тела, обусловленный избытком или недостатком элементарных зарядов (электронов).",formula:"q = N · e",inputs:[{id:"n",label:"Количество частиц N",val:1e13},{id:"e",label:"Элементарный заряд e (Кл)",val:1.6e-19}],calc:(w)=>w.n<0||w.e<=0?"Ошибка":"Заряд q = "+(w.n*w.e).toExponential(4)+" Кл" },
             { id:"e3",title:"Напряжённость электрического поля",category:"Электродинамика",description:"Силовая характеристика электрического поля, равная отношению силы, действующей на точечный заряд, к величине этого заряда.",formula:"E = F / q",inputs:[{id:"f",label:"Сила Кулона F (Н)",val:0.05},{id:"q",label:"Заряд q (Кл)",val:1e-6}],calc:(w)=>w.q===0?"Ошибка":"Напряжённость E = "+(w.f/w.q).toFixed(2)+" Н/Кл (В/м)" },
             { id:"e4", title:"Напряженность поля точечного заряда", category:"Электродинамика", description:"Силовая векторная характеристика кулоновского поля.", formula:"E = k · q / r²", inputs:[{id:"k",label:"Коэффициент k (Н·м²/Кл²)",val:9e9},{id:"q", label:"Заряд источника q (Кл)", val:1e-9}, {id:"r", label:"Расстояние r (м)", val:0.05}], calc:(w) => {return w.r<=0 ? "Ошибка":"Напряженность E = " + (w.k*w.q/(w.r*w.r)).toFixed(2) + " В/м"; } },
@@ -379,7 +394,7 @@
             { id:"e8", title:"Потенциал электростатического поля", category:"Электродинамика", description:"Энергетическая скалярная характеристика поля.", formula:"φ = W / q", inputs:[{id:"w", label:"Энергия заряда W (Дж)", val:0.005}, {id:"q", label:"Величина заряда q (Кл)", val:5e-6}], calc:(w) => w.q===0 ? "Ошибка":"Потенциал φ = " + (w.w/w.q).toFixed(2) + " В" },
             { id:"e9", title:"Емкость плоского воздушного конденсатора", category:"Электродинамика", description:"Электроемкость двух проводящих обкладок с диэлектриком.", formula:"C = ε · ε₀ · S / d", inputs:[{id:"eps", label:"Диэлектрическая проницаемость ε", val:1},{id:"eps0", label:"Диэлектрическая проницаемость ε₀", val:8.85418e-12}, {id:"s", label:"Площадь пластины S (м²)", val:0.01}, {id:"d", label:"Зазор между пластинами d (м)", val:0.001}], calc:(w) => w.d<=0 ? "Ошибка":"Емкость C = " + (w.eps*w.eps0*w.s/w.d).toExponential(5) + " Ф" },
             { id:"e10",title:"Электроёмкость проводника",category:"Электродинамика",description:"Физическая величина, характеризующая способность проводника накапливать электрический заряд и равная отношению заряда проводника к его потенциалу (или разности потенциалов).",formula:"C = q / U",inputs:[{id:"q",label:"Заряд q (Кл)",val:1e-6},{id:"u",label:"Напряжение U (В)",val:100}],calc:(w)=>w.u===0?"Ошибка":"Электроёмкость C = "+(w.q/w.u).toExponential(4)+" Ф" },
-            { id:"e11",title:"Последовательное соединение конденсаторов",category:"Электродинамика",description:"Общая емкость цепочки при последовательном включении (для двух конденсаторов).",formula:"C_общ = (C₁ · C₂) / (C₁ + C₂)",inputs:[{id:"c1",label:"Емкость C₁ (Ф)",val:1e-5},{id:"c2",label:"Емкость C₂ (Ф)",val:2e-5}],calc:(w)=>(w.c1+w.c2)<=0?"Ошибка":"C_общ = "+((w.c1*w.c2)/(w.c1+w.c2)).toExponential(4)+" Ф" },
+            { id:"e11",title:"Последовательное соединение конденсаторов (для 2 конденсаторов)",category:"Электродинамика",description:"Общая емкость цепочки при последовательном включении (для двух конденсаторов).",formula:"C_общ = (C₁ · C₂) / (C₁ + C₂)",inputs:[{id:"c1",label:"Емкость C₁ (Ф)",val:1e-5},{id:"c2",label:"Емкость C₂ (Ф)",val:2e-5}],calc:(w)=>(w.c1+w.c2)<=0?"Ошибка":"C_общ = "+((w.c1*w.c2)/(w.c1+w.c2)).toExponential(4)+" Ф" },
             { id:"e12",title:"Последовательное соединение конденсаторов",category:"Электродинамика",description:"Формула для расчета общей электроёмкости батареи из трёх последовательно соединенных конденсаторов.",formula:"1/C = 1/C₁ + 1/C₂ + 1/C₃",inputs:[{id:"c1",label:"Ёмкость C₁ (Ф)",val:1e-5},{id:"c2",label:"Ёмкость C₂ (Ф)",val:2e-5},{id:"c3",label:"Ёмкость C₃ (Ф)",val:2e-5}],calc:(w)=>w.c1<=0||w.c2<=0||w.c3<=0?"Ошибка":"C_общ = "+(1 / (1/w.c1 + 1/w.c2 + 1/w.c3)).toExponential(4)+" Ф" },
             { id:"e13",title:"Параллельное соединение конденсаторов",category:"Электродинамика",description:"Формула для расчета общей электроёмкости батареи из трёх параллельно соединенных конденсаторов.",formula:"C = C₁ + C₂ + C₃",inputs:[{id:"c1",label:"Ёмкость C₁ (Ф)",val:1e-5},{id:"c2",label:"Ёмкость C₂ (Ф)",val:2e-5},{id:"c3",label:"Ёмкость C₃ (Ф)",val:2e-5}],calc:(w)=>w.c1<0||w.c2<0||w.c3<0?"Ошибка":"C_общ = "+(w.c1+w.c2+w.c3).toExponential(4)+" Ф" },
             { id:"e14", title:"Энергия электрического поля конденсатора", category:"Электродинамика", description:"Потенциальная энергия поля, локализованная в диэлектрике.", formula:"Wc = C · U² / 2", inputs:[{id:"c_mkf", label:"Емкость C (мкФ)", val:22}, {id:"u", label:"Напряжение U (В)", val:16}], calc:(w) => `Энергия W = ${(0.5 * (w.c_mkf * 1e-6) * w.u * w.u).toExponential(4)} Дж` },
@@ -395,7 +410,7 @@
             { id:"e24", title:"Сопротивление цилиндрического проводника", category:"Электродинамика", description:"Омическое сопротивление кабельной линии.", formula:"R = ρ · l / S", inputs:[{id:"rho", label:"Удельное сопр. ρ (Ом·мм²/м)", val:0.0175}, {id:"l", label:"Длина линии l (м)", val:50}, {id:"s", label:"Сечение проводника S (мм²)", val:1.5}], calc:(w) => w.s<=0 ? "Ошибка":"R = " + (w.rho*w.l/w.s).toFixed(4) + " Ом" },
             { id:"e25", title:"Последовательные резисторы", category:"Электродинамика", description:"Общее омическое сопротивление последовательной цепи.", formula:"R_общ = R₁ + R₂", inputs:[{id:"r1", label:"R₁ (Ом)", val:10}, {id:"r2", label:"R₂ (Ом)", val:22}], calc:(w) => `Сопротивление R_общ = ${(w.r1 + w.r2).toFixed(2)} Ом` },
             { id:"e26", title:"Параллельные резисторы", category:"Электродинамика", description:"Общее сопротивление двух параллельных ветвей.", formula:"R_общ = (R₁ · R₂) / (R₁ + R₂)", inputs:[{id:"r1", label:"R₁ (Ом)", val:10}, {id:"r2", label:"R₂ (Ом)", val:10}], calc:(w) => (w.r1+w.r2)<=0 ? "Ошибка":"R_общ = " + ((w.r1*w.r2)/(w.r1+w.r2)).toFixed(3) + " Ом" },
-            { id:"e37",title:"Работа тока через мощность",category:"Электродинамика",description:"Расчет работы электрического тока, зная потребляемую мощность и время работы.",formula:"A = P · t",inputs:[{id:"p",label:"Мощность P (Вт)",val:100},{id:"t",label:"Время t (с)",val:60}],calc:(w)=>w.p<0||w.t<0?"Ошибка":"Работа A = "+(w.p*w.t).toFixed(2)+" Дж" },
+            { id:"e27",title:"Работа тока через мощность",category:"Электродинамика",description:"Расчет работы электрического тока, зная потребляемую мощность и время работы.",formula:"A = P · t",inputs:[{id:"p",label:"Мощность P (Вт)",val:100},{id:"t",label:"Время t (с)",val:60}],calc:(w)=>w.p<0||w.t<0?"Ошибка":"Работа A = "+(w.p*w.t).toFixed(2)+" Дж" },
             { id:"e28",title:"Закон Джоуля-Ленца (работа тока)",category:"Электродинамика",description:"Количество теплоты (работы тока), выделяющееся в проводнике с сопротивлением R при протекании тока I.",formula:"A = I² · R · t",inputs:[{id:"i",label:"Сила тока I (А)",val:2},{id:"r",label:"Сопротивление R (Ом)",val:5},{id:"t",label:"Время t (с)",val:10}],calc:(w)=>w.i<0||w.r<0||w.t<0?"Ошибка":"Работа A = "+(w.i*w.i*w.r*w.t).toFixed(2)+" Дж" },
             { id:"e29",title:"Работа тока через силу тока и напряжение",category:"Электродинамика",description:"Классическая формула работы электрического тока на участке цепи за время t.",formula:"A = I · U · t",inputs:[{id:"i",label:"Сила тока I (А)",val:1.5},{id:"u",label:"Напряжение U (В)",val:220},{id:"t",label:"Время t (с)",val:30}],calc:(w)=>w.i<0||w.u<0||w.t<0?"Ошибка":"Работа A = "+(w.i*w.u*w.t).toFixed(2)+" Дж" },
             { id:"e30",title:"Работа тока через напряжение и сопротивление",category:"Электродинамика",description:"Расчет работы тока на участке цепи с известным сопротивлением при заданном напряжении.",formula:"A = (U² · t) / R",inputs:[{id:"u",label:"Напряжение U (В)",val:12},{id:"t",label:"Время t (с)",val:10},{id:"r",label:"Сопротивление R (Ом)",val:4}],calc:(w)=>w.r===0||w.u<0||w.t<0?"Ошибка":"Работа A = "+((w.u*w.u*w.t)/w.r).toFixed(2)+" Дж" },
@@ -407,7 +422,7 @@
             { id:"e36",title:"Полная мощность через ток и сопротивление",category:"Электродинамика",description:"Расчет полной мощности источника через силу тока, внешнее и внутреннее сопротивление цепи.",formula:"Pполн = I² · (R + r)",inputs:[{id:"i",label:"Сила тока I (А)",val:2},{id:"r_ext",label:"Внешнее сопротивление R (Ом)",val:5},{id:"r_int",label:"Внутреннее сопротивление r (Ом)",val:1}],calc:(w)=>w.i<0||w.r_ext<0||w.r_int<0?"Ошибка":"Полная мощность P = "+(w.i*w.i*(w.r_ext+w.r_int)).toFixed(2)+" Вт" },
             { id:"e37",title:"Полная мощность через ЭДС и сопротивление",category:"Электродинамика",description:"Расчет полной мощности источника через его ЭДС и полное сопротивление цепи.",formula:"Pполн = ε² / (R + r)",inputs:[{id:"eds",label:"ЭДС источника ε (В)",val:12},{id:"r_ext",label:"Внешнее сопротивление R (Ом)",val:5},{id:"r_int",label:"Внутреннее сопротивление r (Ом)",val:1}],calc:(w)=>(w.r_ext+w.r_int)===0||w.eds<0?"Ошибка":"Полная мощность P = "+((w.eds*w.eds)/(w.r_ext+w.r_int)).toFixed(2)+" Вт" },            
             { id:"e38", title: "Скорость дрейфа электронов в проводнике", category: "Электродинамика", description: "Расчет скорости упорядоченного движения электронов.", formula: "v = I / (e · n · S)", inputs: [{ id: "i", label: "Сила тока I (А)", val: 1 }, { id: "n", label: "Концентрация n (м⁻³)", val: 8.5e28 }, { id: "s", label: "Площадь сечения S (м²)", val: 1e-6 }], calc: w => (w.i < 0 || w.n <= 0 || w.s <= 0) ? "Ошибка" : `Скорость v = ${(w.i / (CONSTS.e * w.n * w.s)).toExponential(4)} м/с` },
-            { id:"e39",title:"ЭДС через работу сторонних сил",category:"Электродинамика",description:"Электродвижущая сила, определяемая отношением работы сторонних сил по перемещению заряда к величине этого заряда.",formula:"ε = Aст / q",inputs:[{id:"a_st",label:"Работа сторонних сил Aст (Дж)",val:12},{id:"q",label:"Заряд q (Кл)",val:2}],calc:(w)=>w.q===0?"Ошибка":"ЭДС ε = "+(w.a_st/w.q).toFixed(2)+" В" },           
+            { id:"e39",title:"ЭДС через работу сторонних сил",category:"Электродинамика",description:"Электродвижущая сила, определяемая отношением работы сторонних сил по перемещению заряда к величине этого заряда.",formula:"ε = (A_ст)/q",inputs:[{id:"a_st",label:"Работа сторонних сил Aст (Дж)",val:12},{id:"q",label:"Заряд q (Кл)",val:2}],calc:(w)=>w.q===0?"Ошибка":"ЭДС ε = "+(w.a_st/w.q).toFixed(2)+" В" },           
             { id:"e40",title:"Количество теплоты через ток и сопротивление",category:"Электродинамика",description:"Классический закон Джоуля-Ленца для расчета количества теплоты, выделяющегося в проводнике при протекании тока.",formula:"Q = I² · R · t",inputs:[{id:"i",label:"Сила тока I (А)",val:2},{id:"r",label:"Сопротивление R (Ом)",val:10},{id:"t",label:"Время t (с)",val:60}],calc:(w)=>w.i<0||w.r<0||w.t<0?"Ошибка":"Количество теплоты Q = "+(w.i*w.i*w.r*w.t).toFixed(2)+" Дж" },
             { id:"e41",title:"Количество теплоты через ток и напряжение",category:"Электродинамика",description:"Расчет выделившегося количества теплоты через напряжение на участке цепи, силу тока и время.",formula:"Q = I · U · t",inputs:[{id:"i",label:"Сила тока I (А)",val:1.5},{id:"u",label:"Напряжение U (В)",val:220},{id:"t",label:"Время t (с)",val:30}],calc:(w)=>w.i<0||w.u<0||w.t<0?"Ошибка":"Количество теплоты Q = "+(w.i*w.u*w.t).toFixed(2)+" Дж" },
             { id:"e42",title:"Количество теплоты через напряжение и сопротивление",category:"Электродинамика",description:"Расчет количества теплоты для участка цепи с известным сопротивлением при заданном напряжении.",formula:"Q = (U² · t) / R",inputs:[{id:"u",label:"Напряжение U (В)",val:12},{id:"t",label:"Время t (с)",val:10},{id:"r",label:"Сопротивление R (Ом)",val:4}],calc:(w)=>w.r===0||w.u<0||w.t<0?"Ошибка":"Количество теплоты Q = "+((w.u*w.u*w.t)/w.r).toFixed(2)+" Дж" },
@@ -429,31 +444,31 @@
             { id:"e58", title:"Индукция в центре кругового витка", category:"Электродинамика", description:"Магнитная индукция в центре кольцевого витка радиуса R.", formula:"B = μ₀ · I / (2R)", inputs:[{id:"i", label:"Ток кольца I (А)", val:10}, {id:"r", label:"Радиус кольца R (м)", val:0.05}], calc:(w) => w.r<=0 ? "Ошибка":"Индукция B = " + (mu0*w.i/(2*w.r)).toExponential(4) + " Тл" },
             { id:"e59", title:"Магнитная индукция соленоида", category:"Электродинамика", description:"Поле внутри длинной многовитковой катушки индуктивности.", formula:"B = μ · μ₀ · N · I / l", inputs:[{id:"mu", label:"Проницаемость сердечника μ", val:1}, {id:"n", label:"Число витков N", val:500}, {id:"i", label:"Ток катушки I (А)", val:2}, {id:"l", label:"Длина катушки l (м)", val:0.2}], calc:(w) => w.l<=0 ? "Ошибка":"Индукция B = " + (w.mu*mu0*w.n*w.i/w.l).toExponential(4) + " Тл" },
             { id:"e60", title:"Индуктивность длинного соленоида", category:"Электродинамика", description:"Геометрический расчет индуктивности катушки.", formula:"L = μ · μ₀ · N² · S / l", inputs:[{id:"mu", label:"Проницаемость μ", val:1}, {id:"n", label:"Число витков N", val:1000}, {id:"s", label:"Площадь торца S (м²)", val:0.001}, {id:"l", label:"Длина соленоида l (м)", val:0.2}], calc:(w) => w.l<=0 ? "Ошибка":"Индуктивность L = " + (w.mu*mu0*w.n*w.n*w.s/w.l).toExponential(4) + " Гн" },
-            { id:"e61", title:"Закон электромагнитной индукции Фарадея", category:"Электродинамика", description:"Генерация индукционной ЭДС при динамическом сдвиге потока.", formula:"ε_i = -ΔΦ / Δt", inputs:[{id:"df", label:"Изменение потока ΔΦ (Вб)", val:-0.2}, {id:"dt", label:"Временной шаг Δt (с)", val:0.05}], calc:(w) => w.dt<=0 ? "Ошибка":"ЭДС индукции ε_i = " + (-w.df/w.dt).toFixed(2) + " В" },
+            { id:"e61", title:"Закон электромагнитной индукции Фарадея", category:"Электродинамика", description:"Генерация индукционной ЭДС при динамическом сдвиге потока.", formula:"ε_i = -(ΔΦ)/(Δt)", inputs:[{id:"df", label:"Изменение потока ΔΦ (Вб)", val:-0.2}, {id:"dt", label:"Временной шаг Δt (с)", val:0.05}], calc:(w) => w.dt<=0 ? "Ошибка":"ЭДС индукции ε_i = " + (-w.df/w.dt).toFixed(2) + " В" },
             { id:"e62", title:"ЭДС в движущемся проводнике", category:"Электродинамика", description:"Наведение разности потенциалов при пересечении силовых линий поля.", formula:"ε_i = B · v · l · sin(α)", inputs:[{id:"b", label:"Индукция поля B (Тл)", val:0.4}, {id:"v", label:"Скорость проводника v (м/с)", val:12}, {id:"l", label:"Длина провода l (м)", val:0.5}, {id:"angle", label:"Угол движения α (градусы)", val:90}], calc:(w) => `ЭДС индукции ε_i = ${(w.b * w.v * w.l * Math.sin(w.angle * Math.PI / 180)).toFixed(4)} В` },
-            { id:"e63", title:"ЭДС самоиндукции в катушке", category:"Электродинамика", description:"Реакция контура на пульсации собственного рабочего тока.", formula:"ε_си = -L · ΔI / Δt", inputs:[{id:"l", label:"Индуктивность L (Гн)", val:0.1}, {id:"di", label:"Сдвиг тока ΔI (А)", val:-0.5}, {id:"dt", label:"Интервал времени Δt (с)", val:0.01}], calc:(w) => w.dt<=0 ? "Ошибка":"ЭДС самоиндукции ε_си = " + (-w.l*w.di/w.dt).toFixed(2) + " В" },
+            { id:"e63", title:"ЭДС самоиндукции в катушке", category:"Электродинамика", description:"Реакция контура на пульсации собственного рабочего тока.", formula:"ε_си = -L · (ΔI) / (Δt)", inputs:[{id:"l", label:"Индуктивность L (Гн)", val:0.1}, {id:"di", label:"Сдвиг тока ΔI (А)", val:-0.5}, {id:"dt", label:"Интервал времени Δt (с)", val:0.01}], calc:(w) => w.dt<=0 ? "Ошибка":"ЭДС самоиндукции ε_си = " + (-w.l*w.di/w.dt).toFixed(2) + " В" },
             { id:"e64", title:"Энергия магнитного поля катушки", category:"Электродинамика", description:"Запасаемая магнитная энергия обмотки при протекании тока.", formula:"W = L · I² / 2", inputs:[{id:"l", label:"Индуктивность L (Гн)", val:0.5}, {id:"i", label:"Ток катушки I (А)", val:4}], calc:(w) => `Энергия W = ${(0.5 * w.l * w.i * w.i).toFixed(3)} Дж` },
             { id:"e65",title:"Энергия магнитного поля катушки (через поток и ток)",category:"Электродинамика",description:"Расчет энергии магнитного поля катушки через магнитный поток и силу тока.",formula:"W = (Ф · I) / 2",inputs:[{id:"f",label:"Магнитный поток Ф (Вб)",val:0.1},{id:"i",label:"Сила тока I (А)",val:2}],calc:(w)=>w.f<0||w.i<0?"Ошибка":"Энергия поля W = "+(w.f*w.i/2).toFixed(4)+" Дж" },
-            { id:"e66",title:"Энергия магнитного поля катушки (через поток и индуктивность)",category:"Электродинамика",description:"Расчет энергии магнитного поля катушки через магнитный поток и её индуктивность.",formula:"W = Ф² / (2 · L)",inputs:[{id:"f",label:"Магнитный поток Ф (Вб)",val:0.1},{id:"l",label:"Индуктивность L (Гн)",val:0.05}],calc:(w)=>w.f<0||w.l<=0?"Ошибка":"Энергия поля W = "+(w.f*w.f/(2*w.l)).toFixed(4)+" Дж" },
+            { id:"e66",title:"Энергия магнитного поля катушки (через поток и индуктивность)",category:"Электродинамика",description:"Расчет энергии магнитного поля катушки через магнитный поток и её индуктивность.",formula:"W = (Ф²) / (2 · L)",inputs:[{id:"f",label:"Магнитный поток Ф (Вб)",val:0.1},{id:"l",label:"Индуктивность L (Гн)",val:0.05}],calc:(w)=>w.f<0||w.l<=0?"Ошибка":"Энергия поля W = "+(w.f*w.f/(2*w.l)).toFixed(4)+" Дж" },
             { id:"e67", title:"Закон Фарадея для электролиза", category:"Электродинамика", description:"Выход чистой массы вещества на катоде при электролизе.", formula:"m = k_эл · I · t", inputs:[{id:"k", label:"Коэффициент k_эл (мг/Кл)", val:0.329}, {id:"i", label:"Ток ячейки I (А)", val:3}, {id:"t", label:"Время процесса t (с)", val:1200}], calc:(w) => `Осажденная масса m = ${(w.k * w.i * w.t).toFixed(1)} мг` },
             { id:"e68", title:"Магнитная проницаемость среды", category:"Электродинамика", description:"Отношение индукции поля в веществе к полю в вакууме.", formula:"μ = B / B₀", inputs:[{id:"b", label:"Индукция в среде B (Тл)", val:1.2}, {id:"b0", label:"Индукция в вакууме B₀ (Тл)", val:0.002}], calc:(w) => w.b0<=0 ? "Ошибка":"Проницаемость μ = " + (w.b/w.b0).toFixed(1) },
             { id:"e69", title:"Период незатухающих колебаний в LC-контуре", category:"Электродинамика", description:"Классическая формула Томсона для идеального радиоконтура.", formula:"T = 2π · √(L · C)", inputs:[{id:"l_mgh", label:"Индуктивность L (мГн)", val:10}, {id:"c_mkf", label:"Емкость C (мкФ)", val:2.5}], calc:(w) => { const l=w.l_mgh*1e-3, c=w.c_mkf*1e-6; return l<0||c<0 ? "Ошибка":"Период T = " + (2*Math.PI*Math.sqrt(l*c)).toExponential(4) + " с"; } },
-            { id:"e70", title:"Циклическая частота резонансного контура", category:"Электродинамика", description:"Собственная резонансная круговая частота LC-цепи.", formula:"ω = 1 / √(L · C)", inputs:[{id:"l_mgh", label:"Индуктивность L (мГн)", val:5}, {id:"c_mkf", label:"Емкость C (мкФ)", val:4.7}], calc:(w) => { const l=w.l_mgh*1e-3, c=w.c_mkf*1e-6; return l*c<=0 ? "Ошибка":"Частота ω = " + (1/Math.sqrt(l*c)).toFixed(0) + " рад/с"; } },
+            { id:"e70", title:"Циклическая частота резонансного контура", category:"Электродинамика", description:"Собственная резонансная круговая частота LC-цепи.", formula:"ω = 1 / (√(L · C))", inputs:[{id:"l_mgh", label:"Индуктивность L (мГн)", val:5}, {id:"c_mkf", label:"Емкость C (мкФ)", val:4.7}], calc:(w) => { const l=w.l_mgh*1e-3, c=w.c_mkf*1e-6; return l*c<=0 ? "Ошибка":"Частота ω = " + (1/Math.sqrt(l*c)).toFixed(0) + " рад/с"; } },
             { id:"e71", title:"Действующее значение силы переменного тока", category:"Электродинамика", description:"Эквивалент постоянного тока по тепловому действию.", formula:"I_д = I_m / √2", inputs:[{id:"im", label:"Амплитудный ток I_m (А)", val:5}], calc:(w) => `Эффективный ток I_д = ${(w.im / Math.sqrt(2)).toFixed(3)} А` },
             { id:"e72", title:"Действующее значение переменного напряжения", category:"Электродинамика", description:"Эффективное напряжение синусоидальной силовой сети.", formula:"U_д = U_m / √2", inputs:[{id:"um", label:"Амплитудное U_m (В)", val:311}], calc:(w) => `Эффективное вольт U_д = ${(w.um / Math.sqrt(2)).toFixed(1)} В` },
-            { id:"e73",title:"Мгновенное значение силы тока при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения силы тока через амплитудное значение, циклическую частоту и время.",formula:"i = Im · sin(ωt)",inputs:[{id:"im",label:"Амплитуда тока Im (А)",val:5},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.im<0||w.w<0||w.t<0?"Ошибка":"Мгновенный ток i = "+(w.im*Math.sin(w.w*w.t)).toFixed(4)+" А" },
-            { id:"e74",title:"Мгновенное значение напряжения при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения напряжения через амплитудное значение, циклическую частоту и время.",formula:"u = Um · sin(ωt)",inputs:[{id:"um",label:"Амплитуда напряжения Um (В)",val:220},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.um<0||w.w<0||w.t<0?"Ошибка":"Мгновенное напряжение u = "+(w.um*Math.sin(w.w*w.t)).toFixed(2)+" В" },
-            { id:"e75",title:"Мгновенное значение ЭДС при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения электродвижущей силы через амплитудное значение, циклическую частоту и время.",formula:"e = Em · sin(ωt)",inputs:[{id:"em",label:"Амплитуда ЭДС Em (В)",val:36},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.em<0||w.w<0||w.t<0?"Ошибка":"Мгновенная ЭДС e = "+(w.em*Math.sin(w.w*w.t)).toFixed(2)+" В" },
-            { id:"e76",title:"Мгновенное значение заряда при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения заряда конденсатора через амплитудное значение, циклическую частоту и время.",formula:"q = qm · sin(ωt)",inputs:[{id:"qm",label:"Амплитуда заряда qm (Кл)",val:1e-5},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.qm<0||w.w<0||w.t<0?"Ошибка":"Мгновенный заряд q = "+(w.qm*Math.sin(w.w*w.t)).toExponential(4)+" Кл" },
-            { id:"o1",title:"Закон преломления (через синусы углов)",category:"Оптика",description:"Отношение синуса угла падения к синусу угла преломления равно относительному показателю преломления.",formula:"n = sin(α) / sin(β)",inputs:[{id:"alpha",label:"Угол падения α (°)",val:45},{id:"beta",label:"Угол преломления β (°)",val:30}],calc:(w)=>w.beta===0?"Ошибка":"n = "+(Math.sin(w.alpha*Math.PI/180)/Math.sin(w.beta*Math.PI/180)).toFixed(4) },
+            { id:"e73",title:"Мгновенное значение силы тока при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения силы тока через амплитудное значение, циклическую частоту и время.",formula:"i = I_m · sin(ωt)",inputs:[{id:"im",label:"Амплитуда тока Im (А)",val:5},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.im<0||w.w<0||w.t<0?"Ошибка":"Мгновенный ток i = "+(w.im*Math.sin(w.w*w.t)).toFixed(4)+" А" },
+            { id:"e74",title:"Мгновенное значение напряжения при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения напряжения через амплитудное значение, циклическую частоту и время.",formula:"u = U_m · sin(ωt)",inputs:[{id:"um",label:"Амплитуда напряжения Um (В)",val:220},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.um<0||w.w<0||w.t<0?"Ошибка":"Мгновенное напряжение u = "+(w.um*Math.sin(w.w*w.t)).toFixed(2)+" В" },
+            { id:"e75",title:"Мгновенное значение ЭДС при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения электродвижущей силы через амплитудное значение, циклическую частоту и время.",formula:"e = E_m · sin(ωt)",inputs:[{id:"em",label:"Амплитуда ЭДС Em (В)",val:36},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.em<0||w.w<0||w.t<0?"Ошибка":"Мгновенная ЭДС e = "+(w.em*Math.sin(w.w*w.t)).toFixed(2)+" В" },
+            { id:"e76",title:"Мгновенное значение заряда при гармонических колебаниях",category:"Электродинамика",description:"Расчет мгновенного значения заряда конденсатора через амплитудное значение, циклическую частоту и время.",formula:"q = q_m · sin(ωt)",inputs:[{id:"qm",label:"Амплитуда заряда qm (Кл)",val:1e-5},{id:"w",label:"Циклическая частота ω (рад/с)",val:314},{id:"t",label:"Время t (с)",val:0.005}],calc:(w)=>w.qm<0||w.w<0||w.t<0?"Ошибка":"Мгновенный заряд q = "+(w.qm*Math.sin(w.w*w.t)).toExponential(4)+" Кл" },
+            { id:"o1",title:"Закон преломления (через синусы углов)",category:"Оптика",description:"Отношение синуса угла падения к синусу угла преломления равно относительному показателю преломления.",formula:"n = (sinα)/(sinβ)",inputs:[{id:"alpha",label:"Угол падения α (°)",val:45},{id:"beta",label:"Угол преломления β (°)",val:30}],calc:(w)=>w.beta===0?"Ошибка":"n = "+(Math.sin(w.alpha*Math.PI/180)/Math.sin(w.beta*Math.PI/180)).toFixed(4) },
             { id:"o2",title:"Закон преломления (через скорости)",category:"Оптика",description:"Отношение скоростей света в первой и второй средах равно относительному показателю преломления.",formula:"n = v₁ / v₂",inputs:[{id:"v1",label:"Скорость v₁ (м/с)",val:3e8},{id:"v2",label:"Скорость v₂ (м/с)",val:2e8}],calc:(w)=>w.v2===0?"Ошибка":"n = "+(w.v1/w.v2).toFixed(4) },
             { id:"o3",title:"Закон преломления (через абсолютные показатели)",category:"Оптика",description:"Отношение абсолютных показателей преломления второй и первой сред равно относительному показателю преломления.",formula:"n = n₂ / n₁",inputs:[{id:"n2",label:"Показатель n₂",val:1.5},{id:"n1",label:"Показатель n₁",val:1}],calc:(w)=>w.n1===0?"Ошибка":"n = "+(w.n2/w.n1).toFixed(4) },
-            { id:"o4", title:"Предельный угол полного отражения", category:"Оптика", description:"Порог полного запирания света внутри плотной среды.", formula:"sin(α₀) = n₂ / n₁", inputs:[{id:"n1", label:"Плотная среда n₁ (стекло)", val:1.5}, {id:"n2", label:"Разреженная среда n₂ (воздух)", val:1}], calc:(w) => { if(w.n1<=0 || w.n2>w.n1) return "Неверные индексы"; const s = w.n2/w.n1; return `Предельный угол α₀ = ${(Math.asin(s)*180/Math.PI).toFixed(1)}°`; } },
+            { id:"o4", title:"Предельный угол полного отражения", category:"Оптика", description:"Порог полного запирания света внутри плотной среды.", formula:"sinα₀ = n₂ / n₁", inputs:[{id:"n1", label:"Плотная среда n₁ (стекло)", val:1.5}, {id:"n2", label:"Разреженная среда n₂ (воздух)", val:1}], calc:(w) => { if(w.n1<=0 || w.n2>w.n1) return "Неверные индексы"; const s = w.n2/w.n1; return `Предельный угол α₀ = ${(Math.asin(s)*180/Math.PI).toFixed(1)}°`; } },
             { id:"o5", title:"Формула тонкой линзы", category:"Оптика", description:"Поиск фокусного расстояния линзы по дистанциям до объектов.", formula:"1/F = 1/d + 1/f", inputs:[{id:"d", label:"Расстояние до предмета d (м)", val:0.3}, {id:"f", label:"Расстояние до картинки f (м)", val:0.6}], calc:(w) => w.d<=0||w.f<=0 ? "Ошибка":"Оптическая сила D = " + (1/w.d + 1/w.f).toFixed(2) + " дптр; Фокус F = " + (1/(1/w.d + 1/w.f)).toFixed(3) + " м" },
             { id:"o6", title:"Линейное увеличение линзы", category:"Оптика", description:"Масштабный коэффициент поперечного увеличения геометрии объекта.", formula:"Γ = f / d", inputs:[{id:"d", label:"Дистанция d (м)", val:0.2}, {id:"f", label:"Дистанция f (м)", val:0.8}], calc:(w) => w.d<=0 ? "Ошибка":"Линейное увеличение Γ = " + (w.f/w.d).toFixed(2) + " крат" },
             { id:"o7",title:"Абсолютный показатель преломления (через скорости)",category:"Оптика",description:"Расчет показателя преломления среды как отношения скорости света в вакууме к скорости света в среде.",formula:"n = c / v",inputs:[{id:"c",label:"Скорость в вакууме c (м/с)",val:3e8},{id:"v",label:"Скорость в среде v (м/с)",val:2e8}],calc:(w)=>w.v<=0?"Ошибка":"n = "+(w.c/w.v).toFixed(4) },
-            { id:"o8",title:"Абсолютный показатель преломления (через параметры среды)",category:"Оптика",description:"Расчет показателя преломления среды через её диэлектрическую и магнитную проницаемости.",formula:"n = √εμ",inputs:[{id:"eps",label:"Диэл. проницаемость ε",val:2.25},{id:"mu",label:"Магн. проницаемость μ",val:1}],calc:(w)=>w.eps<0||w.mu<0?"Ошибка":"n = "+Math.sqrt(w.eps*w.mu).toFixed(4) },
-            { id:"o9", title:"Формула дифракционной решетки", category:"Оптика", description:"Положение угловых максимумов при интерференции на щелях.", formula:"λ = d · sin(φ) / k", inputs:[{id:"d_mkm", label:"Шаг решетки d (мкм)", val:4}, {id:"angle", label:"Угол дифракции φ (°)", val:30}, {id:"k", label:"Порядок максимума k", val:2}], calc:(w) => w.k<=0 ? "Ошибка":"Длина волны λ = " + ((w.d_mkm*1e-6*Math.sin(w.angle*Math.PI/180))/w.k*1e9).toFixed(1) + " нм" },
+            { id:"o8",title:"Абсолютный показатель преломления (через параметры среды)",category:"Оптика",description:"Расчет показателя преломления среды через её диэлектрическую и магнитную проницаемости.",formula:"n = √(ε ·μ)",inputs:[{id:"eps",label:"Диэл. проницаемость ε",val:2.25},{id:"mu",label:"Магн. проницаемость μ",val:1}],calc:(w)=>w.eps<0||w.mu<0?"Ошибка":"n = "+Math.sqrt(w.eps*w.mu).toFixed(4) },
+            { id:"o9", title:"Формула дифракционной решетки", category:"Оптика", description:"Положение угловых максимумов при интерференции на щелях.", formula:"λ = d · (sinφ) / k", inputs:[{id:"d_mkm", label:"Шаг решетки d (мкм)", val:4}, {id:"angle", label:"Угол дифракции φ (°)", val:30}, {id:"k", label:"Порядок максимума k", val:2}], calc:(w) => w.k<=0 ? "Ошибка":"Длина волны λ = " + ((w.d_mkm*1e-6*Math.sin(w.angle*Math.PI/180))/w.k*1e9).toFixed(1) + " нм" },
             { id:"o10",title:"Условие интерференционного максимума",category:"Оптика",description:"Расчет разности хода для максимума интерференции.",formula:"Δd = k · λ",inputs:[{id:"k",label:"Порядок максимума k",val:1},{id:"lambda",label:"Длина волны λ (м)",val:5e-7}],calc:(w)=>w.k<0?"Ошибка":"Δd = "+(w.k*w.lambda).toExponential(4)+" м" },
             { id:"o11",title:"Условие интерференционного минимума",category:"Оптика",description:"Расчет разности хода для минимума интерференции.",formula:"Δd = (2k + 1) · λ / 2",inputs:[{id:"k",label:"Порядок минимума k",val:0},{id:"lambda",label:"Длина волны λ (м)",val:5e-7}],calc:(w)=>w.k<0?"Ошибка":"Δd = "+((2*w.k+1)*w.lambda/2).toExponential(4)+" м" },
             { id:"o12",title:"Ширина интерференционной полосы",category:"Оптика",description:"Расчет ширины полосы в опыте Юнга.",formula:"Δx = λ · l / d",inputs:[{id:"lambda",label:"Длина волны λ (м)",val:5e-7},{id:"l",label:"Расстояние до экрана l (м)",val:1},{id:"d",label:"Расстояние между источниками d (м)",val:0.001}],calc:(w)=>w.d<=0?"Ошибка":"Δx = "+(w.lambda*w.l/w.d).toExponential(4)+" м" },
@@ -461,7 +476,7 @@
             { id:"o14",title:"Условие минимума при отражении (тонкая пленка)",category:"Оптика",description:"Условие интерференционного минимума при отражении от тонкой пленки.",formula:"2dn = (2k + 1) · λ / 2",inputs:[{id:"d",label:"Толщина пленки d (м)",val:1e-6},{id:"n",label:"Показатель преломления n",val:1.5},{id:"k",label:"Порядок k",val:0},{id:"lambda",label:"Длина волны λ (м)",val:5e-7}],calc:(w)=>w.d<0||w.n<=0?"Ошибка":"Минимум при λ = "+(4*w.d*w.n/(2*w.k+1)).toExponential(4)+" м" },
             { id:"o15", title:"Оптическая сила линзы", category:"Оптика", description:"Характеристика преломляющей способности диоптрийной системы.", formula:"D = 1 / F", inputs:[{id:"f", label:"Фокусное расстояние F (м)", val:0.25}], calc:(w) => w.f===0 ? "Ошибка":"Оптическая сила D = " + (1/w.f).toFixed(2) + " дптр" },
             { id:"q1",title:"Масса фотона",category:"Квантовая физика",description:"Эквивалент массы движущегося кванта излучения.",formula:"m = (h · ν) / c²",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"v",label:"Частота излучения ν (Гц)",val:5e14},{id:"c",label:"Скорость света c (м/с)",val:3e8}],calc:(w)=>w.h<=0||w.v<0||w.c<=0?"Ошибка":"m = "+(w.h*w.v/(w.c*w.c)).toExponential(4)+" кг" },
-            { id:"q2",title:"Давление света",category:"Квантовая физика",description:"Механическое воздействие фотонного потока на поверхность.",formula:"P = (I / c) · (1 + ρ)",inputs:[{id:"i",label:"Интенсивность излучения I (Вт/м²)",val:1360},{id:"c",label:"Скорость света c (м/с)",val:3e8},{id:"rho",label:"Коэффициент отражения ρ (0..1)",val:1}],calc:(w)=>w.i<0||w.c<=0||w.rho<0||w.rho>1?"Ошибка":"P = "+(w.i/w.c*(1+w.rho)).toExponential(4)+" Па" },
+            { id:"q2",title:"Давление света",category:"Квантовая физика",description:"Механическое воздействие фотонного потока на поверхность.",formula:"P = I / c · (1 + ρ)",inputs:[{id:"i",label:"Интенсивность излучения I (Вт/м²)",val:1360},{id:"c",label:"Скорость света c (м/с)",val:3e8},{id:"rho",label:"Коэффициент отражения ρ (0..1)",val:1}],calc:(w)=>w.i<0||w.c<=0||w.rho<0||w.rho>1?"Ошибка":"P = "+(w.i/w.c*(1+w.rho)).toExponential(4)+" Па" },
             { id:"q3",title:"Импульс фотона (через энергию)",category:"Квантовая физика",description:"Переносимый квантом механический импульс.",formula:"p = E / c",inputs:[{id:"e",label:"Энергия фотона E (Дж)",val:3.3e-19},{id:"c",label:"Скорость света c (м/с)",val:3e8}],calc:(w)=>w.e<0||w.c<=0?"Ошибка":"p = "+(w.e/w.c).toExponential(4)+" кг·м/с" },
             { id:"q4",title:"Импульс фотона (через частоту)",category:"Квантовая физика",description:"Динамический удар светового кванта заданной частоты.",formula:"p = (h · ν) / c",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"v",label:"Частота излучения ν (Гц)",val:5e14},{id:"c",label:"Скорость света c (м/с)",val:3e8}],calc:(w)=>w.h<=0||w.v<0||w.c<=0?"Ошибка":"p = "+(w.h*w.v/w.c).toExponential(4)+" кг·м/с" },
             { id:"q5",title:"Импульс фотона (через длину волны)",category:"Квантовая физика",description:"Волновое выражение механического импульса частицы света.",formula:"p = h / λ",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"lambda",label:"Длина волны λ (м)",val:6e-7}],calc:(w)=>w.h<=0||w.lambda<=0?"Ошибка":"p = "+(w.h/w.lambda).toExponential(4)+" кг·м/с" },
@@ -471,13 +486,13 @@
             { id:"q9",title:"Энергия фотона (через частоту)",category:"Квантовая физика",description:"Основной квант энергии электромагнитного излучения.",formula:"E = h · ν",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"v",label:"Частота излучения ν (Гц)",val:5e14}],calc:(w)=>w.h<=0||w.v<0?"Ошибка":"E = "+(w.h*w.v).toExponential(4)+" Дж" },
             { id:"q10",title:"Энергия фотона (через длину волны)",category:"Квантовая физика",description:"Определение порции энергии света через его пространственный период.",formula:"E = (h · c) / λ",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"c",label:"Скорость света c (м/с)",val:3e8},{id:"lambda",label:"Длина волны λ (м)",val:6e-7}],calc:(w)=>w.h<=0||w.c<=0||w.lambda<=0?"Ошибка":"E = "+(w.h*w.c/w.lambda).toExponential(4)+" Дж" },
             { id:"q11",title:"Работа выхода электрона (через частоту)",category:"Квантовая физика",description:"Минимальная энергия для удаления электрона из вещества при пороговой частоте.",formula:"A_вых = h · ν_min",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"v_min",label:"Красная граница фотоэффекта ν_min (Гц)",val:5e14}],calc:(w)=>w.h<=0||w.v_min<0?"Ошибка":"Работа выхода A_вых = "+(w.h*w.v_min).toExponential(4)+" Дж" },
-            { id:"q12",title:"Работа выхода электрона (через длину волны)",category:"Квантовая физика",description:"Минимальная энергия для удаления электрона из вещества при максимальной длине волны.",formula:"A_вых = (h · c) / λ_max",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"c",label:"Скорость света c (м/с)",val:3e8},{id:"lambda_max",label:"Красная граница фотоэффекта λ_max (м)",val:6e-7}],calc:(w)=>w.h<=0||w.c<=0||w.lambda_max<=0?"Ошибка":"Работа выхода A_вых = "+(w.h*w.c/w.lambda_max).toExponential(4)+" Дж" },
+            { id:"q12",title:"Работа выхода электрона (через длину волны)",category:"Квантовая физика",description:"Минимальная энергия для удаления электрона из вещества при максимальной длине волны.",formula:"A_вых = (h · c) /(λ_max)",inputs:[{id:"h",label:"Постоянная Планка h (Дж·с)",val:6.626e-34},{id:"c",label:"Скорость света c (м/с)",val:3e8},{id:"lambda_max",label:"Красная граница фотоэффекта λ_max (м)",val:6e-7}],calc:(w)=>w.h<=0||w.c<=0||w.lambda_max<=0?"Ошибка":"Работа выхода A_вых = "+(w.h*w.c/w.lambda_max).toExponential(4)+" Дж" },
             { id:"q13", title:"Уравнение фотоэффекта Эйнштейна", category:"Квантовая физика", description:"Баланс энергии выбивания электрона световым квантом.", formula:"E_кmax = h·ν - A_вых", inputs:[{id:"l_nm", label:"Длина волны λ (нм)", val:350}, {id:"a_ev", label:"Работа выхода A_вых (эВ)", val:2.2}], calc:(w) => { if(w.l_nm<=0) return "Ошибка"; const e_ph = (h_pl*c_light/(w.l_nm*1e-9))/e_charge; const ek = e_ph - w.a_ev; return ek<0 ? `Фотоэффекта нет. Квант (${e_ph.toFixed(2)} эВ) слабее порога выхода.` : `E_кmax = ${ek.toFixed(2)} эВ`; } },
-            { id:"q14", title:"Красная граница фотоэффекта", category:"Квантовая физика", description:"Предельная максимальная длина волны для запуска эмиссии электронов.", formula:"λ_кр = h · c / A_вых", inputs:[{id:"a_ev", label:"Работа выхода A_вых (эВ)", val:4.5}], calc:(w) => w.a_ev<=0 ? "Ошибка":"Порог λ_кр = " + (h_pl*c_light/(w.a_ev*e_charge)*1e9).toFixed(1) + " нм" },
+            { id:"q14", title:"Красная граница фотоэффекта", category:"Квантовая физика", description:"Предельная максимальная длина волны для запуска эмиссии электронов.", formula:"λ_кр = (h · c) / (A_вых)", inputs:[{id:"a_ev", label:"Работа выхода A_вых (эВ)", val:4.5}], calc:(w) => w.a_ev<=0 ? "Ошибка":"Порог λ_кр = " + (h_pl*c_light/(w.a_ev*e_charge)*1e9).toFixed(1) + " нм" },
             { id:"q15", title:"Постулат Бора (Квантование орбит)", category:"Квантовая физика", description:"Момент импульса электрона на стационарной водородной орбите.", formula:"L = n · ℏ", inputs:[{id:"n", label:"Номер орбиты n (целое)", val:2}], calc:(w) => `Момент импульса L = ${(w.n * h_bar).toExponential(5)} кг·м²/с` },
-            { id:"q16", title:"Формула Бальмера (Спектральные линии)", category:"Квантовая физика", description:"Излучение фотона при перескоке электрона на уровень n=2.", formula:"λ = 1 / (R_H · (1/2² - 1/n²))", inputs:[{id:"n", label:"С какого уровня падение n (>2)", val:3}], calc:(w) => w.n<=2 ? "Ошибка: n должно быть > 2":"Длина волны линии λ = " + (1/(R_ryd*(0.25 - 1/(w.n*w.n)))*1e9).toFixed(1) + " нм" },
+            { id:"q16", title:"Формула Бальмера (Спектральные линии)", category:"Квантовая физика", description:"Излучение фотона при перескоке электрона на уровень n=2.", formula:"λ = 1 / (R_H · 1/2² - 1/n²)", inputs:[{id:"n", label:"С какого уровня падение n (>2)", val:3}], calc:(w) => w.n<=2 ? "Ошибка: n должно быть > 2":"Длина волны линии λ = " + (1/(R_ryd*(0.25 - 1/(w.n*w.n)))*1e9).toFixed(1) + " нм" },
             { id:"q17", title:"Энергия связи атомного ядра через дефект", category:"Квантовая физика", description:"Внутренняя энергия удержания нуклонов в ядре атома.", formula:"E_св = Δm · c²", inputs:[{id:"dm", label:"Дефект масс Δm (а.е.м.)", val:0.03038}], calc:(w) => { const j = w.dm * 1.66054e-27 * c_light * c_light; return `Энергия связи ядра = ${(j / (1.60218e-13)).toFixed(2)} МэВ`; } },
-            { id:"q18", title:"Закон радиоактивного распада", category:"Квантовая физика", description:"Статистическое уменьшение числа радиоактивных ядер со временем.", formula:"N = N₀ · 2^(-t / T)", inputs:[{id:"n0", label:"Начальные ядра N₀", val:1e6}, {id:"t", label:"Время распада t (сут)", val:24}, {id:"t_half", label:"Период полураспада T (сут)", val:8}], calc:(w) => w.t_half<=0 ? "Ошибка":"Осталось ядер N = " + Math.round(w.n0 * Math.pow(2, -w.t/w.t_half)) },
+            { id:"q18", title:"Закон радиоактивного распада", category:"Квантовая физика", description:"Статистическое уменьшение числа радиоактивных ядер со временем.", formula:"N = N₀ · 2^{-t/T}", inputs:[{id:"n0", label:"Начальные ядра N₀", val:1e6}, {id:"t", label:"Время распада t (сут)", val:24}, {id:"t_half", label:"Период полураспада T (сут)", val:8}], calc:(w) => w.t_half<=0 ? "Ошибка":"Осталось ядер N = " + Math.round(w.n0 * Math.pow(2, -w.t/w.t_half)) },
             { id:"q19",title:"Квантование орбит Бора (условие постулата)",category:"Квантовая физика",description:"Универсальный расчет параметров стационарной орбиты электрона по квантовому числу.",formula:"m_e · v_n · r_n = n · ℏ",inputs:[{id:"me",label:"Масса электрона m_e (кг)",val:9.109e-31},{id:"v",label:"Скорость электрона v_n (м/с)",val:2.187e6},{id:"r",label:"Радиус орбиты r_n (м)",val:0},{id:"n",label:"Главное квантовое число n",val:1},{id:"hbar",label:"Редуцированная постоянная Планка (Дж·с)",val:1.054e-34}],calc:(w)=>{ const me = Number(w.me)||0; const v = Number(w.v)||0; const r = Number(w.r)||0; const n = Number(w.n)||0; const hbar = Number(w.hbar)||0; const zeros = [me, v, r, n].filter(x => x === 0).length; if (zeros !== 1 || hbar <= 0) return "Ошибка: заполните ровно три поля из четырех (m_e, v_n, r_n, n)"; if (me === 0) return "Масса электрона m_e = "+(n*hbar/(v*r)).toExponential(4)+" кг"; if (v === 0) return "Скорость электрона v_n = "+(n*hbar/(me*r)).toExponential(4)+" м/с"; if (r === 0) return "Радиус орбиты r_n = "+(n*hbar/(me*v)).toExponential(4)+" м"; if (n === 0) return "Главное квантовое число n = "+Math.round(me*v*r/hbar); } },
             { id:"q20",title:"Радиус стационарной орбиты Бора",category:"Квантовая физика",description:"Физический размер разрешенной орбиты электрона в атоме.",formula:"r_n = (n² · ℏ²) / (m_e · k · e²)",inputs:[{id:"n",label:"Главное квантовое число n",val:1},{id:"hbar",label:"Редуцированная постоянная Планка (Дж·с)",val:1.054e-34},{id:"me",label:"Масса электрона (кг)",val:9.109e-31},{id:"k",label:"Коэффициент кулоновской константы (Н·м²/Кл²)",val:8.988e9},{id:"e",label:"Заряд электрона (Кл)",val:1.602e-19}],calc:(w)=>w.n<=0||w.hbar<=0||w.me<=0||w.k<=0||w.e<=0?"Ошибка":"Радиус орбиты r_n = "+(w.n*w.n*w.hbar*w.hbar/(w.me*w.k*w.e*w.e)).toExponential(4)+" м" },
             { id:"q21",title:"Скорость электрона на боровской орбите",category:"Квантовая физика",description:"Орбитальная скорость электрона на определенном энергетическом уровне.",formula:"v_n = (k · e²) / (n · ℏ)",inputs:[{id:"k",label:"Коэффициент кулоновской константы (Н·м²/Кл²)",val:8.988e9},{id:"e",label:"Заряд электрона (Кл)",val:1.602e-19},{id:"n",label:"Главное квантовое число n",val:1},{id:"hbar",label:"Редуцированная постоянная Планка (Дж·с)",val:1.054e-34}],calc:(w)=>w.k<=0||w.e<=0||w.n<=0||w.hbar<=0?"Ошибка":"Скорость электрона v_n = "+(w.k*w.e*w.e/(w.n*w.hbar)).toExponential(4)+" м/с" },
@@ -491,9 +506,9 @@
             { id:"q29",title:"Дефект массы ядра",category:"Квантовая физика",description:"Разность между суммарной массой отдельных нуклонов и реальной массой связанного ядра.",formula:"Δm = Z · m_p + (A - Z) · m_n - M_я",inputs:[{id:"z",label:"Число протонов в ядре Z",val:2},{id:"mp",label:"Масса свободного протона (атомные единицы массы)",val:1.007276},{id:"a",label:"Массовое число ядра A",val:4},{id:"mn",label:"Масса свободного нейтрона (атомные единицы массы)",val:1.008665},{id:"m_ya",label:"Масса атомного ядра M_я (атомные единицы массы)",val:4.001506}],calc:(w)=>w.z<0||w.mp<=0||w.a<w.z||w.mn<=0||w.m_ya<=0?"Ошибка":"Дефект массы Δm = "+(w.z*w.mp+(w.a-w.z)*w.mn-w.m_ya).toFixed(6)+" а.е.м." },
             { id:"s1",title:"Релятивистская масса движущегося тела",category:"Специальная теория относительности",description:"Увеличение динамической массы объекта по мере приближения его скорости к скорости света.",formula:"m = m_0 / √(1 - v²/c²)",inputs:[{id:"m0",label:"Масса покоя тела (кг)",val:1},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.m0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Релятивистская масса m = "+(w.m0/Math.sqrt(1-w.v*w.v/(w.c*w.c))).toExponential(4)+" кг" },
             { id:"s2",title:"Относительность расстояний",category:"СТО",description:"Сокращение линейного размера предмета вдоль направления его движения относительно наблюдателя.",formula:"l = l_0 · √(1 - v²/c²)",inputs:[{id:"l0",label:"Собственная длина покоящегося тела (м)",val:10},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.l0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Релятивистская длина l = "+(w.l0*Math.sqrt(1-w.v*w.v/(w.c*w.c))).toFixed(4)+" м" },
-            { id:"s3",title:"Относительность промежутков времени",category:"СТО",description:"Замедление течения времени в движущейся системе отсчета с позиции покоящегося наблюдателя.",formula:"τ = τ_0 / √(1 - v²/c²)",inputs:[{id:"t0",label:"Собственное время в покоящейся системе τ_0 (с)",val:1},{id:"v",label:"Скорость движения системы отсчета (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.t0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Релятивистское время τ = "+(w.t0/Math.sqrt(1-w.v*w.v/(w.c*w.c))).toFixed(4)+" с" },
-            { id:"s4",title:"Релятивистское сложение скоростей",category:"СТО",description:"Закон определения скорости тела относительно неподвижной системы отсчета, исключающий превышение скорости света.",formula:"v_res = (v_1 + v) / (1 + (v_1 · v) / c²)",inputs:[{id:"v1",label:"Скорость тела относительно движущейся системы отсчета (м/с)",val:2e8},{id:"v",label:"Скорость движения самой системы отсчета (м/с)",val:1.5e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.v1<0||w.v<0||w.c<=0||w.v1>w.c||w.v>w.c?"Ошибка":"Результирующая скорость v_res = "+((w.v1+w.v)/(1+(w.v1*w.v)/(w.c*w.c))).toExponential(4)+" м/с" },
-            { id:"s5",title:"Релятивистская кинетическая энергия",category:"СТО",description:"Разность между полной энергией движущегося тела и его энергия покоя.",formula:"E_kin = m_0 · c² · (1 / √(1 - v²/c²) - 1)",inputs:[{id:"m0",label:"Масса покоя тела (кг)",val:1},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.m0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Кинетическая энергия E_kin = "+(w.m0*w.c*w.c*(1/Math.sqrt(1-w.v*w.v/(w.c*w.c))-1)).toExponential(4)+" Дж" },
+            { id:"s3",title:"Относительность промежутков времени",category:"СТО",description:"Замедление течения времени в движущейся системе отсчета с позиции покоящегося наблюдателя.",formula:"τ = (τ_0) / (√(1 - v²/c²))",inputs:[{id:"t0",label:"Собственное время в покоящейся системе τ_0 (с)",val:1},{id:"v",label:"Скорость движения системы отсчета (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.t0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Релятивистское время τ = "+(w.t0/Math.sqrt(1-w.v*w.v/(w.c*w.c))).toFixed(4)+" с" },
+            { id:"s4",title:"Релятивистское сложение скоростей",category:"СТО",description:"Закон определения скорости тела относительно неподвижной системы отсчета, исключающий превышение скорости света.",formula:"v_res = (v_1 + v) / {1 + (v_1 · v) / c^2}",inputs:[{id:"v1",label:"Скорость тела относительно движущейся системы отсчета v_1(м/с)",val:2e8},{id:"v",label:"Скорость движения самой системы отсчета v (м/с)",val:1.5e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.v1<0||w.v<0||w.c<=0||w.v1>w.c||w.v>w.c?"Ошибка":"Результирующая скорость v_res = "+((w.v1+w.v)/(1+(w.v1*w.v)/(w.c*w.c))).toExponential(4)+" м/с" },
+            { id:"s5",title:"Релятивистская кинетическая энергия",category:"СТО",description:"Разность между полной энергией движущегося тела и его энергия покоя.",formula:"E_kin = m_0 · c² · (1 / (√(1 - v²/c²)) - 1)",inputs:[{id:"m0",label:"Масса покоя тела (кг)",val:1},{id:"v",label:"Скорость движения тела (м/с)",val:2.4e8},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8}],calc:(w)=>w.m0<0||w.v<0||w.c<=0||w.v>=w.c?"Ошибка":"Кинетическая энергия E_kin = "+(w.m0*w.c*w.c*(1/Math.sqrt(1-w.v*w.v/(w.c*w.c))-1)).toExponential(4)+" Дж" },
             { id:"s6",title:"Связь релятивистского импульса и энергии",category:"СТО",description:"Инвариантное соотношение, связывающее полную энергию, импульс и массу покоя движущегося объекта.",formula:"E = √(p² · c² + m_0² · c⁴)",inputs:[{id:"p",label:"Релятивистский импульс тела (кг·м/с)",val:2e-19},{id:"c",label:"Скорость света в вакууме (м/с)",val:3e8},{id:"m0",label:"Масса покоя тела (кг)",val:9.109e-31}],calc:(w)=>w.p<0||w.c<=0||w.m0<0?"Ошибка":"Полная энергия E = "+Math.sqrt(w.p*w.p*w.c*w.c + w.m0*w.m0*Math.pow(w.c,4)).toExponential(4)+" Дж" },
         ];
 
@@ -518,6 +533,16 @@
             return window.innerWidth < 1024 || (window.innerWidth >= 1024 && window.innerHeight < 720);
         }
 
+        function updateCategoryButtons() {
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.getAttribute('data-cat') === selectedCategory) {
+                    btn.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none";
+                } else {
+                    btn.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none";
+                }
+            });
+        }
+
         function textToLaTeX(f) {
             let s = f;
             s = s.replace(/·/g, '\\cdot ');
@@ -531,15 +556,20 @@
             };
             for(let k in greeks) s = s.replace(new RegExp(k, 'g'), greeks[k] + ' ');
             
+            s = s.replace(/\b(sin|cos|tan|cot|arcsin|arccos|arctan)\b/g, '\\$1 ');
             s = s.replace(/√\(([^)]+)\)/g, '\\sqrt{$1}'); 
-            s = s.replace(/√([A-Za-z0-9_]+)/g, '\\sqrt{$1}'); 
-            
-            s = s.replace(/_([а-яА-Яa-zA-Z0-9]+)/g, '_{\\text{$1}}');
-            s = s.replace(/([а-яА-Я]+)/g, '\\text{$1}');
-            
-            s = s.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
-            s = s.replace(/(?:^|\s|\=)([A-Za-z0-9_^{\}\\]+)\s*\/\s*([A-Za-z0-9_^{\}\\]+)/g, ' \\frac{$1}{$2} ');
-            
+            s = s.replace(/√([A-Za-z0-9_^{}\\]+)/g, '\\sqrt{$1}');
+            s = s.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}'); 
+            s = s.replace(/\(([^)]+)\)\s*\/\s*([a-zA-Z0-9_^{}\\]+)/g, '\\frac{$1}{$2}'); 
+            s = s.replace(/([a-zA-Z0-9_^{}\\]+)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}'); 
+            s = s.replace(/([a-zA-Z0-9_^{}\\]+)\s*\/\s*([a-zA-Z0-9_^{}\\]+)/g, '\\frac{$1}{$2}'); 
+            s = s.replace(/_([а-яА-Яa-zA-Z0-9]+)/g, '_{$1}'); 
+            s = s.replace(/([а-яА-ЯёЁ]+)/g, '\\text{$1}');
+            s = s.replace(/_\{([^}]+)\}/g, (match, p1) => {
+                 if (/^\d+$/.test(p1)) return `_{${p1}}`; 
+                 if (p1.includes('\\text')) return match; 
+                 return `_{\\text{${p1}}}`; 
+            });
             s = s.replace(/ℏ/g, '\\hbar');
             return s;
         }
@@ -568,8 +598,8 @@
                             ${texFormula}
                         </span>
                     `;
+                    
                     btn.onclick = () => {
-                        loadCalculator(f);
                         window.location.hash = f.id; 
                         if (isMobileLayout()) {
                             document.getElementById('calculator-zone').scrollIntoView({ behavior: 'smooth' });
@@ -598,15 +628,17 @@
                 calcFormula.textContent = f.formula;
             }
 
-            window.location.hash = f.id;
             document.title = `${f.title} — Калькулятор физических формул`;
-
             inputsContainer.innerHTML = '';
+
+            const savedVals = JSON.parse(localStorage.getItem(`physcalc_inputs_${f.id}`)) || {};
 
             f.inputs.forEach(inp => {
                 const div = document.createElement('div');
                 div.className = "space-y-1 relative"; 
                 
+                const currentVal = savedVals[inp.id] !== undefined ? savedVals[inp.id] : inp.val;
+
                 div.innerHTML = `
                     <div class="flex items-center justify-between mb-1">
                         <label class="text-[11px] font-medium text-slate-500 dark:text-slate-400">${inp.label}</label>
@@ -622,7 +654,7 @@
                         </div>
                     </div>
                     
-                    <input type="text" data-id="${inp.id}" value="${inp.val}" 
+                    <input type="text" data-id="${inp.id}" value="${currentVal}" 
                            class="w-full bg-white border border-slate-300 text-slate-900 dark:bg-slate-800 dark:border-slate-700 dark:text-white rounded-lg px-3 py-1.5 text-xs font-mono focus:outline-none focus:border-indigo-500 core-input transition-colors duration-150">
                 `;
                 
@@ -632,20 +664,13 @@
                 
                 const updateTooltip = () => {
                     const val = inputEl.value.trim();
-                    
                     if (val.toLowerCase().includes('e')) {
                         tooltipEl.classList.remove('hidden');
-                        
                         const match = val.match(/^([+-]?\d*(?:\.\d+)?)[eE]([+-]?\d+)$/);
-                        
                         if (match) {
                             const base = match[1] || '1'; 
                             let exponent = match[2];      
-                            
-                            if (exponent.startsWith('+')) {
-                                exponent = exponent.slice(1);
-                            }
-                            
+                            if (exponent.startsWith('+')) exponent = exponent.slice(1);
                             tooltipTextEl.innerHTML = `
                                 <span class="text-slate-800 dark:text-white font-semibold block mb-1">Ваше число:</span>
                                 Запись <code class="bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-[#e2e5f3] px-1 rounded font-mono text-[11px]">${val}</code> означает:
@@ -685,6 +710,8 @@
                 inputsContainer.querySelectorAll('.core-input').forEach(i => {
                     vals[i.getAttribute('data-id')] = parseFloat(i.value) || 0;
                 });
+                
+                localStorage.setItem(`physcalc_inputs_${f.id}`, JSON.stringify(vals));
                 return f.calc(vals);
             };
 
@@ -707,25 +734,30 @@
         document.getElementById('category-filters').addEventListener('click', (e) => {
             const b = e.target.closest('button');
             if (!b) return;
-            document.querySelectorAll('.cat-btn').forEach(btn => {
-                btn.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none";
-            });
-            b.className = "cat-btn text-left px-3 py-1.5 rounded-xl text-xs font-medium bg-indigo-500/10 text-indigo-600 border border-indigo-500/20 dark:bg-indigo-600/20 dark:text-indigo-400 dark:border-indigo-500/30 transition-all whitespace-nowrap shrink-0 snap-start lg:whitespace-normal lg:shrink lg:snap-none";
             selectedCategory = b.getAttribute('data-cat');
+            updateCategoryButtons();
             renderList();
+            
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const formula = physicsFormulas.find(f => f.id === hash);
+                if (formula) {
+                    document.querySelectorAll('#formulas-list button').forEach(btn => {
+                        if (btn.querySelector('.font-bold').textContent === formula.title) {
+                            btn.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/50');
+                        }
+                    });
+                }
+            }
         });
-
-        renderList();
 
         const themeToggleBtn = document.getElementById('theme-toggle');
         const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
         const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
+        if (document.documentElement.classList.contains('dark')) {
             themeToggleLightIcon.classList.remove('hidden');
         } else {
-            document.documentElement.classList.remove('dark');
             themeToggleDarkIcon.classList.remove('hidden');
         }
 
@@ -749,46 +781,12 @@
                 }
             });
         });
+        
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
                 .then(() => console.log('PhysCalc PWA работает!'))
                 .catch((err) => console.error('Ошибка регистрации PWA:', err));
-        }
-        function handleUrlHash() {
-            const hash = window.location.hash.replace('#', '');
-            if (hash) {
-                const formula = physicsFormulas.find(f => f.id === hash);
-                if (formula) {
-                    loadCalculator(formula);
-                }
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', handleUrlHash);
-
-        window.addEventListener('hashchange', handleUrlHash);
-
-        function handleUrlRouting() {
-            const id = window.location.hash.replace('#', ''); 
-            
-            if (id) {
-                const formula = physicsFormulas.find(f => f.id === id);
-                if (formula) {
-                    loadCalculator(formula);
-                }
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', handleUrlRouting);
-
-        window.addEventListener('hashchange', handleUrlRouting);
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/sw.js').then((reg) => {
-                reg.update();
-              });
-            });
-        
+                
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
               if (!refreshing) {
@@ -796,7 +794,47 @@
                 window.location.reload();
               }
             });
-          }
+        }
+        
+        function handleUrlHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const formula = physicsFormulas.find(f => f.id === hash);
+                if (formula) {
+                    
+                    if (selectedCategory !== 'all' && selectedCategory !== formula.category) {
+                        selectedCategory = formula.category;
+                        updateCategoryButtons();
+                        renderList(); 
+                    }
+                    
+                    loadCalculator(formula);
+                    
+                    document.querySelectorAll('#formulas-list button').forEach(btn => {
+                        btn.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/50');
+                        if (btn.querySelector('.font-bold').textContent === formula.title) {
+                            btn.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50', 'dark:bg-indigo-900/50');
+                        }
+                    });
+                }
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const formula = physicsFormulas.find(f => f.id === hash);
+                if (formula) {
+                    selectedCategory = formula.category;
+                    updateCategoryButtons();
+                }
+            }
+            renderList();
+            handleUrlHash();
+        });
+
+        window.addEventListener('hashchange', handleUrlHash);
+
     </script>
 </body>
 </html>
