@@ -10,7 +10,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Калькулятор погрешностей измерений</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="output.css">
     <script>
         tailwind.config = {
             darkMode: 'class'
@@ -48,6 +48,32 @@
             border-width: 6px;
             border-style: solid;
             border-color: #0f172a transparent transparent transparent;
+        }
+
+        /* Стили для тулбара и кнопок формул */
+        .formula-toolbar {
+            @apply bg-slate-100/70 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-2.5 mt-2 shadow-sm backdrop-blur-md;
+        }
+
+        .formula-nav-container {
+            @apply flex p-1 bg-slate-200/70 dark:bg-slate-800/90 rounded-xl gap-1 mb-2.5 border border-slate-300/40 dark:border-slate-700/50;
+        }
+
+        .formula-tab-btn {
+            @apply flex-1 py-1.5 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer select-none text-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white;
+        }
+
+        .formula-tab-btn.active {
+            @apply bg-white dark:bg-indigo-600 text-indigo-950 dark:text-white shadow-sm font-bold;
+        }
+
+        .formula-toolbar-btn {
+            @apply flex items-center justify-center h-9 sm:h-10 rounded-xl border border-slate-200/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 dark:hover:border-indigo-500 hover:shadow-md hover:shadow-indigo-500/15 active:scale-95 transition-all cursor-pointer select-none;
+        }
+
+        /* Выделение математических операторов */
+        .formula-op-btn {
+            @apply bg-indigo-50/70 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 font-bold border-indigo-100/80 dark:border-slate-700;
         }
     </style>
     <script type="text/javascript">
@@ -267,7 +293,63 @@
                         <label for="ind-formula" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Формула искомой величины (f):</label>
                         <input type="text" id="ind-formula" value="log2(k) * x^2 / 2" placeholder="Например: log2(k) * x^2 / 2" class="w-full min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 dark:text-slate-100 min-h-[42px] transition-all">
                         
-                        <div id="live-formula-box" class="live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-emerald-300 bg-emerald-50/50 dark:border-emerald-600/50 dark:bg-emerald-950/20">
+                        <!-- Тулбар для вставки символов -->
+                        <div class="formula-toolbar bg-slate-100/80 dark:bg-slate-900/70 backdrop-blur-md rounded-2xl border border-indigo-100 dark:border-slate-700/80 p-2.5 mt-2.5 shadow-sm">
+                            
+                            <!-- Переключатель вкладок (растянут на всю ширину w-full, каждая кнопка flex-1) -->
+                            <div class="flex w-full p-1 bg-indigo-100/60 dark:bg-slate-800/80 rounded-xl gap-1 mb-3 border border-indigo-200/50 dark:border-slate-700/60">
+                                <button type="button" class="formula-tab-btn active flex-1 py-1.5 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all cursor-pointer select-none text-center bg-white dark:bg-indigo-600 text-indigo-950 dark:text-white shadow-sm" onclick="switchFormulaTab('symbols')">
+                                    Символы
+                                </button>
+                                <button type="button" class="formula-tab-btn flex-1 py-1.5 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer select-none text-center text-indigo-700/80 dark:text-indigo-300/80 hover:text-indigo-950 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50" onclick="switchFormulaTab('functions')">
+                                    Функции
+                                </button>
+                                <button type="button" class="formula-tab-btn flex-1 py-1.5 px-3 text-xs sm:text-sm font-semibold rounded-lg transition-all cursor-pointer select-none text-center text-indigo-700/80 dark:text-indigo-300/80 hover:text-indigo-950 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50" onclick="switchFormulaTab('greek')">
+                                    Греческие
+                                </button>
+                            </div>
+
+                            <!-- Вкладка: Символы -->
+                            <div id="toolbar-symbols" class="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm font-semibold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('sqrt()', -1)">√</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('π')">π</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm font-semibold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('^2', 0)">x<sup class="text-[10px] font-bold ml-0.5">n</sup></button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('()', -1)">( )</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-indigo-50/80 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 text-base font-bold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('+')">+</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-indigo-50/80 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 text-base font-bold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('-')">−</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-indigo-50/80 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 text-base font-bold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('×')">×</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-indigo-50/80 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 text-base font-bold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('÷')">÷</button>
+                            </div>
+
+                            <!-- Вкладка: Функции -->
+                            <div id="toolbar-functions" class="grid grid-cols-3 sm:grid-cols-9 gap-1.5 hidden">
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('sin()', -1)">sin</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('cos()', -1)">cos</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('tg()', -1)">tg</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('ctg()', -1)">ctg</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('lg()', -1)">lg</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('ln()', -1)">ln</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('log_a()', -1)">log<sub class="text-[9px] ml-0.5">a</sub>b</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('root_n()', -1)"><sup class="text-[9px] mr-0.5">n</sup>√x</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('abs()', -1)">|x|</button>
+                            </div>
+
+                            <!-- Вкладка: Греческие -->
+                            <div id="toolbar-greek" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 hidden">
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Альфа" onclick="insertToFormula('α')">α</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Бета" onclick="insertToFormula('β')">β</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Гамма" onclick="insertToFormula('γ')">γ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Дельта" onclick="insertToFormula('δ')">δ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Эпсилон" onclick="insertToFormula('ε')">ε</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Тета" onclick="insertToFormula('θ')">θ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Лямбда" onclick="insertToFormula('λ')">λ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Мю" onclick="insertToFormula('μ')">μ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Ро" onclick="insertToFormula('ρ')">ρ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Сигма" onclick="insertToFormula('σ')">σ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Фи" onclick="insertToFormula('φ')">φ</button>
+                                <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Омега" onclick="insertToFormula('ω')">ω</button>
+                            </div>
+                        <div id="live-formula-box" class="live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-emerald-300 bg-emerald-50/50 dark:border-emerald-600/50 dark:bg-emerald-950/20 mt-1">
                             <span id="status-badge" class="status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-emerald-700 dark:text-emerald-400">✓ Формула корректна</span>
                             <div id="preview-text" class="preview-text text-xs sm:text-sm text-slate-800 dark:text-slate-100 bg-white/95 dark:bg-slate-900/80 p-2 rounded-lg border border-slate-200 dark:border-slate-700 min-h-[65px] max-h-[75px] overflow-auto flex items-center justify-center text-center"></div>
                         </div>
@@ -410,7 +492,7 @@
                     </tr>
                     <tr>
                         <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Тригонометрия</b></td>
-                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">sin(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">cos(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">tan(x)</span></td>
+                        <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">sin(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">cos(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">tg(x)</span>, <span class="math-code font-mono bg-slate-100 dark:bg-slate-900 px-1.5 py-0.5 rounded text-indigo-700 dark:text-indigo-300 font-bold text-xs border border-slate-200 dark:border-slate-700">ctg(x)</span></td>
                     </tr>
                     <tr>
                         <td class="py-2 px-1.5 border-b border-dashed border-indigo-200 dark:border-slate-700 align-middle"><b>Константы (π, e)</b></td>
@@ -497,9 +579,9 @@
         };
 
         const RESERVED_MATH = new Set([
-            'sqrt', 'cbrt', 'root', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan',
+            'sqrt', 'cbrt', 'root', 'sin', 'cos', 'tan', 'tg', 'ctg', 'asin', 'acos', 'atan',
             'abs', 'log', 'lg', 'log10', 'log2', 'ln', 'exp', 'floor', 'ceil', 'round',
-            'pi', 'e', 'PI', 'E', 'Math', '_customLog', '_customRoot'
+            'pi', 'e', 'PI', 'E', 'Math', '_customLog', '_customRoot', '_ctg'
         ]);
 
         function _customRoot(n, x) {
@@ -537,6 +619,10 @@
                 throw new Error("Ошибка: аргумент логарифма должен быть строго больше 0");
             }
             return Math.log(x) / Math.log(b);
+        }
+
+        function _ctg(x) {
+            return 1 / Math.tan(x);
         }
 
         function renderMath(element, latexStr, displayMode = false) {
@@ -623,6 +709,38 @@
             }
         }
 
+        function switchFormulaTab(tabName) {
+            const tabs = ['symbols', 'functions', 'greek'];
+            tabs.forEach(t => {
+                document.getElementById(`toolbar-${t}`).classList.add('hidden');
+            });
+            document.getElementById(`toolbar-${tabName}`).classList.remove('hidden');
+
+            const btns = document.querySelectorAll('.formula-tab-btn');
+            btns.forEach(btn => {
+                btn.classList.remove('active', 'bg-white', 'dark:bg-indigo-600', 'text-indigo-950', 'dark:text-white', 'shadow-sm', 'font-bold');
+                btn.classList.add('text-indigo-700/80', 'dark:text-indigo-300/80', 'font-semibold');
+            });
+
+            event.target.classList.add('active', 'bg-white', 'dark:bg-indigo-600', 'text-indigo-950', 'dark:text-white', 'shadow-sm', 'font-bold');
+            event.target.classList.remove('text-indigo-700/80', 'dark:text-indigo-300/80', 'font-semibold');
+        }
+
+        function insertToFormula(text, cursorOffset = 0) {
+            const input = document.getElementById('ind-formula');
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+            const val = input.value;
+            
+            input.value = val.substring(0, start) + text + val.substring(end);
+            input.focus();
+            
+            const newPos = start + text.length + cursorOffset;
+            input.setSelectionRange(newPos, newPos);
+            
+            autoSyncVariablesWithFormula();
+        }
+
         function toggleMathHelp() {
             const modal = document.getElementById('math-help-modal');
             modal.classList.toggle('hidden');
@@ -690,17 +808,22 @@
             });
 
             expr = expr.replace(/[·•×]/g, '*');
+            expr = expr.replace(/÷/g, '/');
             expr = expr.replace(/\^/g, '**');
 
-            expr = expr.replace(/\broot_([a-zA-Z0-9_]+)\s*\(/g, '_customRoot($1, ');
+            expr = expr.replace(/\broot_([a-zA-Z0-9_α-ωΑ-Ω]+)\s*\(/g, '_customRoot($1, ');
             expr = expr.replace(/\broot\s*\(/gi, '_customRoot(');
             expr = expr.replace(/\bcbrt\s*\(/gi, 'Math.cbrt(');
+            expr = expr.replace(/√\s*\(/g, 'Math.sqrt(');
 
-            expr = expr.replace(/\blog_([a-zA-Z0-9_]+)\s*\(/g, '_customLog($1, ');
+            expr = expr.replace(/\blog_([a-zA-Z0-9_α-ωΑ-Ω]+)\s*\(/g, '_customLog($1, ');
             expr = expr.replace(/\blog2\s*\(/gi, '_customLog(2, ');
             expr = expr.replace(/\b(lg|log10)\s*\(/gi, '_customLog(10, ');
             expr = expr.replace(/\bln\s*\(/gi, '_customLog(Math.E, ');
             expr = expr.replace(/\blog\s*\(/gi, '_customLog(');
+
+            expr = expr.replace(/\btg\s*\(/gi, 'Math.tan(');
+            expr = expr.replace(/\bctg\s*\(/gi, '_ctg(');
 
             const otherFuncs = ['sqrt', 'cbrt', 'sin', 'cos', 'tan', 'asin', 'acos', 'atan', 'abs', 'exp', 'floor', 'ceil', 'round'];
             otherFuncs.forEach(fn => {
@@ -708,32 +831,37 @@
                 expr = expr.replace(regex, 'Math.' + fn);
             });
 
-            expr = expr.replace(/(\d+(?:\.\d+)?)\s*([a-zA-Z_\(])/g, '$1*$2');
-            expr = expr.replace(/(\))\s*([a-zA-Z_0-9\(])/g, '$1*$2');
+            // Неявное умножение (например, 2x, 2π, 2α)
+            expr = expr.replace(/(\d+(?:\.\d+)?)\s*([a-zA-Z_α-ωΑ-Ω\(])/g, '$1*$2');
+            expr = expr.replace(/(\))\s*([a-zA-Z_0-9α-ωΑ-Ω\(])/g, '$1*$2');
 
             sciNumMap.forEach((val, i) => {
                 expr = expr.replace(`__SCI_NUM_${i}__`, val);
             });
 
-            const hasPi = ('pi' in varObj) || ('PI' in varObj);
+            const hasPi = ('pi' in varObj) || ('PI' in varObj) || ('π' in varObj);
             const hasE = ('e' in varObj) || ('E' in varObj);
 
-            if (!hasPi) expr = expr.replace(/\bpi\b/gi, 'Math.PI');
+            if (!hasPi) {
+                expr = expr.replace(/\bpi\b/gi, 'Math.PI');
+                expr = expr.replace(/π/g, 'Math.PI');
+            }
             if (!hasE) expr = expr.replace(/\be\b/g, 'Math.E');
 
             return expr;
         }
 
         function extractVariablesFromFormula(formulaStr) {
-            const dummyContext = { e: 1, E: 1, pi: 1, PI: 1 };
+            const dummyContext = { e: 1, E: 1, pi: 1, PI: 1, 'π': 1 };
             const transformed = prepareJsExpression(formulaStr, dummyContext);
             
             const cleanExpr = transformed.replace(/\b\d+(?:\.\d+)?[eE][\+\-]?\d+\b/g, '');
-            const matches = cleanExpr.match(/[a-zA-Z_][a-zA-Z0-9_]*/g) || [];
+            // Поддержка латиницы и греческого алфавита
+            const matches = cleanExpr.match(/[a-zA-Z_α-ωΑ-Ω][a-zA-Z0-9_α-ωΑ-Ω]*/g) || [];
             const vars = [];
 
             matches.forEach(m => {
-                if (!RESERVED_MATH.has(m) && !vars.includes(m)) {
+                if (!RESERVED_MATH.has(m) && !vars.includes(m) && m !== 'π') {
                     vars.push(m);
                 }
             });
@@ -746,8 +874,8 @@
             const keys = Object.keys(varObj);
             const values = keys.map(k => varObj[k]);
 
-            const func = new Function('_customLog', '_customRoot', ...keys, `return (${jsExpr});`);
-            return func(_customLog, _customRoot, ...values);
+            const func = new Function('_customLog', '_customRoot', '_ctg', ...keys, `return (${jsExpr});`);
+            return func(_customLog, _customRoot, _ctg, ...values);
         }
 
         function findMatchingParen(str, openIndex) {
@@ -780,7 +908,7 @@
                 guard++;
                 changed = false;
 
-                let matchRootSub = expr.match(/\broot_([a-zA-Z0-9_]+)\s*\(/i);
+                let matchRootSub = expr.match(/\broot_([a-zA-Z0-9_α-ωΑ-Ω]+)\s*\(/i);
                 if (matchRootSub) {
                     let openIdx = matchRootSub.index + matchRootSub[0].length - 1;
                     let closeIdx = findMatchingParen(expr, openIdx);
@@ -820,7 +948,7 @@
                     }
                 }
 
-                let matchLogSub = expr.match(/\blog_([a-zA-Z0-9_]+)\s*\(/i);
+                let matchLogSub = expr.match(/\blog_([a-zA-Z0-9_α-ωΑ-Ω]+)\s*\(/i);
                 if (matchLogSub) {
                     let openIdx = matchLogSub.index + matchLogSub[0].length - 1;
                     let closeIdx = findMatchingParen(expr, openIdx);
@@ -835,7 +963,7 @@
                     }
                 }
 
-                let funcRegex = /\b(log2|log10|lg|ln|sqrt|cbrt|abs|sin|cos|tan|asin|acos|atan|exp)\s*\(/i;
+                let funcRegex = /\b(log2|log10|lg|ln|sqrt|cbrt|abs|sin|cos|tan|tg|ctg|asin|acos|atan|exp)\s*\(/i;
                 let matchFunc = expr.match(funcRegex);
                 if (matchFunc) {
                     let openIdx = matchFunc.index + matchFunc[0].length - 1;
@@ -854,7 +982,8 @@
                         else if (fnName === 'abs') latexFn = `\\left|${processedArg}\\right|`;
                         else if (fnName === 'sin') latexFn = `\\sin\\left(${processedArg}\\right)`;
                         else if (fnName === 'cos') latexFn = `\\cos\\left(${processedArg}\\right)`;
-                        else if (fnName === 'tan') latexFn = `\\tan\\left(${processedArg}\\right)`;
+                        else if (fnName === 'tan' || fnName === 'tg') latexFn = `\\tan\\left(${processedArg}\\right)`;
+                        else if (fnName === 'ctg') latexFn = `\\cot\\left(${processedArg}\\right)`;
                         else if (fnName === 'asin') latexFn = `\\arcsin\\left(${processedArg}\\right)`;
                         else if (fnName === 'acos') latexFn = `\\arccos\\left(${processedArg}\\right)`;
                         else if (fnName === 'atan') latexFn = `\\arctan\\left(${processedArg}\\right)`;
@@ -968,10 +1097,15 @@
             }
 
             str = str.replace(/\*\*/g, '^');
+            str = str.replace(/×/g, '*');
+            str = str.replace(/÷/g, '/');
+            str = str.replace(/√\s*\(/g, 'sqrt(');
+            
             str = processMathFunctionsInLatex(str);
             str = convertFractions(str);
             str = str.replace(/\*/g, ' \\cdot ');
             str = str.replace(/\bpi\b/gi, '\\pi');
+            str = str.replace(/π/g, '\\pi');
 
             return `${lhs} = ${str}`;
         }
@@ -1120,7 +1254,7 @@
             const badge = document.getElementById('status-badge');
             const previewText = document.getElementById('preview-text');
 
-            liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-rose-300 bg-rose-50/50 dark:border-rose-600/50 dark:bg-rose-950/20';
+            liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-rose-300 bg-rose-50/50 dark:border-rose-600/50 dark:bg-rose-950/20 mt-1';
             badge.className = 'status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-rose-700 dark:text-rose-400';
             badge.textContent = '⚠ Ошибка в формуле';
             previewText.textContent = msg;
@@ -1147,7 +1281,7 @@
                     throw new Error("Ошибка: Результат вычисления не является числом (проверьте аргументы логарифмов и деление на ноль).");
                 }
 
-                liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-emerald-300 bg-emerald-50/50 dark:border-emerald-600/50 dark:bg-emerald-950/20';
+                liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-emerald-300 bg-emerald-50/50 dark:border-emerald-600/50 dark:bg-emerald-950/20 mt-1';
                 badge.className = 'status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-emerald-700 dark:text-emerald-400';
                 badge.textContent = '✓ Формула корректна';
                 
@@ -1168,7 +1302,7 @@
             const newVars = extractVariablesFromFormula(formulaStr);
 
             const currentRows = Array.from(indVarsContainer.querySelectorAll('.var-row'));
-            const currentVars = currentRows.map(row => row.querySelector('.var-name').value.trim());
+            const currentVars = currentRows.map(row => row.querySelector('.var-name').textContent.trim());
 
             const isIdentical = newVars.length === currentVars.length && newVars.every((v, i) => v === currentVars[i]);
             if (isIdentical) {
@@ -1177,7 +1311,7 @@
 
             const existingData = {};
             currentRows.forEach(row => {
-                const name = row.querySelector('.var-name').value.trim();
+                const name = row.querySelector('.var-name').textContent.trim();
                 if (name) {
                     existingData[name] = {
                         val: row.querySelector('.var-val').value,
@@ -1198,11 +1332,17 @@
             row.className = 'var-row flex gap-2 items-center w-full';
             
             row.innerHTML = `
-                <input type="text" class="var-name w-[58px] shrink-0 text-center font-semibold px-1 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${name}" placeholder="Имя">
+                <div class="w-[58px] shrink-0 flex items-center justify-center bg-indigo-50/50 dark:bg-slate-800/50 border border-indigo-100 dark:border-slate-700 rounded-xl min-h-[42px] shadow-inner overflow-hidden px-1">
+                    <span class="var-name hidden">${name}</span>
+                    <span class="var-name-math text-indigo-800 dark:text-indigo-300 text-sm"></span>
+                </div>
                 <input type="text" class="var-val flex-1 min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${value}" placeholder="⟨x⟩" inputmode="decimal">
                 <input type="text" class="var-err flex-1 min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-[42px] transition-all" value="${error}" placeholder="Δx" inputmode="decimal">
                 <button type="button" class="btn-icon p-0 w-[38px] h-[38px] min-h-[38px] bg-transparent text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg shrink-0 flex items-center justify-center cursor-pointer transition-all delete-btn" title="Удалить">&#10005;</button>
             `;
+
+            // Рендерим имя переменной как математический символ
+            renderMath(row.querySelector('.var-name-math'), name, false);
 
             row.querySelectorAll('input').forEach(input => {
                 attachEnterSubmit(input, calculateIndirect);
@@ -1243,7 +1383,7 @@
             let hasError = false;
 
             rows.forEach(row => {
-                const name = row.querySelector('.var-name').value.trim();
+                const name = row.querySelector('.var-name').textContent.trim();
                 const val = parseInputNumber(row.querySelector('.var-val').value);
                 const err = parseInputNumber(row.querySelector('.var-err').value);
 
@@ -1343,8 +1483,27 @@
                 breakdown.forEach(item => {
                     const percent = sumSqDerivErrors > 0 ? (item.termSq / sumSqDerivErrors) * 100 : 0;
                     const el = document.createElement('div');
-                    el.className = 'breakdown-item flex justify-between gap-2 text-xs text-slate-700 dark:text-slate-300';
-                    el.innerHTML = `<span><b class="text-indigo-900 dark:text-indigo-300">${item.name}</b> (Δ=${formatNum(varErrors[item.name])}):</span> <span><b>${formatNum(percent, 1)}%</b> (±${formatNum(item.termError)})</span>`;
+                    el.className = 'breakdown-item flex justify-between items-center gap-2 text-xs text-slate-700 dark:text-slate-300';
+                    
+                    const leftDiv = document.createElement('div');
+                    leftDiv.className = 'flex items-center gap-1';
+                    
+                    const mathSpan = document.createElement('span');
+                    mathSpan.className = 'text-indigo-900 dark:text-indigo-300 font-bold text-[13px]';
+                    renderMath(mathSpan, item.name, false);
+                    
+                    const textSpan = document.createElement('span');
+                    textSpan.innerHTML = ` (Δ=${formatNum(varErrors[item.name])}):`;
+                    
+                    leftDiv.appendChild(mathSpan);
+                    leftDiv.appendChild(textSpan);
+                    
+                    const rightSpan = document.createElement('span');
+                    rightSpan.innerHTML = `<b>${formatNum(percent, 1)}%</b> (±${formatNum(item.termError)})`;
+                    
+                    el.appendChild(leftDiv);
+                    el.appendChild(rightSpan);
+                    
                     breakdownList.appendChild(el);
                 });
 
@@ -1355,6 +1514,18 @@
                 showFormulaError(translateJsError(errEx));
             }
         }
+        // Анимация при клике на кнопки в тулбаре формул
+        document.addEventListener('mousedown', (e) => {
+            const btn = e.target.closest('.formula-toolbar-btn');
+            if (btn) {
+                // Убираем класс, чтобы анимацию можно было запустить повторно
+                btn.classList.remove('animate-btn-pop');
+                // Трюк с void для перезапуска CSS-анимации
+                void btn.offsetWidth; 
+                // Добавляем класс с анимацией
+                btn.classList.add('animate-btn-pop');
+            }
+        });
 
         document.addEventListener('click', (e) => {
             const icon = e.target.closest('.info-icon');
@@ -1369,7 +1540,41 @@
             }
         });
 
-        indFormulaInput.addEventListener('input', autoSyncVariablesWithFormula);
+        // Перехватчик ввода для поля формулы
+        let equalsWarningTimeout;
+        indFormulaInput.addEventListener('input', function(e) {
+            if (this.value.includes('=')) {
+                // Сохраняем позицию курсора
+                let start = this.selectionStart;
+                
+                // Удаляем все знаки "="
+                this.value = this.value.replace(/=/g, '');
+                
+                // Восстанавливаем курсор (сдвигаем на 1 символ назад, так как удалили '=')
+                if (start > 0) this.setSelectionRange(start - 1, start - 1);
+                
+                // Показываем красивое предупреждение
+                const liveBox = document.getElementById('live-formula-box');
+                const badge = document.getElementById('status-badge');
+                const previewText = document.getElementById('preview-text');
+
+                liveBox.className = 'live-formula-box rounded-xl p-2.5 flex flex-col gap-1.5 min-h-[105px] border transition-colors duration-200 border-amber-300 bg-amber-50/50 dark:border-amber-600/50 dark:bg-amber-950/20 mt-1';
+                badge.className = 'status-badge text-xs font-bold flex items-center gap-1.5 min-h-[18px] truncate text-amber-700 dark:text-amber-400';
+                badge.textContent = 'ℹ️ Обратите внимание';
+                previewText.innerHTML = '<span class="text-amber-800 dark:text-amber-200">Знак <b>"="</b> писать не нужно.<br>Вводите только саму формулу.</span>';
+                
+                // Сбрасываем таймер, если пользователь продолжает вводить
+                clearTimeout(equalsWarningTimeout);
+                equalsWarningTimeout = setTimeout(() => {
+                    autoSyncVariablesWithFormula();
+                }, 2500);
+                
+                return;
+            }
+            
+            autoSyncVariablesWithFormula();
+        });
+
         attachEnterSubmit(indFormulaInput, calculateIndirect);
         attachEnterSubmit(document.getElementById('device-value'), calculateDirect);
 
@@ -1401,26 +1606,23 @@
             autoSyncVariablesWithFormula();
             initKaTeX();
         });
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('PhysCalc PWA работает!'))
-                .catch((err) => console.error('Ошибка регистрации PWA:', err));
-        }
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-              navigator.serviceWorker.register('/sw.js').then((reg) => {
-                reg.update();
-              });
+                navigator.serviceWorker.register('/sw.js').then((reg) => {
+                    reg.update();
+                    console.log('PhysCalc PWA работает!');
+                }).catch((err) => console.error('Ошибка регистрации PWA:', err));
             });
         
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
-              if (!refreshing) {
-                refreshing = true;
-                window.location.reload();
-              }
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
             });
-          }
+        }
     </script>
 </body>
 </html>
