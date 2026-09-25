@@ -50,7 +50,6 @@
             border-color: #0f172a transparent transparent transparent;
         }
 
-        /* Стили для тулбара и кнопок формул */
         .formula-toolbar {
             @apply bg-slate-100/70 dark:bg-slate-900/80 border border-slate-200/90 dark:border-slate-700/80 rounded-2xl p-2.5 mt-2 shadow-sm backdrop-blur-md;
         }
@@ -71,7 +70,6 @@
             @apply flex items-center justify-center h-9 sm:h-10 rounded-xl border border-slate-200/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-semibold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 dark:hover:border-indigo-500 hover:shadow-md hover:shadow-indigo-500/15 active:scale-95 transition-all cursor-pointer select-none;
         }
 
-        /* Выделение математических операторов */
         .formula-op-btn {
             @apply bg-indigo-50/70 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 font-bold border-indigo-100/80 dark:border-slate-700;
         }
@@ -293,10 +291,8 @@
                         <label for="ind-formula" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300">Формула искомой величины (f):</label>
                         <input type="text" id="ind-formula" value="log2(k) * x^2 / 2" placeholder="Например: log2(k) * x^2 / 2" class="w-full min-w-0 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 bg-white dark:bg-slate-900 dark:text-slate-100 min-h-[42px] transition-all">
                         
-                        <!-- Тулбар для вставки символов -->
                         <div class="formula-toolbar bg-slate-100/80 dark:bg-slate-900/70 backdrop-blur-md rounded-2xl border border-indigo-100 dark:border-slate-700/80 p-2.5 mt-2.5 shadow-sm">
                             
-                            <!-- Переключатель вкладок (растянут на всю ширину w-full, каждая кнопка flex-1) -->
                             <div class="flex w-full p-1 bg-indigo-100/60 dark:bg-slate-800/80 rounded-xl gap-1 mb-3 border border-indigo-200/50 dark:border-slate-700/60">
                                 <button type="button" class="formula-tab-btn active flex-1 py-1.5 px-3 text-xs sm:text-sm font-bold rounded-lg transition-all cursor-pointer select-none text-center bg-white dark:bg-indigo-600 text-indigo-950 dark:text-white shadow-sm" onclick="switchFormulaTab('symbols')">
                                     Символы
@@ -309,7 +305,6 @@
                                 </button>
                             </div>
 
-                            <!-- Вкладка: Символы -->
                             <div id="toolbar-symbols" class="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-sm font-semibold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('sqrt()', -1)">√</button>
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('π')">π</button>
@@ -321,7 +316,6 @@
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-indigo-50/80 dark:bg-slate-800/60 text-indigo-900 dark:text-indigo-200 text-base font-bold hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('÷')">÷</button>
                             </div>
 
-                            <!-- Вкладка: Функции -->
                             <div id="toolbar-functions" class="grid grid-cols-3 sm:grid-cols-9 gap-1.5 hidden">
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('sin()', -1)">sin</button>
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('cos()', -1)">cos</button>
@@ -334,7 +328,6 @@
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-xs sm:text-sm font-mono hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" onclick="insertToFormula('abs()', -1)">|x|</button>
                             </div>
 
-                            <!-- Вкладка: Греческие -->
                             <div id="toolbar-greek" class="grid grid-cols-6 sm:grid-cols-12 gap-1.5 hidden">
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Альфа" onclick="insertToFormula('α')">α</button>
                                 <button type="button" class="flex items-center justify-center h-10 rounded-xl border border-indigo-100/80 dark:border-slate-700/70 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 text-base font-serif italic hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 hover:border-indigo-600 active:scale-95 transition-all cursor-pointer select-none" title="Бета" onclick="insertToFormula('β')">β</button>
@@ -831,7 +824,6 @@
                 expr = expr.replace(regex, 'Math.' + fn);
             });
 
-            // Неявное умножение (например, 2x, 2π, 2α)
             expr = expr.replace(/(\d+(?:\.\d+)?)\s*([a-zA-Z_α-ωΑ-Ω\(])/g, '$1*$2');
             expr = expr.replace(/(\))\s*([a-zA-Z_0-9α-ωΑ-Ω\(])/g, '$1*$2');
 
@@ -856,7 +848,6 @@
             const transformed = prepareJsExpression(formulaStr, dummyContext);
             
             const cleanExpr = transformed.replace(/\b\d+(?:\.\d+)?[eE][\+\-]?\d+\b/g, '');
-            // Поддержка латиницы и греческого алфавита
             const matches = cleanExpr.match(/[a-zA-Z_α-ωΑ-Ω][a-zA-Z0-9_α-ωΑ-Ω]*/g) || [];
             const vars = [];
 
@@ -1341,7 +1332,6 @@
                 <button type="button" class="btn-icon p-0 w-[38px] h-[38px] min-h-[38px] bg-transparent text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg shrink-0 flex items-center justify-center cursor-pointer transition-all delete-btn" title="Удалить">&#10005;</button>
             `;
 
-            // Рендерим имя переменной как математический символ
             renderMath(row.querySelector('.var-name-math'), name, false);
 
             row.querySelectorAll('input').forEach(input => {
@@ -1514,15 +1504,11 @@
                 showFormulaError(translateJsError(errEx));
             }
         }
-        // Анимация при клике на кнопки в тулбаре формул
         document.addEventListener('mousedown', (e) => {
             const btn = e.target.closest('.formula-toolbar-btn');
             if (btn) {
-                // Убираем класс, чтобы анимацию можно было запустить повторно
                 btn.classList.remove('animate-btn-pop');
-                // Трюк с void для перезапуска CSS-анимации
                 void btn.offsetWidth; 
-                // Добавляем класс с анимацией
                 btn.classList.add('animate-btn-pop');
             }
         });
@@ -1540,20 +1526,15 @@
             }
         });
 
-        // Перехватчик ввода для поля формулы
         let equalsWarningTimeout;
         indFormulaInput.addEventListener('input', function(e) {
             if (this.value.includes('=')) {
-                // Сохраняем позицию курсора
                 let start = this.selectionStart;
                 
-                // Удаляем все знаки "="
                 this.value = this.value.replace(/=/g, '');
                 
-                // Восстанавливаем курсор (сдвигаем на 1 символ назад, так как удалили '=')
                 if (start > 0) this.setSelectionRange(start - 1, start - 1);
                 
-                // Показываем красивое предупреждение
                 const liveBox = document.getElementById('live-formula-box');
                 const badge = document.getElementById('status-badge');
                 const previewText = document.getElementById('preview-text');
@@ -1563,7 +1544,6 @@
                 badge.textContent = 'ℹ️ Обратите внимание';
                 previewText.innerHTML = '<span class="text-amber-800 dark:text-amber-200">Знак <b>"="</b> писать не нужно.<br>Вводите только саму формулу.</span>';
                 
-                // Сбрасываем таймер, если пользователь продолжает вводить
                 clearTimeout(equalsWarningTimeout);
                 equalsWarningTimeout = setTimeout(() => {
                     autoSyncVariablesWithFormula();
