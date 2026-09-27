@@ -1,14 +1,17 @@
-const CACHE_NAME = 'physcalc-v1.0.11';
+const CACHE_NAME = 'physcalc-v1.0.12'; 
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/prjamieizmer.html',
-  '/manifest.json',
-  '/index3.html',
-  '/icon-128.png',
-  '/icon-192.png',
-  '/icon-256.png',
-  '/icon-512.png'
+  './',
+  './index.html',
+  './prjamieizmer.html',
+  './manifest.json',
+  './index3.html',
+  './icon-128.png',
+  './icon-192.png',
+  './icon-256.png',
+  './icon-512.png',
+  'https://cdn.tailwindcss.com',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css',
+  'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js'
 ];
 
 self.addEventListener('install', (e) => {
@@ -33,6 +36,23 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  const url = new URL(e.request.url);
+
+  if (url.hostname === 'cdn.tailwindcss.com' || url.hostname === 'cdn.jsdelivr.net') {
+    e.respondWith(
+      caches.match(e.request).then((cachedResponse) => {
+        if (cachedResponse) return cachedResponse; 
+        
+        return fetch(e.request).then((networkResponse) => {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, responseClone));
+          return networkResponse;
+        });
+      })
+    );
+    return;
+  }
+
   e.respondWith(
     fetch(e.request)
       .then((networkResponse) => {
