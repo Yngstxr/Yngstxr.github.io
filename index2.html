@@ -89,6 +89,210 @@
 <body class="bg-gradient-to-br from-indigo-100 via-slate-50 to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 min-h-screen text-slate-800 dark:text-slate-100 p-3 sm:p-6 flex justify-center items-start font-sans transition-colors duration-200">
 
     <div class="w-full max-w-5xl flex flex-col gap-4">
+        <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
+    <div id="support-card" class="absolute bottom-0 right-0 pointer-events-none invisible opacity-0 scale-90 translate-y-4 origin-bottom-right transition-all duration-300 ease-out bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-[calc(100vw-2rem)] sm:w-[320px] rounded-2xl sm:rounded-[24px] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-gray-200/60 dark:border-slate-700/60">
+      
+      <div id="support-drag-handle" class="cursor-move touch-none group/handle">
+        
+        <div class="w-12 h-1.5 bg-gray-200 dark:bg-slate-600 rounded-full mx-auto mb-4 group-hover/handle:bg-gray-300 dark:group-hover/handle:bg-slate-500 transition-colors"></div>
+        
+        <div class="flex items-start justify-between mb-3">
+          <div class="flex items-center gap-2.5 pointer-events-none">
+            <div class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center shrink-0">
+              <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"></path>
+              </svg>
+            </div>
+            <h3 class="text-gray-900 dark:text-white font-bold text-[17px] tracking-tight">
+              Нашли ошибку?
+            </h3>
+          </div>
+          <button id="support-minimize-btn" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all rounded-full p-1.5 -mr-1.5 -mt-1 outline-none touch-btn shrink-0 cursor-pointer" title="Свернуть">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="text-gray-600 dark:text-slate-300 text-[13.5px] leading-relaxed mb-4">
+        Сообщите нам, и мы оперативно всё исправим! Выберите удобный способ связи:
+      </p>
+      <div class="flex items-center gap-2.5">
+        <a href="https://vk.com/" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#0077FF]/10 hover:bg-[#0077FF]/20 dark:bg-[#0077FF]/15 dark:hover:bg-[#0077FF]/25 text-[#0077FF] dark:text-[#60a5fa] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в ВКонтакте">
+          <img src="VK Logo.png" alt="ВКонтакте" class="w-4 h-4 object-contain group-hover:scale-110 transition-transform rounded-sm">
+          <span>ВКонтакте</span>
+        </a>
+        <a href="https://t.me/" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#229ED9]/10 hover:bg-[#229ED9]/20 dark:bg-[#229ED9]/15 dark:hover:bg-[#229ED9]/25 text-[#229ED9] dark:text-[#38bdf8] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в Telegram">
+          <img src="icons8-telegram-48.png" alt="Telegram" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform">
+          <span>Telegram</span>
+        </a>
+      </div>
+    </div>
+    <button id="support-fab" class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-800 rounded-full shadow-lg border border-gray-200 dark:border-slate-700 flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 cursor-move group touch-none relative z-10">
+      <div class="relative pointer-events-none">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-gray-600 dark:text-slate-300 group-hover:text-brand-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        <div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center">
+          <svg class="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"></path></svg>
+        </div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Скрипт логики виджета (Сворачивание + Перетаскивание) -->
+  <script>
+    (function() {
+      const widget = document.getElementById('support-widget');
+      const card = document.getElementById('support-card');
+      const fab = document.getElementById('support-fab');
+      const dragHandle = document.getElementById('support-drag-handle');
+      const minimizeBtn = document.getElementById('support-minimize-btn');
+      
+      let isExpanded = false;
+      let isDragging = false;
+      let startX, startY, initialRight, initialBottom;
+      let hasMoved = false;
+
+      function checkBounds() {
+        const activeWidth = isExpanded ? card.offsetWidth : fab.offsetWidth;
+        const activeHeight = isExpanded ? card.offsetHeight : fab.offsetHeight;
+
+        const rect = widget.getBoundingClientRect();
+        let currentRight = widget.style.right ? parseFloat(widget.style.right) : (window.innerWidth - rect.right);
+        let currentBottom = widget.style.bottom ? parseFloat(widget.style.bottom) : (window.innerHeight - rect.bottom);
+        
+        const maxRight = Math.max(16, window.innerWidth - activeWidth - 16);
+        const maxBottom = Math.max(16, window.innerHeight - activeHeight - 16);
+        
+        let newRight = Math.max(16, Math.min(currentRight, maxRight));
+        let newBottom = Math.max(16, Math.min(currentBottom, maxBottom));
+        
+        if (Math.abs(newRight - currentRight) > 1 || Math.abs(newBottom - currentBottom) > 1) {
+          widget.style.transition = 'right 0.3s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+          widget.style.right = newRight + 'px';
+          widget.style.bottom = newBottom + 'px';
+          widget.style.left = 'auto';
+          widget.style.top = 'auto';
+          
+          setTimeout(() => {
+            if (!isDragging) widget.style.transition = '';
+          }, 300);
+        }
+      }
+
+      function toggleWidget(e) {
+        if (hasMoved) return;
+        if (e) e.stopPropagation();
+        
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+          checkBounds();
+          
+          card.classList.remove('invisible', 'pointer-events-none', 'opacity-0', 'scale-90', 'translate-y-4');
+          card.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+          
+          fab.classList.add('opacity-0', 'scale-50', 'pointer-events-none');
+        } else {
+          card.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+          card.classList.add('opacity-0', 'scale-90', 'translate-y-4', 'pointer-events-none');
+          
+          setTimeout(() => {
+            if (!isExpanded) card.classList.add('invisible');
+          }, 300);
+          
+          fab.classList.remove('opacity-0', 'scale-50', 'pointer-events-none');
+          checkBounds();
+        }
+      }
+
+      function onDragStart(e) {
+        if (e.target.closest('a') || e.target.closest('#support-minimize-btn')) {
+          hasMoved = false;
+          return;
+        }
+        
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        
+        startX = clientX;
+        startY = clientY;
+        hasMoved = false;
+        
+        widget.style.transition = '';
+        
+        const rect = widget.getBoundingClientRect();
+        if (!widget.style.right || !widget.style.bottom) {
+          widget.style.right = (window.innerWidth - rect.right) + 'px';
+          widget.style.bottom = (window.innerHeight - rect.bottom) + 'px';
+          widget.style.left = 'auto';
+          widget.style.top = 'auto';
+        }
+        
+        initialRight = parseFloat(widget.style.right);
+        initialBottom = parseFloat(widget.style.bottom);
+        isDragging = true;
+        
+        document.addEventListener('mousemove', onDragMove, { passive: false });
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+      }
+
+      function onDragMove(e) {
+        if (!isDragging) return;
+        
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+          hasMoved = true;
+        }
+        
+        if (hasMoved) {
+          e.preventDefault();
+          
+          let newRight = initialRight - dx;
+          let newBottom = initialBottom - dy;
+          
+          const activeWidth = isExpanded ? card.offsetWidth : fab.offsetWidth;
+          const activeHeight = isExpanded ? card.offsetHeight : fab.offsetHeight;
+
+          const maxRight = Math.max(16, window.innerWidth - activeWidth - 16);
+          const maxBottom = Math.max(16, window.innerHeight - activeHeight - 16);
+          
+          newRight = Math.max(16, Math.min(newRight, maxRight));
+          newBottom = Math.max(16, Math.min(newBottom, maxBottom));
+          
+          widget.style.right = newRight + 'px';
+          widget.style.bottom = newBottom + 'px';
+        }
+      }
+
+      function onDragEnd() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchend', onDragEnd);
+      }
+
+      fab.addEventListener('click', toggleWidget);
+      minimizeBtn.addEventListener('click', toggleWidget);
+      
+      fab.addEventListener('mousedown', onDragStart);
+      fab.addEventListener('touchstart', onDragStart, { passive: false });
+      
+      dragHandle.addEventListener('mousedown', onDragStart);
+      dragHandle.addEventListener('touchstart', onDragStart, { passive: false });
+      
+      window.addEventListener('resize', checkBounds);
+    })();
+  </script>
         <header class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-1">
             <div class="text-center sm:text-left">
                 <h1 class="text-xl sm:text-2xl font-bold text-indigo-950 dark:text-white tracking-tight">Калькулятор погрешностей</h1>
