@@ -194,7 +194,7 @@
 
     <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
     <div id="support-card" class="absolute bottom-0 right-0 pointer-events-none invisible opacity-0 scale-90 translate-y-4 origin-bottom-right transition-all duration-300 ease-out bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-[calc(100vw-2rem)] sm:w-[320px] rounded-2xl sm:rounded-[24px] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-gray-200/60 dark:border-slate-700/60">
-    
+      
       <div id="support-drag-handle" class="cursor-move touch-none group/handle">
         
         <div class="w-12 h-1.5 bg-gray-200 dark:bg-slate-600 rounded-full mx-auto mb-4 group-hover/handle:bg-gray-300 dark:group-hover/handle:bg-slate-500 transition-colors"></div>
@@ -222,11 +222,11 @@
         Сообщите нам, и мы оперативно всё исправим! Выберите удобный способ связи:
       </p>
       <div class="flex items-center gap-2.5">
-        <a href="https://vk.com/" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#0077FF]/10 hover:bg-[#0077FF]/20 dark:bg-[#0077FF]/15 dark:hover:bg-[#0077FF]/25 text-[#0077FF] dark:text-[#60a5fa] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в ВКонтакте">
+        <a href="https://vk.com/physcalc" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#0077FF]/10 hover:bg-[#0077FF]/20 dark:bg-[#0077FF]/15 dark:hover:bg-[#0077FF]/25 text-[#0077FF] dark:text-[#60a5fa] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в ВКонтакте">
           <img src="VK Logo.png" alt="ВКонтакте" class="w-4 h-4 object-contain group-hover:scale-110 transition-transform rounded-sm">
           <span>ВКонтакте</span>
         </a>
-        <a href="https://t.me/" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#229ED9]/10 hover:bg-[#229ED9]/20 dark:bg-[#229ED9]/15 dark:hover:bg-[#229ED9]/25 text-[#229ED9] dark:text-[#38bdf8] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в Telegram">
+        <a href="https://t.me/PhysCalc67" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#229ED9]/10 hover:bg-[#229ED9]/20 dark:bg-[#229ED9]/15 dark:hover:bg-[#229ED9]/25 text-[#229ED9] dark:text-[#38bdf8] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в Telegram">
           <img src="icons8-telegram-48.png" alt="Telegram" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform">
           <span>Telegram</span>
         </a>
@@ -243,6 +243,8 @@
       </div>
     </button>
   </div>
+
+  <!-- Скрипт логики виджета (Сворачивание + Перетаскивание) -->
   <script>
     (function() {
       const widget = document.getElementById('support-widget');
