@@ -194,11 +194,9 @@
 
     <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
     <div id="support-card" class="absolute bottom-0 right-0 pointer-events-none invisible opacity-0 scale-90 translate-y-4 origin-bottom-right transition-all duration-300 ease-out bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-[calc(100vw-2rem)] sm:w-[320px] rounded-2xl sm:rounded-[24px] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-gray-200/60 dark:border-slate-700/60">
-      
-      <!-- Шапка (Зона для перетаскивания) -->
+    
       <div id="support-drag-handle" class="cursor-move touch-none group/handle">
         
-        <!-- Тот самый штрих-индикатор перетаскивания -->
         <div class="w-12 h-1.5 bg-gray-200 dark:bg-slate-600 rounded-full mx-auto mb-4 group-hover/handle:bg-gray-300 dark:group-hover/handle:bg-slate-500 transition-colors"></div>
         
         <div class="flex items-start justify-between mb-3">
@@ -245,8 +243,6 @@
       </div>
     </button>
   </div>
-
-  <!-- Скрипт логики виджета (Сворачивание + Перетаскивание) -->
   <script>
     (function() {
       const widget = document.getElementById('support-widget');
