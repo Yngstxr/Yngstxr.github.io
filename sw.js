@@ -1,10 +1,9 @@
-const CACHE_NAME = 'physcalc-v1.0.12'; 
+const CACHE_NAME = 'physcalc-v1.0.13'; 
 const ASSETS = [
   './',
   './index.html',
-  './prjamieizmer.html',
+  './index2.html',
   './manifest.json',
-  './index3.html',
   './icon-128.png',
   './icon-192.png',
   './icon-256.png',
