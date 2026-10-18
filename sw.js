@@ -1,4 +1,4 @@
-const CACHE_NAME = 'physcalc-v1.0.16'; 
+const CACHE_NAME = 'physcalc-v1.0.17'; 
 const ASSETS = [
   './',
   './index.html',
