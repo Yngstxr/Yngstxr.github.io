@@ -12,41 +12,47 @@
   <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
+      document.documentElement.classList.add('dark');
     } else {
-        document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
   </script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <script>
-    window.tailwind = {
-      config: {
-        darkMode: 'class',
-        theme: {
-          screens: {
-            'sm': '640px',
-            'md': '768px',
-            'lg': { 'raw': '(min-width: 1024px) and (min-height: 910px)' },
-            'xl': '1280px',
-            '2xl': '1536px',
-          },
-          extend: {
-            colors: {
-              brand: {
-                50: '#f0f3ff', 100: '#e0e7ff', 400: '#818cf8',
-                500: '#4f46e5', 600: '#4338ca', 700: '#3730a3', 900: '#312e81',
-              }
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        screens: {
+          'sm': '640px',
+          'md': '768px',
+          'lg': { 'raw': '(min-width: 1024px) and (min-height: 860px)' },
+          'xl': '1280px',
+          '2xl': '1536px',
+        },
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
             }
           }
         }
       }
     };
   </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -55,29 +61,29 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
     .math-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
-    #mathPreview { font-size: 1.25rem; transition: opacity 0.15s ease-in-out; content-visibility: auto; }
-    @media (min-width: 640px) { #mathPreview { font-size: 1.5rem; } }
-    .katex-display { margin: 0 !important; overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; -webkit-overflow-scrolling: touch; }
+    #mathPreview { font-size: 1.3rem; transition: opacity 0.15s ease-in-out; }
+    @media (min-width: 640px) { #mathPreview { font-size: 1.55rem; } }
+    .katex-display { margin: 0 !important; overflow-x: auto; overflow-y: hidden; padding: 4px 0; -webkit-overflow-scrolling: touch; }
     .katex-display::-webkit-scrollbar { height: 4px; }
     .katex-display::-webkit-scrollbar-track { background: transparent; }
     .katex-display::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.4); border-radius: 4px; }
     input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
     input[type=number] { -moz-appearance: textfield; }
-    .custom-scrollbar { -webkit-overflow-scrolling: touch; will-change: scroll-position; }
+    .custom-scrollbar { -webkit-overflow-scrolling: touch; }
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(156, 163, 175, 0.7); }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(71, 85, 105, 0.5); }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(100, 116, 139, 0.8); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(71, 85, 105, 0.55); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(100, 116, 139, 0.85); }
     .touch-btn { touch-action: manipulation; user-select: none; }
-    .formula-card .katex { font-size: 1.1rem; }
+    .formula-card .katex { font-size: 1.12rem; }
     .solution-line {
       display: flex;
       flex-wrap: wrap;
-      align-items: baseline;
-      gap: 0.35rem;
-      line-height: 1.6;
+      align-items: center;
+      gap: 0.45rem;
+      line-height: 1.65;
       min-width: 0;
     }
     .solution-line > * { min-width: 0; }
@@ -87,6 +93,7 @@
       overflow-x: auto;
       overflow-y: hidden;
       vertical-align: middle;
+      padding: 2px 0;
       -webkit-overflow-scrolling: touch;
     }
     .solution-line .math-inline::-webkit-scrollbar { height: 3px; }
@@ -94,23 +101,23 @@
       background-color: rgba(156, 163, 175, 0.4);
       border-radius: 4px;
     }
-    .solution-line .katex { font-size: 1.05em; }
+    .solution-line .katex { font-size: 1.08em; }
     @media (max-width: 640px) {
-      .solution-line .katex { font-size: 0.95em; }
+      .solution-line .katex { font-size: 0.98em; }
       .btn-step-up, .btn-step-down { padding: 0.55rem 0.4rem; }
     }
     .solution-line + .solution-line {
-      padding-top: 0.35rem;
-      border-top: 1px dashed rgba(148, 163, 184, 0.18);
+      padding-top: 0.5rem;
+      border-top: 1px dashed rgba(148, 163, 184, 0.22);
     }
     .dark .solution-line + .solution-line {
-      border-top-color: rgba(71, 85, 105, 0.35);
+      border-top-color: rgba(71, 85, 105, 0.4);
     }
     #solutionModal .solution-line { font-size: 0.95rem; line-height: 1.9; }
-    #solutionModal .solution-line .katex { font-size: 1.15em; }
+    #solutionModal .solution-line .katex { font-size: 1.18em; }
     @media (min-width: 768px) {
       #solutionModal .solution-line { font-size: 1.05rem; }
-      #solutionModal .solution-line .katex { font-size: 1.2em; }
+      #solutionModal .solution-line .katex { font-size: 1.22em; }
     }
     #solutionModal .solution-line + .solution-line {
       padding-top: 0.75rem;
@@ -129,7 +136,7 @@
     }
     .input-error { animation: pc-shake 0.35s ease-in-out; }
     .quick-tab {
-      padding: 0.35rem 0.75rem;
+      padding: 0.35rem 0.8rem;
       font-size: 0.75rem;
       font-weight: 600;
       border-radius: 0.5rem;
@@ -138,67 +145,64 @@
       transition: all .15s ease;
       white-space: nowrap;
     }
-    .quick-tab:hover { background: rgba(99, 102, 241, 0.08); color: #4f46e5; }
-    .quick-tab.active { background: #4f46e5; color: #fff; box-shadow: 0 2px 8px rgba(79, 70, 229, .25); }
+    .quick-tab:hover { background: rgba(99, 102, 241, 0.1); color: #4f46e5; }
+    .quick-tab.active { background: #4f46e5; color: #fff; box-shadow: 0 2px 8px rgba(79, 70, 229, .28); }
     .dark .quick-tab { color: #94a3b8; }
-    .dark .quick-tab:hover { background: rgba(99, 102, 241, 0.15); color: #a5b4fc; }
+    .dark .quick-tab:hover { background: rgba(99, 102, 241, 0.18); color: #a5b4fc; }
     .dark .quick-tab.active { background: #4f46e5; color: #fff; }
     .qk {
-      min-height: 40px;
+      min-height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.4rem 0.3rem;
+      padding: 0.35rem 0.3rem;
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
       color: #334155;
       background: #fff;
       border: 1px solid #e2e8f0;
-      border-radius: 0.6rem;
+      border-radius: 0.65rem;
       cursor: pointer;
-      transition: all .12s ease;
+      transition: all .14s ease;
       touch-action: manipulation;
       user-select: none;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
     }
-    .qk:hover { border-color: #818cf8; color: #4f46e5; transform: translateY(-1px); }
-    .qk:active { transform: translateY(0) scale(.97); background: #f0f3ff; }
+    .qk:hover { border-color: #818cf8; color: #4f46e5; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(79, 70, 229, 0.12); }
+    .qk:active { transform: translateY(0) scale(.97); background: #eef2ff; }
     .dark .qk { background: #1e293b; border-color: #334155; color: #cbd5e1; }
     .dark .qk:hover { border-color: #6366f1; color: #a5b4fc; background: #0f172a; }
     @media (max-width: 640px) {
-      .qk { min-height: 44px; font-size: 1rem; }
+      .qk { min-height: 42px; font-size: 0.98rem; }
     }
   </style>
   <script type="text/javascript">
-        (function(m,e,t,r,i,k,a){
-            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();
-            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109650062', 'ym');
-
-        ym(109650062, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/109650062" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109650062', 'ym');
+    ym(109650062, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/109650062" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-slate-900 dark:text-slate-100 h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200 selection:bg-brand-500 selection:text-white">
 
-  <div id="updateToast" class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[60] bg-white dark:bg-slate-800 border border-brand-200 dark:border-brand-800 shadow-2xl rounded-2xl p-3 sm:p-4 w-[92%] sm:w-auto sm:min-w-[360px] max-w-md flex items-start gap-3 transition-all duration-500 -translate-y-[150%] opacity-0">
+  <div id="updateToast" class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[60] bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-brand-200 dark:border-brand-800 shadow-2xl rounded-2xl p-3 sm:p-4 w-[92%] sm:w-auto sm:min-w-[360px] max-w-md flex items-start gap-3 transition-all duration-500 -translate-y-[150%] opacity-0">
     <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/50 flex items-center justify-center text-xl shrink-0 shadow-inner">🚀</div>
     <div class="flex-grow pt-0.5">
       <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Новая версия сайта!</h4>
-      <p class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">Теперь вы можете ввести свою формулу в поле для ввода или выбрать готовую из базы формул.</p>
+      <p class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">Теперь вы можете ввести свою формулу в поле для ввода или выбрать готовую из базы 240 физических формул.</p>
     </div>
     <button id="closeToastBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1.5 -mr-1.5 -mt-1.5 rounded-lg transition-colors touch-btn shrink-0">✕</button>
   </div>
 
-    <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
+  <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
     <div id="support-card" class="absolute bottom-0 right-0 pointer-events-none invisible opacity-0 scale-90 translate-y-4 origin-bottom-right transition-all duration-300 ease-out bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl w-[calc(100vw-2rem)] sm:w-[320px] rounded-2xl sm:rounded-[24px] p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.12)] dark:shadow-[0_10px_40px_rgba(0,0,0,0.5)] border border-gray-200/60 dark:border-slate-700/60">
-      
       <div id="support-drag-handle" class="cursor-move touch-none group/handle">
-        
         <div class="w-12 h-1.5 bg-gray-200 dark:bg-slate-600 rounded-full mx-auto mb-4 group-hover/handle:bg-gray-300 dark:group-hover/handle:bg-slate-500 transition-colors"></div>
-        
         <div class="flex items-start justify-between mb-3">
           <div class="flex items-center gap-2.5 pointer-events-none">
             <div class="w-8 h-8 rounded-full bg-red-50 dark:bg-red-500/10 flex items-center justify-center shrink-0">
@@ -206,9 +210,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"></path>
               </svg>
             </div>
-            <h3 class="text-gray-900 dark:text-white font-bold text-[17px] tracking-tight">
-              Нашли ошибку?
-            </h3>
+            <h3 class="text-gray-900 dark:text-white font-bold text-[17px] tracking-tight">Нашли ошибку?</h3>
           </div>
           <button id="support-minimize-btn" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-700 transition-all rounded-full p-1.5 -mr-1.5 -mt-1 outline-none touch-btn shrink-0 cursor-pointer" title="Свернуть">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -217,16 +219,15 @@
           </button>
         </div>
       </div>
-
       <p class="text-gray-600 dark:text-slate-300 text-[13.5px] leading-relaxed mb-4">
         Сообщите нам, и мы оперативно всё исправим! Выберите удобный способ связи:
       </p>
       <div class="flex items-center gap-2.5">
-        <a href="https://vk.com/physcalc" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#0077FF]/10 hover:bg-[#0077FF]/20 dark:bg-[#0077FF]/15 dark:hover:bg-[#0077FF]/25 text-[#0077FF] dark:text-[#60a5fa] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в ВКонтакте">
+        <a href="https://vk.com/physcalc" target="_blank" rel="noopener" class="flex-1 flex items-center justify-center gap-2 bg-[#0077FF]/10 hover:bg-[#0077FF]/20 dark:bg-[#0077FF]/15 dark:hover:bg-[#0077FF]/25 text-[#0077FF] dark:text-[#60a5fa] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в ВКонтакте">
           <img src="VK Logo.png" alt="ВКонтакте" class="w-4 h-4 object-contain group-hover:scale-110 transition-transform rounded-sm">
           <span>ВКонтакте</span>
         </a>
-        <a href="https://t.me/PhysCalc67" target="_blank" class="flex-1 flex items-center justify-center gap-2 bg-[#229ED9]/10 hover:bg-[#229ED9]/20 dark:bg-[#229ED9]/15 dark:hover:bg-[#229ED9]/25 text-[#229ED9] dark:text-[#38bdf8] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в Telegram">
+        <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener" class="flex-1 flex items-center justify-center gap-2 bg-[#229ED9]/10 hover:bg-[#229ED9]/20 dark:bg-[#229ED9]/15 dark:hover:bg-[#229ED9]/25 text-[#229ED9] dark:text-[#38bdf8] py-2.5 px-2 rounded-xl transition-all duration-200 font-semibold text-[13px] group touch-btn" title="Написать в Telegram">
           <img src="icons8-telegram-48.png" alt="Telegram" class="w-5 h-5 object-contain group-hover:scale-110 transition-transform">
           <span>Telegram</span>
         </a>
@@ -244,7 +245,6 @@
     </button>
   </div>
 
-  <!-- Скрипт логики виджета (Сворачивание + Перетаскивание) -->
   <script>
     (function() {
       const widget = document.getElementById('support-widget');
@@ -252,7 +252,7 @@
       const fab = document.getElementById('support-fab');
       const dragHandle = document.getElementById('support-drag-handle');
       const minimizeBtn = document.getElementById('support-minimize-btn');
-      
+
       let isExpanded = false;
       let isDragging = false;
       let startX, startY, initialRight, initialBottom;
@@ -261,50 +261,36 @@
       function checkBounds() {
         const activeWidth = isExpanded ? card.offsetWidth : fab.offsetWidth;
         const activeHeight = isExpanded ? card.offsetHeight : fab.offsetHeight;
-
         const rect = widget.getBoundingClientRect();
         let currentRight = widget.style.right ? parseFloat(widget.style.right) : (window.innerWidth - rect.right);
         let currentBottom = widget.style.bottom ? parseFloat(widget.style.bottom) : (window.innerHeight - rect.bottom);
-        
         const maxRight = Math.max(16, window.innerWidth - activeWidth - 16);
         const maxBottom = Math.max(16, window.innerHeight - activeHeight - 16);
-        
         let newRight = Math.max(16, Math.min(currentRight, maxRight));
         let newBottom = Math.max(16, Math.min(currentBottom, maxBottom));
-        
         if (Math.abs(newRight - currentRight) > 1 || Math.abs(newBottom - currentBottom) > 1) {
           widget.style.transition = 'right 0.3s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
           widget.style.right = newRight + 'px';
           widget.style.bottom = newBottom + 'px';
           widget.style.left = 'auto';
           widget.style.top = 'auto';
-          
-          setTimeout(() => {
-            if (!isDragging) widget.style.transition = '';
-          }, 300);
+          setTimeout(() => { if (!isDragging) widget.style.transition = ''; }, 300);
         }
       }
 
       function toggleWidget(e) {
         if (hasMoved) return;
         if (e) e.stopPropagation();
-        
         isExpanded = !isExpanded;
         if (isExpanded) {
           checkBounds();
-          
           card.classList.remove('invisible', 'pointer-events-none', 'opacity-0', 'scale-90', 'translate-y-4');
           card.classList.add('opacity-100', 'scale-100', 'translate-y-0');
-          
           fab.classList.add('opacity-0', 'scale-50', 'pointer-events-none');
         } else {
           card.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
           card.classList.add('opacity-0', 'scale-90', 'translate-y-4', 'pointer-events-none');
-          
-          setTimeout(() => {
-            if (!isExpanded) card.classList.add('invisible');
-          }, 300);
-          
+          setTimeout(() => { if (!isExpanded) card.classList.add('invisible'); }, 300);
           fab.classList.remove('opacity-0', 'scale-50', 'pointer-events-none');
           checkBounds();
         }
@@ -315,16 +301,12 @@
           hasMoved = false;
           return;
         }
-        
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-        
         startX = clientX;
         startY = clientY;
         hasMoved = false;
-        
         widget.style.transition = '';
-        
         const rect = widget.getBoundingClientRect();
         if (!widget.style.right || !widget.style.bottom) {
           widget.style.right = (window.innerWidth - rect.right) + 'px';
@@ -332,11 +314,9 @@
           widget.style.left = 'auto';
           widget.style.top = 'auto';
         }
-        
         initialRight = parseFloat(widget.style.right);
         initialBottom = parseFloat(widget.style.bottom);
         isDragging = true;
-        
         document.addEventListener('mousemove', onDragMove, { passive: false });
         document.addEventListener('touchmove', onDragMove, { passive: false });
         document.addEventListener('mouseup', onDragEnd);
@@ -345,34 +325,21 @@
 
       function onDragMove(e) {
         if (!isDragging) return;
-        
         const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
         const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-        
         const dx = clientX - startX;
         const dy = clientY - startY;
-        
-        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-          hasMoved = true;
-        }
-        
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
         if (hasMoved) {
           e.preventDefault();
-          
           let newRight = initialRight - dx;
           let newBottom = initialBottom - dy;
-          
           const activeWidth = isExpanded ? card.offsetWidth : fab.offsetWidth;
           const activeHeight = isExpanded ? card.offsetHeight : fab.offsetHeight;
-
           const maxRight = Math.max(16, window.innerWidth - activeWidth - 16);
           const maxBottom = Math.max(16, window.innerHeight - activeHeight - 16);
-          
-          newRight = Math.max(16, Math.min(newRight, maxRight));
-          newBottom = Math.max(16, Math.min(newBottom, maxBottom));
-          
-          widget.style.right = newRight + 'px';
-          widget.style.bottom = newBottom + 'px';
+          widget.style.right = Math.max(16, Math.min(newRight, maxRight)) + 'px';
+          widget.style.bottom = Math.max(16, Math.min(newBottom, maxBottom)) + 'px';
         }
       }
 
@@ -386,95 +353,94 @@
 
       fab.addEventListener('click', toggleWidget);
       minimizeBtn.addEventListener('click', toggleWidget);
-      
       fab.addEventListener('mousedown', onDragStart);
       fab.addEventListener('touchstart', onDragStart, { passive: false });
-      
       dragHandle.addEventListener('mousedown', onDragStart);
       dragHandle.addEventListener('touchstart', onDragStart, { passive: false });
-      
       window.addEventListener('resize', checkBounds);
     })();
   </script>
 
-  <header class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 shrink-0 z-30 shadow-sm relative">
+  <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shrink-0 z-30 shadow-sm relative">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between relative">
-      
-      <div class="flex items-center space-x-2 sm:space-x-3">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md shrink-0 group">
+      <div class="flex items-center space-x-2.5 sm:space-x-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md shadow-brand-500/25 shrink-0 group">
           <svg class="w-full h-full text-white animate-[spin_8s_linear_infinite] group-hover:animate-[spin_2s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-              <circle cx="12" cy="12" r="3"/>
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
           </svg>
         </div>
         <div>
-          <h1 class="text-base sm:text-xl font-bold tracking-tight text-gray-900 dark:text-white leading-none">PhysCalc</h1>
-          <p class="text-[10px] sm:text-xs text-gray-500 dark:text-slate-400 mt-0.5">Универсальный калькулятор</p>
+          <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">PhysCalc</h1>
+          <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Универсальный калькулятор формул</p>
         </div>
       </div>
 
-      <div class="absolute left-1/2 -translate-x-1/2 text-[9px] sm:text-xs text-gray-400 dark:text-slate-500 text-center pointer-events-none whitespace-nowrap opacity-70">
-        &copy; 2026 PhysCalc<span class="hidden sm:inline">. Все права защищены.</span>
+      <div class="hidden md:block absolute left-1/2 -translate-x-1/2 text-xs text-slate-400 dark:text-slate-500 text-center pointer-events-none whitespace-nowrap">
+        &copy; 2026 PhysCalc. Все права защищены.
       </div>
 
-      <div class="flex items-center space-x-1 sm:space-x-2">
-        <a href="index2.html" class="min-h-[38px] px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-indigo-500 hover:bg-indigo-600 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white shadow-sm hover:shadow border border-transparent text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 touch-btn cursor-pointer active:scale-95 group">
+      <div class="flex items-center space-x-1.5 sm:space-x-2.5">
+        <a href="index2.html" class="min-h-[38px] px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-sm shadow-brand-500/20 text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 touch-btn cursor-pointer active:scale-95 group">
           <svg class="w-4 h-4 opacity-90 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-6 4h6m-6 4h6M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
           </svg>
           <span class="hidden sm:inline">Калькулятор погрешностей</span>
         </a>
 
-        <button id="themeToggle" aria-label="Переключить тему" class="min-h-[38px] min-w-[38px] p-2 rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors text-sm font-medium touch-btn flex items-center justify-center">
-          <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.03 9.03 0 0012 21a9.03 9.03 0 008.354-5.646z"></path></svg>
+        <button id="themeToggle" aria-label="Переключить тему" class="min-h-[38px] min-w-[38px] p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition-colors text-sm font-medium touch-btn flex items-center justify-center">
+          <svg id="sunIcon" class="w-5 h-5 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="moonIcon" class="w-5 h-5 block dark:hidden text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.03 9.03 0 0012 21a9.03 9.03 0 008.354-5.646z"></path></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="flex-grow overflow-y-auto lg:overflow-hidden flex flex-col w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-6">
-    
-    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:grid-rows-[auto_auto_1fr] gap-3 sm:gap-6 lg:h-full lg:min-h-0">
+  <main class="flex-grow overflow-y-auto lg:overflow-hidden flex flex-col w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-5">
+    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:grid-rows-[auto_auto_1fr] gap-3 sm:gap-5 lg:h-full lg:min-h-0">
 
-      <div class="order-1 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-1 shrink-0 bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm">
-        <div class="flex items-center justify-between mb-3 sm:mb-4 flex-wrap gap-2">
-          <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <svg class="w-5 h-5 text-brand-600 dark:text-brand-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-            Формула и целевая величина
-          </h2>
+      <!-- Формула и целевая величина -->
+      <div class="order-1 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-1 shrink-0 bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+              Формула и целевая величина
+            </h2>
+            <span id="activeFormulaBadge" class="hidden text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/60 truncate max-w-[260px]"></span>
+          </div>
           <div class="flex items-center gap-2">
-            <button id="openCatalogBtn" class="px-3 py-1.5 rounded-lg bg-brand-50 text-brand-600 hover:bg-brand-100 dark:bg-brand-900/30 dark:text-brand-400 dark:hover:bg-brand-900/50 text-xs sm:text-sm font-semibold transition-colors flex items-center gap-1.5 touch-btn border border-brand-200 dark:border-brand-800/50">
+            <button id="openCatalogBtn" class="px-3.5 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 dark:bg-brand-950/60 dark:text-brand-300 dark:hover:bg-brand-900/60 text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 touch-btn border border-brand-200/80 dark:border-brand-800/60 shadow-sm">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
               База формул
             </button>
-            <button id="openHelpBtn" aria-label="Справка по записи формул" title="Справка по записи формул" class="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-700 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-gray-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center justify-center transition-colors font-bold text-sm touch-btn shrink-0">?</button>
+            <button id="openHelpBtn" aria-label="Справка по записи формул" title="Справка по записи формул" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center justify-center transition-colors font-bold text-sm touch-btn shrink-0 border border-slate-200/60 dark:border-slate-700/60">?</button>
           </div>
         </div>
 
         <div class="flex flex-col md:flex-row items-stretch md:items-start gap-2.5 sm:gap-3">
           <div class="w-full md:w-1/4">
-            <label for="targetVar" class="block text-[11px] sm:text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Что найти:</label>
-            <input type="text" id="targetVar" value="v" autocomplete="off" autocapitalize="none" class="w-full px-3 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white font-bold text-center text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+            <label for="targetVar" class="block text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Что найти:</label>
+            <input type="text" id="targetVar" value="v" autocomplete="off" autocapitalize="none" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white font-bold text-center text-base focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
           </div>
           <div class="hidden md:flex flex-col shrink-0 select-none">
             <span class="block text-[11px] sm:text-xs font-medium mb-1 invisible" aria-hidden="true">.</span>
-            <span class="text-xl font-bold text-gray-400 dark:text-slate-500 py-2.5 sm:py-3 px-0.5 leading-none">=</span>
+            <span class="text-xl font-bold text-slate-400 dark:text-slate-500 py-2.5 px-0.5 leading-none">=</span>
           </div>
           <div class="w-full md:w-3/4">
-            <label for="formulaInput" class="block text-[11px] sm:text-xs font-medium text-gray-500 dark:text-slate-400 mb-1">Формула (выражение):</label>
+            <label for="formulaInput" class="block text-[11px] sm:text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Формула (выражение):</label>
             <div class="relative">
-              <input type="text" id="formulaInput" value="S / t" placeholder="Например: log(2, x) + root(3, y)" autocomplete="off" autocapitalize="none" class="w-full pl-3 pr-10 py-2.5 sm:py-3 rounded-xl border border-gray-300 dark:border-slate-600 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white math-font text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-              <button id="clearFormulaBtn" aria-label="Очистить формулу" class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 text-lg touch-btn flex items-center justify-center">✕</button>
+              <input type="text" id="formulaInput" value="S / t" placeholder="Например: log(2, x) + root(3, y)" autocomplete="off" autocapitalize="none" class="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white math-font text-base focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+              <button id="clearFormulaBtn" aria-label="Очистить формулу" class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 text-base touch-btn flex items-center justify-center rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800">✕</button>
             </div>
-            <div id="quickKeys" class="mt-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/40 p-2">
+            <div id="quickKeys" class="mt-2 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 p-2">
               <div class="flex gap-1 mb-2 overflow-x-auto custom-scrollbar">
                 <button type="button" data-quick-tab="basic" class="quick-tab active">Символы</button>
                 <button type="button" data-quick-tab="func" class="quick-tab">Функции</button>
                 <button type="button" data-quick-tab="greek" class="quick-tab">Греческие</button>
               </div>
               <div class="quick-group grid grid-cols-4 sm:grid-cols-8 gap-1.5" data-quick-group="basic">
-                <button type="button" class="qk" data-insert="√" data-cursor="inside">√</button>
+                <button type="button" class="qk" data-insert="sqrt()" data-cursor="inside">√</button>
                 <button type="button" class="qk" data-insert="π">π</button>
                 <button type="button" class="qk" data-insert="^">xⁿ</button>
                 <button type="button" class="qk" data-insert="Δ">Δ</button>
@@ -508,73 +474,73 @@
             </div>
           </div>
         </div>
-        <div id="decimalWarning" class="mt-3 sm:mt-4 p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 transition-all duration-300 hidden flex-wrap gap-2">
+
+        <div id="decimalWarning" class="mt-3 p-2.5 bg-amber-500/10 border border-amber-500/25 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-300 transition-all duration-300 hidden flex-wrap gap-2">
           <div class="flex items-center gap-2">
             <span class="text-base shrink-0">⚠️</span>
             <span>Ввод десятичных дробей — <b>ЧЕРЕЗ ТОЧКУ!</b></span>
           </div>
           <div class="shrink-0 bg-amber-500/20 px-2 py-0.5 rounded-lg font-mono text-[11px] font-semibold text-amber-900 dark:text-amber-200">
-            3.14 <span class="text-amber-500 dark:text-amber-400 font-normal">вместо</span> 3,14
+            3.14 <span class="text-amber-600 dark:text-amber-400 font-normal">вместо</span> 3,14
           </div>
         </div>
       </div>
 
-      <div class="order-2 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-2 shrink-0 bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm">
+      <!-- Математический вид формулы -->
+      <div class="order-2 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-2 shrink-0 bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-[11px] sm:text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <span class="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
             <svg class="w-4 h-4 text-brand-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-6 4h6m-6 4h6M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
             Математический вид формулы
           </span>
-          <span class="text-[11px] sm:text-xs text-gray-400 dark:text-slate-500">Предпросмотр</span>
+          <span class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500">Предпросмотр</span>
         </div>
-        <div id="mathPreviewWrapper" class="w-full min-h-[75px] sm:min-h-[85px] bg-gray-50 dark:bg-slate-900/60 rounded-xl p-3 sm:p-4 flex items-center justify-center overflow-x-auto custom-scrollbar border border-gray-100 dark:border-slate-800 transition-colors">
+        <div id="mathPreviewWrapper" class="w-full min-h-[75px] sm:min-h-[85px] bg-slate-50 dark:bg-slate-950/70 rounded-xl p-3 sm:p-4 flex items-center justify-center overflow-x-auto custom-scrollbar border border-slate-100 dark:border-slate-800/80 transition-colors">
           <div id="mathPreview" class="w-full text-center"></div>
         </div>
       </div>
 
-      <div class="order-3 lg:order-none lg:col-span-4 lg:col-start-1 lg:row-start-1 lg:row-span-3 flex flex-col bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm lg:h-full lg:min-h-0 shrink-0 lg:shrink">
+      <!-- Значения переменных -->
+      <div class="order-3 lg:order-none lg:col-span-4 lg:col-start-1 lg:row-start-1 lg:row-span-3 flex flex-col bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm lg:h-full lg:min-h-0 shrink-0 lg:shrink">
         <div class="shrink-0 mb-2">
-          <div class="flex items-center justify-between gap-2 mb-2">
-            <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
-              <svg class="w-5 h-5 text-brand-600 dark:text-brand-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
+              <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
               Значения переменных
             </h2>
-            <span id="varsCount" class="text-xs px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-900/40 dark:text-brand-300 font-medium whitespace-nowrap shrink-0">0 переменных</span>
+            <span id="varsCount" class="text-xs px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 font-semibold whitespace-nowrap shrink-0 border border-brand-200/50 dark:border-brand-800/50">0 переменных</span>
           </div>
-          <p class="text-xs text-gray-500 dark:text-slate-400 mb-2">Укажите их значения для расчёта:</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">Укажите известные величины для расчёта:</p>
         </div>
 
         <div class="flex-grow overflow-y-auto custom-scrollbar pr-1 max-h-[260px] sm:max-h-[320px] lg:max-h-none">
-          <div id="variablesContainer" class="space-y-2.5 sm:space-y-3"></div>
+          <div id="variablesContainer" class="space-y-2.5"></div>
         </div>
 
-        <div class="shrink-0 mt-3 pt-3 border-t border-gray-100 dark:border-slate-700/60 text-[11px] sm:text-xs text-gray-400 dark:text-slate-500">
-          * Искомая величина автоматически исключается из этого списка.
+        <div class="shrink-0 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] sm:text-xs text-slate-400 dark:text-slate-500">
+          * Искомая величина автоматически исключается из списка.
         </div>
       </div>
 
-      <div class="order-4 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-3 flex-grow flex flex-col bg-white dark:bg-slate-800 rounded-2xl p-3.5 sm:p-6 border border-gray-200 dark:border-slate-700 shadow-sm lg:min-h-0 shrink-0 lg:shrink">
-        <div class="shrink-0 flex items-center justify-between mb-3 sm:mb-4 gap-2 flex-wrap">
-          <h2 class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+      <!-- Ход решения и ответ -->
+      <div class="order-4 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-3 flex-grow flex flex-col bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm lg:min-h-0 shrink-0 lg:shrink">
+        <div class="shrink-0 flex items-center justify-between mb-3 gap-2 flex-wrap">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
             <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             Ход решения и ответ
           </h2>
-          <button id="expandSolutionBtn" aria-label="Развернуть ход решения" title="Развернуть" class="px-2.5 py-1.5 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-gray-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 text-xs font-semibold transition-colors flex items-center gap-1.5 touch-btn shrink-0">
+          <button id="expandSolutionBtn" aria-label="Развернуть ход решения" title="Развернуть" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/60 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-300 text-xs font-semibold transition-colors flex items-center gap-1.5 touch-btn shrink-0 border border-slate-200/60 dark:border-slate-700/60">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
             <span class="hidden sm:inline">Развернуть</span>
           </button>
         </div>
 
         <div class="flex-grow grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 lg:min-h-0 lg:h-full">
-          
-          <div id="resultBox" class="order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[200px] h-auto shrink-0 lg:shrink">
-  
+          <div id="resultBox" class="order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[190px] h-auto shrink-0 lg:shrink">
             <div class="absolute -right-8 -top-8 w-28 h-28 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500"></div>
-            
             <div id="eHintBadge" class="hidden absolute right-4 top-12 sm:top-14 bg-amber-100 dark:bg-amber-900/90 border border-amber-200 dark:border-amber-700/80 text-amber-800 dark:text-amber-200 text-[10px] px-2 py-1 rounded-lg shadow-sm z-20 pointer-events-none transition-all duration-300">
               💡 e = ×10ⁿ
             </div>
-
             <div class="relative z-10 flex flex-col justify-between h-full flex-grow">
               <div>
                 <div class="flex items-center justify-between mb-2 sm:mb-3">
@@ -588,7 +554,6 @@
                     <option value="4">0.0000</option>
                   </select>
                 </div>
-                
                 <div class="space-y-1.5 sm:space-y-2 py-1">
                   <div class="flex items-center gap-2">
                     <span id="targetVarBadge" class="px-2.5 py-0.5 sm:py-1 rounded-md bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-mono font-bold text-xs sm:text-sm border border-emerald-500/20">v =</span>
@@ -599,8 +564,7 @@
                   </div>
                 </div>
               </div>
-              
-              <div id="resultActionContainer" class="relative z-10 pt-2 sm:pt-3 mb-1.5 sm:mb-2 mt-auto border-t border-emerald-500/15 dark:border-emerald-500/10 shrink-0 w-full">
+              <div id="resultActionContainer" class="relative z-10 pt-2 sm:pt-3 mb-1 sm:mb-1.5 mt-auto border-t border-emerald-500/15 dark:border-emerald-500/10 shrink-0 w-full">
                 <button id="copyResultBtn" class="w-full min-h-[38px] py-1.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md shadow-emerald-600/20 touch-btn">
                   <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
                   <span>Копировать ответ</span>
@@ -608,73 +572,77 @@
               </div>
             </div>
           </div>
-          
-          <div id="solutionSteps" class="order-2 md:order-1 md:col-span-7 lg:col-span-8 space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-gray-600 dark:text-slate-300 bg-gray-50 dark:bg-slate-900/40 p-3.5 sm:p-4 rounded-2xl border border-gray-100 dark:border-slate-800/80 font-mono overflow-y-auto custom-scrollbar max-h-[280px] sm:max-h-[400px] lg:max-h-none lg:h-full"></div>
+
+          <div id="solutionSteps" class="order-2 md:order-1 md:col-span-7 lg:col-span-8 space-y-2.5 sm:space-y-3 text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 p-3.5 sm:p-4 rounded-2xl border border-slate-100 dark:border-slate-800/80 font-mono overflow-y-auto custom-scrollbar max-h-[280px] sm:max-h-[400px] lg:max-h-none lg:h-full"></div>
         </div>
       </div>
 
     </div>
   </main>
+
+  <!-- Модальное окно Базы формул -->
   <div id="catalogModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center sm:p-4">
-    <div class="bg-white dark:bg-slate-800 sm:border border-gray-200 dark:border-slate-700 rounded-none sm:rounded-2xl w-full max-w-6xl h-[100dvh] sm:h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
-      <div class="p-4 sm:p-5 border-b border-gray-200 dark:border-slate-700 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center bg-gray-50 dark:bg-slate-800/50 shrink-0">
+    <div class="bg-white dark:bg-slate-900 sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-2xl w-full max-w-6xl h-[100dvh] sm:h-[90vh] flex flex-col shadow-2xl relative overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-between items-start sm:items-center bg-slate-50/80 dark:bg-slate-900/80 shrink-0">
         <div class="flex items-start justify-between w-full sm:w-auto gap-3">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0">
+            <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 border border-brand-200/50 dark:border-brand-800/50">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
             </div>
             <div>
-              <h3 class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white leading-tight">База формул</h3>
-              <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">Выберите формулу для автозаполнения</p>
+              <h3 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white leading-tight">База формул</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Выберите нужную формулу для автозаполнения</p>
             </div>
           </div>
-          <button id="closeCatalogBtn" aria-label="Закрыть каталог" class="sm:hidden text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1.5 -mr-1.5 rounded-lg text-xl touch-btn shrink-0">✕</button>
+          <button id="closeCatalogBtn" aria-label="Закрыть каталог" class="sm:hidden text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 -mr-1.5 rounded-lg text-xl touch-btn shrink-0">✕</button>
         </div>
         <div class="flex items-center gap-3 w-full sm:w-auto">
-          <div class="w-full sm:w-72 relative flex items-center">
-            <svg class="w-5 h-5 absolute left-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input type="text" id="catalogSearch" placeholder="Поиск по названию, символу..." class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-gray-900 dark:text-white text-base sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-            <button id="clearSearchBtn" class="absolute right-2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1.5 rounded-lg text-lg touch-btn hidden" aria-label="Очистить поиск">✕</button>
+          <div class="w-full sm:w-80 relative flex items-center">
+            <svg class="w-5 h-5 absolute left-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            <input type="text" id="catalogSearch" placeholder="Поиск по названию, символу..." class="w-full pl-10 pr-10 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-base sm:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+            <button id="clearSearchBtn" class="absolute right-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1.5 rounded-lg text-lg touch-btn hidden" aria-label="Очистить поиск">✕</button>
           </div>
-          <button id="closeCatalogBtnDesktop" aria-label="Закрыть каталог" class="hidden sm:block text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-xl touch-btn shrink-0">✕</button>
+          <button id="closeCatalogBtnDesktop" aria-label="Закрыть каталог" class="hidden sm:block text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg text-xl touch-btn shrink-0">✕</button>
         </div>
       </div>
-      <div class="border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 overflow-x-auto custom-scrollbar shrink-0">
+      <div class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 overflow-x-auto custom-scrollbar shrink-0">
         <div id="catalogCategories" class="flex gap-2 w-max"></div>
       </div>
-      <div id="catalogGrid" class="flex-grow p-4 sm:p-5 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-gray-50/50 dark:bg-slate-900/30 content-start"></div>
+      <div id="catalogGrid" class="flex-grow p-4 sm:p-5 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-50/70 dark:bg-slate-950/50 content-start"></div>
     </div>
   </div>
 
+  <!-- Модальное окно Хода решения -->
   <div id="solutionModal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center sm:p-4">
-    <div class="bg-white dark:bg-slate-800 sm:border border-gray-200 dark:border-slate-700 rounded-none sm:rounded-2xl w-full max-w-4xl h-[100dvh] sm:h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
-      <div class="p-4 sm:p-5 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between gap-3 bg-gray-50 dark:bg-slate-800/50 shrink-0">
+    <div class="bg-white dark:bg-slate-900 sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-2xl w-full max-w-4xl h-[100dvh] sm:h-[92vh] flex flex-col shadow-2xl relative overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/50 shrink-0">
         <div class="flex items-center gap-3 min-w-0">
           <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
           <div class="min-w-0">
-            <h3 class="text-base sm:text-xl font-bold text-gray-900 dark:text-white leading-tight truncate">Ход решения</h3>
-            <p id="solutionModalSubtitle" class="text-xs text-gray-500 dark:text-slate-400 mt-0.5 truncate">Подробный расчёт по шагам</p>
+            <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white leading-tight truncate">Ход решения</h3>
+            <p id="solutionModalSubtitle" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">Подробный расчёт по шагам</p>
           </div>
         </div>
-        <button id="closeSolutionBtn" aria-label="Закрыть" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-xl touch-btn shrink-0">✕</button>
+        <button id="closeSolutionBtn" aria-label="Закрыть" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg text-xl touch-btn shrink-0">✕</button>
       </div>
-      <div id="solutionModalBody" class="flex-grow p-4 sm:p-6 overflow-y-auto custom-scrollbar text-sm sm:text-base text-gray-700 dark:text-slate-200 bg-gray-50/60 dark:bg-slate-900/40 font-mono space-y-3"></div>
-      <div class="p-3 sm:p-4 border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex justify-end gap-2 shrink-0">
-        <button id="solutionModalCloseBtn" class="min-h-[42px] px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-slate-200 rounded-xl text-sm font-medium transition-colors touch-btn">Закрыть</button>
+      <div id="solutionModalBody" class="flex-grow p-4 sm:p-6 overflow-y-auto custom-scrollbar text-sm sm:text-base text-slate-700 dark:text-slate-200 bg-slate-50/60 dark:bg-slate-950/50 font-mono space-y-3"></div>
+      <div class="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-end gap-2 shrink-0">
+        <button id="solutionModalCloseBtn" class="min-h-[42px] px-5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold transition-colors touch-btn">Закрыть</button>
       </div>
     </div>
   </div>
 
+  <!-- Модальное окно Справки -->
   <div id="helpModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-4">
-    <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto my-auto custom-scrollbar">
-      <button id="closeHelpBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">✕</button>
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-lg w-full p-4 sm:p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto my-auto custom-scrollbar">
+      <button id="closeHelpBtn" aria-label="Закрыть окно" class="absolute top-3 right-3 sm:top-4 sm:right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg text-lg touch-btn">✕</button>
       <div class="flex items-center space-x-3 mb-3 sm:mb-4 pr-6">
         <div class="w-8 h-8 rounded-lg bg-brand-100 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 flex items-center justify-center font-bold shrink-0">?</div>
-        <h3 class="text-base sm:text-lg font-bold text-gray-900 dark:text-white leading-tight">Справка по записи математических функций</h3>
+        <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-tight">Справка по записи математических функций</h3>
       </div>
-      <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-gray-600 dark:text-slate-300">
+      <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
         <div class="bg-amber-50 dark:bg-amber-950/40 p-3 sm:p-3.5 rounded-xl border border-amber-200 dark:border-amber-800/50 text-amber-900 dark:text-amber-200">
           <div class="font-semibold flex items-center gap-1.5 mb-1 text-amber-800 dark:text-amber-300">
             <span>⚠️</span> Ввод десятичных дробей — ВСЕГДА ЧЕРЕЗ ТОЧКУ!
@@ -683,25 +651,25 @@
             Пишите <code class="bg-amber-100 dark:bg-amber-900/80 px-1.5 py-0.5 rounded font-mono font-bold">3.14</code>, а не <code class="bg-amber-100 dark:bg-amber-900/80 px-1.5 py-0.5 rounded font-mono font-bold">3,14</code>.
           </p>
         </div>
-        <div class="bg-gray-50 dark:bg-slate-900/60 p-3 sm:p-3.5 rounded-xl border border-gray-100 dark:border-slate-700/50">
-          <div class="font-semibold text-gray-900 dark:text-white flex items-center gap-1.5 mb-1">
+        <div class="bg-slate-50 dark:bg-slate-950/60 p-3 sm:p-3.5 rounded-xl border border-slate-100 dark:border-slate-800">
+          <div class="font-semibold text-slate-900 dark:text-white flex items-center gap-1.5 mb-1">
             <span class="text-brand-500 font-bold">•</span> Поддерживаемые функции:
           </div>
           <ul class="text-xs space-y-1.5 font-mono pl-1">
             <li><span class="text-brand-600 dark:text-brand-400 font-bold">log(2, 8)</span> → логарифм (2 аргумента через запятую)</li>
             <li><span class="text-brand-600 dark:text-brand-400 font-bold">root(3, 27)</span> → корень любой степени (2 аргумента)</li>
             <li><span class="text-brand-600 dark:text-brand-400 font-bold">sqrt(x), lg(x), ln(x)</span> → корень, десятичный и натур. логарифм</li>
-            <li><span class="text-brand-600 dark:text-brand-400 font-bold">sin(x), cos(x), tg(x), ctg(x)</span> → тригонометрия (в радианах)</li>
+            <li><span class="text-brand-600 dark:text-brand-400 font-bold">sin(x), cos(x), tg(x), ctg(x)</span> → тригонометрия</li>
             <li><span class="text-brand-600 dark:text-brand-400 font-bold">abs(x), min(a,b), max(a,b)</span> → модуль, минимум, максимум</li>
-            <li class="pt-1 text-gray-500 dark:text-slate-400">Также можно писать <span class="text-brand-600 dark:text-brand-400 font-bold">√(x)</span>, <span class="text-brand-600 dark:text-brand-400 font-bold">π</span>, <span class="text-brand-600 dark:text-brand-400 font-bold">×</span>, <span class="text-brand-600 dark:text-brand-400 font-bold">÷</span> прямо с панели быстрых кнопок.</li>
+            <li class="pt-1 text-slate-500 dark:text-slate-400">Также можно писать <span class="text-brand-600 dark:text-brand-400 font-bold">√(x)</span>, <span class="text-brand-600 dark:text-brand-400 font-bold">π</span>, <span class="text-brand-600 dark:text-brand-400 font-bold">×</span>, <span class="text-brand-600 dark:text-brand-400 font-bold">÷</span> прямо с панели быстрых кнопок.</li>
           </ul>
         </div>
-        <div class="bg-brand-50 dark:bg-brand-900/30 p-3 sm:p-3.5 rounded-xl border border-brand-200 dark:border-brand-800/50">
+        <div class="bg-brand-50 dark:bg-brand-950/40 p-3 sm:p-3.5 rounded-xl border border-brand-200 dark:border-brand-800/50">
           <div class="font-semibold text-brand-800 dark:text-brand-300 flex items-center gap-1.5 mb-1">
             <span>🎯</span> Автоматический пересчёт градусов
           </div>
           <p class="text-xs leading-relaxed text-brand-900 dark:text-brand-200">
-            Если формула содержит угол (α, β, φ — с меткой «<b>градусы</b>» или «<b>°</b>»), значение автоматически переводится в радианы. Вводите <b>60</b>, а не <b>1.047</b>.
+            Если формула из базы содержит угол (α, β, φ — с меткой «<b>градусы</b>» или «<b>°</b>»), значение автоматически переводится в радианы. Вводите <b>60</b>, а не <b>1.047</b>.
           </p>
         </div>
         <div class="bg-indigo-50 dark:bg-indigo-950/30 p-3 sm:p-3.5 rounded-xl border border-indigo-200 dark:border-indigo-800/50">
@@ -724,16 +692,44 @@
   </div>
 
   <script>
-    const g = 9.80665;
-    const G = 6.67430e-11;
-    const mu0 = 4 * Math.PI * 1e-7;
-    const h_pl = 6.62607015e-34;
-    const h_bar = 1.054571817e-34;
-    const c_light = 299792458;
-    const e_charge = 1.602176634e-19;
-    const R_ryd = 10973731.568160;
+    const PHYS_CONSTS = {
+      g: 9.80665,
+      G: 6.67430e-11,
+      mu0: 4 * Math.PI * 1e-7,
+      eps0: 8.85418781e-12,
+      h: 6.62607015e-34,
+      hp: 6.62607015e-34,
+      hpl: 6.62607015e-34,
+      hb: 1.054571817e-34,
+      hbar: 1.054571817e-34,
+      h_bar: 1.054571817e-34,
+      c: 299792458,
+      c_light: 299792458,
+      e: 1.602176634e-19,
+      e_charge: 1.602176634e-19,
+      Rr: 10973731.568160,
+      R_ryd: 10973731.568160,
+      NA: 6.02214076e23
+    };
 
-    const PHYS_CONSTS = { G, mu0, hbar: h_bar, h_bar, c_light, e_charge, R_ryd };
+    const CONST_META = {
+      g: { label: 'Ускорение св. падения g', unit: 'м/с²' },
+      G: { label: 'Гравитационная постоянная G', unit: 'Н·м²/кг²' },
+      mu0: { label: 'Магнитная постоянная μ₀', unit: 'Гн/м' },
+      eps0: { label: 'Электрическая постоянная ε₀', unit: 'Ф/м' },
+      h: { label: 'Постоянная Планка h', unit: 'Дж·с' },
+      hp: { label: 'Постоянная Планка h', unit: 'Дж·с' },
+      hb: { label: 'Постоянная Дирака ℏ', unit: 'Дж·с' },
+      hbar: { label: 'Постоянная Дирака ℏ', unit: 'Дж·с' },
+      c: { label: 'Скорость света в вакууме c', unit: 'м/с' },
+      e: { label: 'Элементарный заряд e', unit: 'Кл' },
+      Rr: { label: 'Постоянная Ридберга R', unit: 'м⁻¹' },
+      NA: { label: 'Постоянная Авогадро N_A', unit: 'моль⁻¹' }
+    };
+
+    const ALLOWED_FUNCTIONS = new Set(['log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max']);
+    const TWO_ARG_FUNCTIONS = new Set(['log', 'root', 'min', 'max']);
+
     const physicsFormulas = [
       { id:"m0", title:"Скорость при равномерном движении", category:"Механика", description:"Скорость тела при неизменном расстоянии S.", formula:"v = S / t", unit:"м/с", inputs:[{id:"S", label:"Расстояние S (м)", val:50}, {id:"t", label:"Время t (с)", val:10}] },
       { id:"m1", title:"Скорость при равноускоренном движении", category:"Механика", description:"Мгновенная скорость в момент времени t.", formula:"v = v_0 + a · t", unit:"м/с", inputs:[{id:"v0", label:"Нач. скорость v₀ (м/с)", val:2}, {id:"a", label:"Ускорение a (м/с²)", val:1.5}, {id:"t", label:"Время t (с)", val:6}] },
@@ -798,7 +794,7 @@
       { id:"mk2", title:"Количество вещества через число частиц", category:"МКТ", description:"Число молей через постоянную Авогадро.", formula:"ν = N / N_A", unit:"моль", inputs:[{id:"N", label:"Кол-во молекул N", val:1.2e24}, {id:"NA", label:"Постоянная Авогадро N_A", val:6.022e23}] },
       { id:"mk3", title:"Относительная молекулярная масса", category:"МКТ", description:"Значение массы молекулы в а.е.м.", formula:"M_r = m_0 / (1/12 · m_0C)", unit:"", inputs:[{id:"m0", label:"Масса молекулы m₀ (кг)", val:2.99e-26}, {id:"m0C", label:"Масса углерода-12 m₀C (кг)", val:1.993e-26}] },
       { id:"mk3_2", title:"Масса одной молекулы", category:"МКТ", description:"Абсолютная масса одиночной структурной единицы.", formula:"m_0 = M / N_A", unit:"кг", inputs:[{id:"M", label:"Молярная масса M (кг/моль)", val:0.032}, {id:"NA", label:"Постоянная Авогадро N_A", val:6.022e23}] },
-      { id:"mk4", title:"Молярная масса через относительную массу", category:"МКТ", description:"Масса одного моля вещества.", formula:"M = M_r · 0,001", unit:"кг/моль", inputs:[{id:"Mr", label:"Отн. молекулярная масса M_r", val:18}] },
+      { id:"mk4", title:"Молярная масса через относительную массу", category:"МКТ", description:"Масса одного моля вещества.", formula:"M = M_r · 0.001", unit:"кг/моль", inputs:[{id:"Mr", label:"Отн. молекулярная масса M_r", val:18}] },
       { id:"mk5", title:"Масса вещества через плотность", category:"МКТ", description:"Масса тела через его плотность и объём.", formula:"m = ρ · V", unit:"кг", inputs:[{id:"rho", label:"Плотность вещества ρ (кг/м³)", val:1.29}, {id:"V", label:"Объём V (м³)", val:2}] },
       { id:"mk6", title:"Плотность вещества через концентрацию", category:"МКТ", description:"Плотность вещества через массу одной молекулы.", formula:"ρ = m_0 · n", unit:"кг/м³", inputs:[{id:"m0", label:"Масса молекулы m₀ (кг)", val:4.65e-26}, {id:"n", label:"Концентрация n (м⁻³)", val:2.7e25}] },
       { id:"mk7", title:"Количество вещества через объём газа", category:"МКТ", description:"Отношение объёма газа к молярному объёму.", formula:"ν = V / V_m", unit:"моль", inputs:[{id:"V", label:"Объём газа V (м³)", val:0.0448}, {id:"Vm", label:"Молярный объём V_m (м³/моль)", val:0.0224}] },
@@ -812,7 +808,7 @@
       { id:"mk15", title:"Давление газа (Менделеев-Клапейрон)", category:"МКТ", description:"Давление идеального газа через массу.", formula:"p = (m · R · T) / (M · V)", unit:"Па", inputs:[{id:"m", label:"Масса m (кг)", val:0.032}, {id:"V", label:"Объём V (м³)", val:0.0224}, {id:"M", label:"Молярная масса M (кг/моль)", val:0.032}, {id:"T", label:"Температура T (К)", val:273.15}, {id:"R", label:"Газовая постоянная R", val:8.31}] },
       { id:"mk16", title:"Объём газа (Менделеев-Клапейрон)", category:"МКТ", description:"Объём идеального газа через массу.", formula:"V = (m · R · T) / (M · p)", unit:"м³", inputs:[{id:"m", label:"Масса m (кг)", val:0.032}, {id:"p", label:"Давление p (Па)", val:101325}, {id:"M", label:"Молярная масса M (кг/моль)", val:0.032}, {id:"T", label:"Температура T (К)", val:273.15}, {id:"R", label:"Газовая постоянная R", val:8.31}] },
       { id:"mk17", title:"Уравнение Менделеева-Клапейрона", category:"МКТ", description:"Связывает термодинамические параметры газа.", formula:"P = (ν · R · T) / V", unit:"Па", inputs:[{id:"nu", label:"Кол-во вещества ν (моль)", val:2}, {id:"R", label:"Газовая постоянная R", val:8.314}, {id:"T", label:"Температура T (К)", val:300}, {id:"V", label:"Объем V (м³)", val:0.05}] },
-      { id:"mk18", title:"Уравнение Клапейрона (Базовое)", category:"МКТ", description:"Связывает все три параметра при неизменной массе.", formula:"(P_1 · V_1) / T_1 = (P_2 · V_2) / T_2", inputs:[{id:"p1", label:"P₁ (Па)", val:100000}, {id:"v1", label:"V₁ (м³)", val:2}, {id:"t1", label:"T₁ (К)", val:293}, {id:"p2", label:"P₂ (Па)", val:0}, {id:"v2", label:"V₂ (м³)", val:1}, {id:"t2", label:"T₂ (К)", val:350}], calc:(w)=>{const vars={p1:w.p1,v1:w.v1,t1:w.t1,p2:w.p2,v2:w.v2,t2:w.t2}; const empty=Object.keys(vars).filter(k=>!vars[k]||vars[k]<=0); if(empty.length!==1)return"Ошибка: оставьте одно поле равным 0"; const target=empty[0], p1=w.p1,v1=w.v1,t1=w.t1,p2=w.p2,v2=w.v2,t2=w.t2; switch(target){case "p1":return "P₁ = "+((p2*v2*t1)/(v1*t2)).toFixed(0)+" Па"; case "v1":return "V₁ = "+((p2*v2*t1)/(p1*t2)).toFixed(4)+" м³"; case "t1":return "T₁ = "+((p1*v1*t2)/(p2*v2)).toFixed(1)+" К"; case "p2":return "P₂ = "+((p1*v1*t2)/(v2*t1)).toFixed(0)+" Па"; case "v2":return "V₂ = "+((p1*v1*t2)/(p2*t1)).toFixed(4)+" м³"; case "t2":return "T₂ = "+((p2*v2*t1)/(p1*v1)).toFixed(1)+" К"; default:return "Ошибка";}} },
+      { id:"mk18", title:"Уравнение Клапейрона (Базовое)", category:"МКТ", description:"Отношение произведения давления на объём к абсолютной температуре постоянно.", formula:"C = (P · V) / T", unit:"Дж/К", inputs:[{id:"P", label:"Давление P (Па)", val:100000}, {id:"V", label:"Объём V (м³)", val:2}, {id:"T", label:"Температура T (К)", val:293}] },
       { id:"mk18_1", title:"Уравнение Клапейрона (Объединенный закон)", category:"МКТ", description:"Нахождение давления P₁.", formula:"P_1 = (P_2 · V_2 · T_1) / (V_1 · T_2)", unit:"Па", inputs:[{id:"P2", label:"P₂ (Па)", val:150000}, {id:"V2", label:"V₂ (м³)", val:1}, {id:"T1", label:"T₁ (К)", val:293}, {id:"V1", label:"V₁ (м³)", val:2}, {id:"T2", label:"T₂ (К)", val:350}] },
       { id:"mk18_2", title:"Уравнение Клапейрона (Объединенный закон)", category:"МКТ", description:"Нахождение объёма V₁.", formula:"V_1 = (P_2 · V_2 · T_1) / (P_1 · T_2)", unit:"м³", inputs:[{id:"P2", label:"P₂ (Па)", val:150000}, {id:"V2", label:"V₂ (м³)", val:1}, {id:"T1", label:"T₁ (К)", val:293}, {id:"P1", label:"P₁ (Па)", val:100000}, {id:"T2", label:"T₂ (К)", val:350}] },
       { id:"mk18_3", title:"Уравнение Клапейрона (Объединенный закон)", category:"МКТ", description:"Нахождение температуры T₁.", formula:"T_1 = (P_1 · V_1 · T_2) / (P_2 · V_2)", unit:"К", inputs:[{id:"P1", label:"P₁ (Па)", val:100000}, {id:"V1", label:"V₁ (м³)", val:2}, {id:"T2", label:"T₂ (К)", val:350}, {id:"P2", label:"P₂ (Па)", val:150000}, {id:"V2", label:"V₂ (м³)", val:1}] },
@@ -915,7 +911,7 @@
       { id:"e64", title:"Энергия магнитного поля (L, I)", category:"Электродинамика", description:"Запасаемая магнитная энергия катушки.", formula:"W = L · I² / 2", unit:"Дж", inputs:[{id:"L", label:"Индуктивность L (Гн)", val:0.5}, {id:"I", label:"Ток I (А)", val:4}] },
       { id:"e65", title:"Энергия магнитного поля (Φ, I)", category:"Электродинамика", description:"Энергия через поток и ток.", formula:"W = (Φ · I) / 2", unit:"Дж", inputs:[{id:"Phi", label:"Поток Φ (Вб)", val:0.1}, {id:"I", label:"Сила тока I (А)", val:2}] },
       { id:"e66", title:"Энергия магнитного поля (Φ, L)", category:"Электродинамика", description:"Энергия через поток и индуктивность.", formula:"W = Φ² / (2 · L)", unit:"Дж", inputs:[{id:"Phi", label:"Поток Φ (Вб)", val:0.1}, {id:"L", label:"Индуктивность L (Гн)", val:0.05}] },
-      { id:"e67", title:"Закон Фарадея для электролиза", category:"Электродинамика", description:"Масса осадка на катоде.", formula:"m = k_э · I · t", unit:"кг", inputs:[{id:"kэл", label:"Коэффициент k_эл (кг/Кл)", val:3.29e-7}, {id:"I", label:"Ток I (А)", val:3}, {id:"t", label:"Время t (с)", val:1200}] },
+      { id:"e67", title:"Закон Фарадея для электролиза", category:"Электродинамика", description:"Масса осадка на катоде.", formula:"m = k_э · I · t", unit:"кг", inputs:[{id:"kэ", label:"Коэффициент k_эл (кг/Кл)", val:3.29e-7}, {id:"I", label:"Ток I (А)", val:3}, {id:"t", label:"Время t (с)", val:1200}] },
       { id:"e68", title:"Магнитная проницаемость среды", category:"Электродинамика", description:"Отношение индукции в среде к вакууму.", formula:"μ = B / B_0", unit:"", inputs:[{id:"B", label:"Индукция среды B (Тл)", val:1.2}, {id:"B0", label:"Индукция в вакууме B₀ (Тл)", val:0.002}] },
       { id:"e69", title:"Формула Томсона (LC-контур)", category:"Электродинамика", description:"Период незатухающих колебаний.", formula:"T = 2 · π · √(L · C)", unit:"с", inputs:[{id:"L", label:"Индуктивность L (Гн)", val:0.01}, {id:"C", label:"Емкость C (Ф)", val:2.5e-6}] },
       { id:"e70", title:"Резонансная частота контура", category:"Электродинамика", description:"Собственная круговая частота LC-цепи.", formula:"ω = 1 / (√(L · C))", unit:"рад/с", inputs:[{id:"L", label:"Индуктивность L (Гн)", val:0.005}, {id:"C", label:"Емкость C (Ф)", val:4.7e-6}] },
@@ -928,8 +924,8 @@
       { id:"o1", title:"Закон преломления (через синусы)", category:"Оптика", description:"Относительный показатель преломления.", formula:"n = (sin(α))/(sin(β))", unit:"", inputs:[{id:"alpha", label:"Угол падения α (°)", val:45}, {id:"beta", label:"Угол преломления β (°)", val:30}] },
       { id:"o2", title:"Закон преломления (через скорости)", category:"Оптика", description:"Отношение скоростей света в двух средах.", formula:"n = v_1 / v_2", unit:"", inputs:[{id:"v1", label:"Скорость v₁ (м/с)", val:3e8}, {id:"v2", label:"Скорость v₂ (м/с)", val:2e8}] },
       { id:"o3", title:"Закон преломления (через абс. показатели)", category:"Оптика", description:"Отношение абсолютных показателей.", formula:"n = n_2 / n_1", unit:"", inputs:[{id:"n2", label:"Показатель n₂", val:1.5}, {id:"n1", label:"Показатель n₁", val:1}] },
-      { id:"o4", title:"Предельный угол полного отражения", category:"Оптика", description:"Порог полного запирания света внутри плотной среды.", formula:"sin(α_0) = n_2 / n_1", unit:"", inputs:[{id:"n1", label:"Плотная среда n₁", val:1.5}, {id:"n2", label:"Разреженная n₂", val:1}], calc:(w)=>{if(w.n1<=0||w.n2>w.n1)return"Ошибка"; return"Предельный угол α₀ = "+(Math.asin(w.n2/w.n1)*180/Math.PI).toFixed(1)+"°";} },
-      { id:"o5", title:"Формула тонкой линзы", category:"Оптика", description:"Поиск фокусного расстояния линзы.", formula:"1 / F = 1 / d + 1 / f", unit:"", inputs:[{id:"d", label:"Расстояние до предмета d (м)", val:0.3}, {id:"f", label:"Расстояние до картинки f (м)", val:0.6}], calc:(w)=>w.d<=0||w.f<=0?"Ошибка":"Оптическая сила D = "+(1/w.d+1/w.f).toFixed(2)+" дптр; Фокус F = "+(1/(1/w.d+1/w.f)).toFixed(3)+" м" },
+      { id:"o4", title:"Предельный угол полного отражения", category:"Оптика", description:"Синус предельного угла полного внутреннего отражения.", formula:"sin_α0 = n_2 / n_1", unit:"", inputs:[{id:"n1", label:"Плотная среда n₁", val:1.5}, {id:"n2", label:"Разреженная среда n₂", val:1}] },
+      { id:"o5", title:"Формула тонкой линзы", category:"Оптика", description:"Оптическая сила тонкой линзы через расстояния до предмета и изображения.", formula:"D = 1 / d + 1 / f", unit:"дптр", inputs:[{id:"d", label:"Расстояние до предмета d (м)", val:0.3}, {id:"f", label:"Расстояние до изображения f (м)", val:0.6}] },
       { id:"o6", title:"Линейное увеличение линзы", category:"Оптика", description:"Масштабный коэффициент.", formula:"Γ = f / d", unit:"крат", inputs:[{id:"f", label:"Дистанция f (м)", val:0.8}, {id:"d", label:"Дистанция d (м)", val:0.2}] },
       { id:"o7", title:"Абсолютный показатель преломления", category:"Оптика", description:"Отношение скорости света в вакууме к скорости в среде.", formula:"n = c / v", unit:"", inputs:[{id:"v", label:"Скорость v (м/с)", val:2e8}] },
       { id:"o8", title:"Показатель преломления (через среду)", category:"Оптика", description:"Через диэлектрическую и магнитную проницаемости.", formula:"n = √(ε · μ)", unit:"", inputs:[{id:"eps", label:"Диэл. проницаемость ε", val:2.25}, {id:"mu", label:"Магн. проницаемость μ", val:1}] },
@@ -940,25 +936,25 @@
       { id:"o13", title:"Условие максимума (тонкая пленка)", category:"Оптика", description:"Отражение от пленки.", formula:"λ = 2 · d · n / k", unit:"м", inputs:[{id:"d", label:"Толщина d (м)", val:1e-6}, {id:"n", label:"Показатель n", val:1.5}, {id:"k", label:"Порядок k", val:1}] },
       { id:"o14", title:"Условие минимума (тонкая пленка)", category:"Оптика", description:"Отражение от пленки.", formula:"λ = 4 · d · n / (2 · k + 1)", unit:"м", inputs:[{id:"d", label:"Толщина d (м)", val:1e-6}, {id:"n", label:"Показатель n", val:1.5}, {id:"k", label:"Порядок k", val:0}] },
       { id:"o15", title:"Оптическая сила линзы", category:"Оптика", description:"Преломляющая способность линзы.", formula:"D = 1 / F", unit:"дптр", inputs:[{id:"F", label:"Фокусное расстояние F (м)", val:0.25}] },
-      { id:"q1", title:"Масса фотона", category:"Квантовая физика", description:"Эквивалент массы.", formula:"m = (h_p · ν) / c²", unit:"кг", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu", label:"Частота ν (Гц)", val:5e14}] },
+      { id:"q1", title:"Масса фотона", category:"Квантовая физика", description:"Эквивалент массы.", formula:"m = (h_p · ν) / c²", unit:"кг", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu", label:"Частота ν (Гц)", val:5e14}] },
       { id:"q2", title:"Давление света", category:"Квантовая физика", description:"Воздействие фотонного потока.", formula:"P = I / c · (1 + ρ)", unit:"Па", inputs:[{id:"I", label:"Интенсивность I (Вт/м²)", val:1360}, {id:"rho", label:"Отражение ρ (0..1)", val:1}] },
       { id:"q3", title:"Импульс фотона (через энергию)", category:"Квантовая физика", description:"Механический импульс.", formula:"p = E / c", unit:"кг·м/с", inputs:[{id:"E", label:"Энергия E (Дж)", val:3.3e-19}] },
-      { id:"q4", title:"Импульс фотона (через частоту)", category:"Квантовая физика", description:"Импульс светового кванта.", formula:"p = (h_p · ν) / c", unit:"кг·м/с", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu", label:"Частота ν (Гц)", val:5e14}] },
-      { id:"q5", title:"Импульс фотона (через длину волны)", category:"Квантовая физика", description:"Импульс через длину.", formula:"p = (h_p) / (λ)", unit:"кг·м/с", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"lambda", label:"Длина волны λ (м)", val:6e-7}] },
+      { id:"q4", title:"Импульс фотона (через частоту)", category:"Квантовая физика", description:"Импульс светового кванта.", formula:"p = (h_p · ν) / c", unit:"кг·м/с", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu", label:"Частота ν (Гц)", val:5e14}] },
+      { id:"q5", title:"Импульс фотона (через длину волны)", category:"Квантовая физика", description:"Импульс через длину.", formula:"p = (h_p) / (λ)", unit:"кг·м/с", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"lambda", label:"Длина волны λ (м)", val:6e-7}] },
       { id:"q6", title:"Энергия покоя (Эйнштейн)", category:"Квантовая физика", description:"Полная энергия.", formula:"E = m · c²", unit:"Дж", inputs:[{id:"m", label:"Масса m (кг)", val:1}] },
       { id:"q7", title:"Энергия фотона (циклическая частота)", category:"Квантовая физика", description:"Энергия через угловую частоту.", formula:"E = h · ω", unit:"Дж", inputs:[{id:"w", label:"Цикл. частота ω (рад/с)", val:3e15}] },
       { id:"q8", title:"Энергия фотона (через импульс)", category:"Квантовая физика", description:"Связь энергии с движением.", formula:"E = p · c", unit:"Дж", inputs:[{id:"p", label:"Импульс p (кг·м/с)", val:1e-27}] },
-      { id:"q9", title:"Энергия фотона (через частоту)", category:"Квантовая физика", description:"Квант энергии.", formula:"E = h_p · ν", unit:"Дж", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu", label:"Частота ν (Гц)", val:5e14}] },
-      { id:"q10", title:"Энергия фотона (через длину волны)", category:"Квантовая физика", description:"Порция энергии.", formula:"E = (h · c) / λ", unit:"Дж", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"lambda", label:"Длина волны λ (м)", val:6e-7}] },
-      { id:"q11", title:"Работа выхода (через частоту)", category:"Квантовая физика", description:"Энергия для удаления электрона.", formula:"A_{вых} = h_p · ν_min", unit:"Дж", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu_min", label:"Мин. частота ν_min (Гц)", val:5e14}] },
-      { id:"q12", title:"Работа выхода (через длину волны)", category:"Квантовая физика", description:"Энергия через порог.", formula:"A_{вых} = (h_p · c) / λ_max", unit:"Дж", inputs:[{id:"hpl", label:"Постоянная Планка h", val:6.626e-34}, {id:"lambda_max", label:"Макс. длина λ_max (м)", val:6e-7}] },
-      { id:"q13", title:"Уравнение фотоэффекта Эйнштейна", category:"Квантовая физика", description:"Баланс энергии.", formula:"E_кmax = h_p · ν - A_в", inputs:[{id:"l_nm", label:"Длина волны λ (нм)", val:350}, {id:"a_ev", label:"Работа выхода A_вых (эВ)", val:2.2}], calc:(w)=>{if(w.l_nm<=0)return"Ошибка"; const ek=(6.626e-34*299792458/(w.l_nm*1e-9))/1.602e-19 - w.a_ev; return ek<0?"Фотоэффекта нет":`E_кmax = ${ek.toFixed(2)} эВ`;} },
-      { id:"q14", title:"Красная граница фотоэффекта", category:"Квантовая физика", description:"Предельная длина волны.", formula:"λ_кр = h_p · c / A_в", inputs:[{id:"a_ev", label:"Работа выхода A_вых (эВ)", val:4.5}], calc:(w)=>w.a_ev<=0?"Ошибка":"λ_кр = "+(6.626e-34*299792458/(w.a_ev*1.602e-19)*1e9).toFixed(1)+" нм" },
+      { id:"q9", title:"Энергия фотона (через частоту)", category:"Квантовая физика", description:"Квант энергии.", formula:"E = h_p · ν", unit:"Дж", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu", label:"Частота ν (Гц)", val:5e14}] },
+      { id:"q10", title:"Энергия фотона (через длину волны)", category:"Квантовая физика", description:"Порция энергии.", formula:"E = (h · c) / λ", unit:"Дж", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"lambda", label:"Длина волны λ (м)", val:6e-7}] },
+      { id:"q11", title:"Работа выхода (через частоту)", category:"Квантовая физика", description:"Энергия для удаления электрона.", formula:"A_{вых} = h_p · ν_min", unit:"Дж", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"nu_min", label:"Мин. частота ν_min (Гц)", val:5e14}] },
+      { id:"q12", title:"Работа выхода (через длину волны)", category:"Квантовая физика", description:"Энергия через порог.", formula:"A_{вых} = (h_p · c) / λ_max", unit:"Дж", inputs:[{id:"hp", label:"Постоянная Планка h", val:6.626e-34}, {id:"lambda_max", label:"Макс. длина λ_max (м)", val:6e-7}] },
+      { id:"q13", title:"Уравнение фотоэффекта Эйнштейна", category:"Квантовая физика", description:"Максимальная кинетическая энергия фотоэлектронов.", formula:"E_кmax = h_p · ν - A_в", unit:"Дж", inputs:[{id:"hp", label:"Постоянная Планка h (Дж·с)", val:6.626e-34}, {id:"nu", label:"Частота света ν (Гц)", val:8e14}, {id:"Aв", label:"Работа выхода A_в (Дж)", val:3.5e-19}] },
+      { id:"q14", title:"Красная граница фотоэффекта", category:"Квантовая физика", description:"Предельная длина волны для возникновения фотоэффекта.", formula:"λ_кр = (h_p · c) / A_в", unit:"м", inputs:[{id:"hp", label:"Постоянная Планка h (Дж·с)", val:6.626e-34}, {id:"c", label:"Скорость света c (м/с)", val:299792458}, {id:"Aв", label:"Работа выхода A_в (Дж)", val:7.2e-19}] },
       { id:"q15", title:"Постулат Бора (Квантование орбит)", category:"Квантовая физика", description:"Момент импульса электрона.", formula:"L = n · h_b", unit:"кг·м²/с", inputs:[{id:"n", label:"Орбита n", val:2}] },
-      { id:"q16", title:"Формула Бальмера (Спектр)", category:"Квантовая физика", description:"Излучение фотона.", formula:"λ = 1 / (R_r · (1/4 - 1/n²))", inputs:[{id:"n", label:"С уровня n (>2)", val:3}], calc:(w)=>w.n<=2?"Ошибка":"λ = "+(1/(10973731.56*(0.25-1/(w.n*w.n)))*1e9).toFixed(1)+" нм" },
-      { id:"q17", title:"Энергия связи ядра", category:"Квантовая физика", description:"Энергия удержания нуклонов.", formula:"E_{св} = Δm · c²", inputs:[{id:"dm", label:"Дефект масс Δm (а.е.м.)", val:0.03038}], calc:(w)=>{return `E_св = ${(w.dm*1.66054e-27*Math.pow(299792458,2)/1.602e-13).toFixed(2)} МэВ`;} },
-      { id:"q18", title:"Закон радиоактивного распада", category:"Квантовая физика", description:"Уменьшение числа ядер.", formula:"N = N_0 · 2^(-t / T)", inputs:[{id:"n0", label:"Нач. ядра N₀", val:1e6}, {id:"t", label:"Время t (сут)", val:24}, {id:"T", label:"Период T (сут)", val:8}], calc:(w)=>w.T<=0?"Ошибка":"N = "+Math.round(w.n0*Math.pow(2,-w.t/w.T)) },
-      { id:"q19", title:"Квантование орбит Бора", category:"Квантовая физика", description:"Многовариантный расчет орбиты.", formula:"m_e · v_n · r_n = n · h_b", inputs:[{id:"me", label:"m_e (кг)", val:9.11e-31}, {id:"v", label:"v_n (м/с)", val:2.19e6}, {id:"r", label:"r_n (м)", val:0}, {id:"n", label:"n", val:1}], calc:(w)=>{const z=[w.me,w.v,w.r,w.n].filter(x=>x===0).length; if(z!==1)return"Ошибка: одно поле = 0"; const h=1.054e-34; if(!w.me)return"m_e = "+(w.n*h/(w.v*w.r)).toExponential(4)+" кг"; if(!w.v)return"v_n = "+(w.n*h/(w.me*w.r)).toExponential(4)+" м/с"; if(!w.r)return"r_n = "+(w.n*h/(w.me*w.v)).toExponential(4)+" м"; return"n = "+Math.round(w.me*w.v*w.r/h);} },
+      { id:"q16", title:"Формула Бальмера (Спектр)", category:"Квантовая физика", description:"Длина волны излучения атома водорода в серии Бальмера.", formula:"λ = 1 / (R_r · (1/4 - 1/n²))", unit:"м", inputs:[{id:"Rr", label:"Постоянная Ридберга R (м⁻¹)", val:10973731.57}, {id:"n", label:"Энергетический уровень n (>2)", val:3}] },
+      { id:"q17", title:"Энергия связи ядра", category:"Квантовая физика", description:"Энергия удержания нуклонов через дефект масс.", formula:"E_{св} = Δm · c²", unit:"Дж", inputs:[{id:"dm", label:"Дефект масс Δm (кг)", val:5.04e-29}, {id:"c", label:"Скорость света c (м/с)", val:299792458}] },
+      { id:"q18", title:"Закон радиоактивного распада", category:"Квантовая физика", description:"Число нераспавшихся ядер к моменту времени t.", formula:"N = N_0 · 2^(-t / T)", unit:"", inputs:[{id:"N0", label:"Нач. число ядер N₀", val:1e6}, {id:"t", label:"Время t (сут)", val:24}, {id:"T", label:"Период полураспада T (сут)", val:8}] },
+      { id:"q19", title:"Квантование орбит Бора", category:"Квантовая физика", description:"Радиус стационарной орбиты через момент импульса электрона.", formula:"r_n = (n · h_b) / (m_e · v_n)", unit:"м", inputs:[{id:"n", label:"Номер орбиты n", val:1}, {id:"hb", label:"Постоянная Дирака ℏ (Дж·с)", val:1.05457e-34}, {id:"me", label:"Масса электрона m_e (кг)", val:9.11e-31}, {id:"vn", label:"Скорость электрона v_n (м/с)", val:2.19e6}] },
       { id:"q20", title:"Радиус орбиты Бора", category:"Квантовая физика", description:"Физический размер орбиты.", formula:"r_n = (n² · h_b²) / (m_e · k · e²)", unit:"м", inputs:[{id:"n", label:"Орбита n", val:1}, {id:"m_e", label:"Масса m_e (кг)", val:9.11e-31}, {id:"k", label:"Коэффициент k", val:8.988e9}] },
       { id:"q21", title:"Скорость электрона на орбите", category:"Квантовая физика", description:"Орбитальная скорость.", formula:"v_n = (k · e²) / (n · h_b)", unit:"м/с", inputs:[{id:"k", label:"Коэффициент k", val:8.988e9}, {id:"n", label:"Орбита n", val:1}] },
       { id:"q22", title:"Энергия стационарного состояния", category:"Квантовая физика", description:"Полная энергия.", formula:"E_n = -(m_e · k² · e⁴) / (2 · n² · h_b²)", unit:"Дж", inputs:[{id:"m_e", label:"Масса m_e (кг)", val:9.11e-31}, {id:"k", label:"Коэффициент k", val:8.988e9}, {id:"n", label:"Орбита n", val:1}] },
@@ -975,17 +971,16 @@
       { id:"s4", title:"Сложение скоростей", category:"СТО", description:"Релятивистское сложение скоростей.", formula:"v_{res} = (v_1 + v) / (1 + v_1·v /c² )", unit:"м/с", inputs:[{id:"v1", label:"Скорость тела v₁ (м/с)", val:2e8}, {id:"v", label:"Скорость системы v (м/с)", val:1.5e8}] },
       { id:"s5", title:"Релятивистская кинетическая энергия", category:"СТО", description:"Разность полной энергии и покоя.", formula:"E_kin = m_0 · c² · (1 / (√(1 - v² / c²)) - 1)", unit:"Дж", inputs:[{id:"m0", label:"Масса покоя m₀ (кг)", val:1}, {id:"v", label:"Скорость v (м/с)", val:2.4e8}] },
       { id:"s6", title:"Связь импульса и энергии", category:"СТО", description:"Инвариантное соотношение.", formula:"E = √(p² · c² + m_0² · c⁴)", unit:"Дж", inputs:[{id:"p", label:"Импульс p (кг·м/с)", val:2e-19}, {id:"m0", label:"Масса покоя m₀ (кг)", val:9.11e-31}] }
-    
     ];
+
     const state = { variables: {} };
     let rawCalculatedValue = null;
     let activeFormula = null;
     let targetUnit = '';
 
-    const ALLOWED_FUNCTIONS = new Set(['log', 'ln', 'lg', 'root', 'sqrt', 'sin', 'cos', 'tan', 'tg', 'ctg', 'abs', 'min', 'max']);
-
     const targetVarInput = document.getElementById('targetVar');
     const formulaInput = document.getElementById('formulaInput');
+    const activeFormulaBadge = document.getElementById('activeFormulaBadge');
     const decimalWarning = document.getElementById('decimalWarning');
     const variablesContainer = document.getElementById('variablesContainer');
     const mathPreviewWrapper = document.getElementById('mathPreviewWrapper');
@@ -1025,13 +1020,13 @@
     }, { passive: true });
 
     const toggleModal = (modal, show) => {
-        if(show) {
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        } else {
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
+      if (show) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      } else {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
     };
 
     const closeCatalog = () => {
@@ -1042,24 +1037,22 @@
     document.getElementById('openHelpBtn').addEventListener('click', () => toggleModal(helpModal, true), { passive: true });
     document.getElementById('closeHelpBtn').addEventListener('click', () => toggleModal(helpModal, false), { passive: true });
     document.getElementById('modalOkBtn').addEventListener('click', () => toggleModal(helpModal, false), { passive: true });
-    
-    document.getElementById('openCatalogBtn').addEventListener('click', () => { 
-      toggleModal(catalogModal, true); 
+
+    document.getElementById('openCatalogBtn').addEventListener('click', () => {
+      toggleModal(catalogModal, true);
       localStorage.setItem('catalogOpen', 'true');
-      renderCatalog(); 
+      renderCatalog();
     }, { passive: true });
-    
+
     document.getElementById('closeCatalogBtn').addEventListener('click', closeCatalog, { passive: true });
     document.getElementById('closeCatalogBtnDesktop').addEventListener('click', closeCatalog, { passive: true });
 
-    [helpModal].forEach(modal => {
-      modal.addEventListener('click', (e) => { if (e.target === modal) toggleModal(modal, false); }, { passive: true });
-    });
+    helpModal.addEventListener('click', (e) => { if (e.target === helpModal) toggleModal(helpModal, false); }, { passive: true });
     catalogModal.addEventListener('click', (e) => { if (e.target === catalogModal) closeCatalog(); }, { passive: true });
     solutionModal.addEventListener('click', (e) => { if (e.target === solutionModal) toggleModal(solutionModal, false); }, { passive: true });
 
     function openSolutionModal() {
-      solutionModalBody.innerHTML = solutionSteps.innerHTML || '<div class="text-gray-400 text-sm">Введите формулу для расчёта</div>';
+      solutionModalBody.innerHTML = solutionSteps.innerHTML || '<div class="text-slate-400 text-sm">Введите формулу для расчёта</div>';
       solutionModalBody.querySelectorAll('.math-inline').forEach(el => el.removeAttribute('data-rendered'));
       const target = targetVarInput.value.trim() || 'y';
       const formula = formulaInput.value.trim() || '';
@@ -1085,6 +1078,7 @@
       activeFormula = null;
       targetUnit = '';
       onFormulaChange();
+      formulaInput.focus();
     }, { passive: true });
 
     (function initQuickKeys() {
@@ -1128,23 +1122,451 @@
     })();
 
     precisionSelect.addEventListener('change', updateResultDisplay, { passive: true });
-    const debouncedOnFormulaChange = debounce(onFormulaChange, 120);
+    const debouncedOnFormulaChange = debounce(onFormulaChange, 100);
     targetVarInput.addEventListener('input', debouncedOnFormulaChange);
     formulaInput.addEventListener('input', debouncedOnFormulaChange);
 
+    /* ==========================================================================
+       МАТЕМАТИЧЕСКИЙ ТОКЕНИЗАТОР, AST-ПАРСЕР И ГЕНЕРАТОР LATEX (БЕЗ БАГОВ FRAC)
+       ========================================================================== */
+    const GREEK_LATEX = {
+      'α': '\\alpha', 'β': '\\beta', 'γ': '\\gamma', 'δ': '\\delta',
+      'φ': '\\varphi', 'λ': '\\lambda', 'ν': '\\nu', 'ρ': '\\rho',
+      'ε': '\\varepsilon', 'μ': '\\mu', 'ω': '\\omega', 'π': '\\pi',
+      'τ': '\\tau', 'Φ': '\\Phi', 'Γ': '\\Gamma', 'Δ': '\\Delta',
+      'ℏ': '\\hbar', 'η': '\\eta',
+      'alpha': '\\alpha', 'beta': '\\beta', 'gamma': '\\gamma', 'delta': '\\delta',
+      'phi': '\\varphi', 'lambda': '\\lambda', 'nu': '\\nu', 'rho': '\\rho',
+      'eps': '\\varepsilon', 'mu': '\\mu', 'omega': '\\omega', 'pi': '\\pi',
+      'tau': '\\tau', 'Phi': '\\Phi', 'Gamma': '\\Gamma', 'eta': '\\eta',
+      'hbar': '\\hbar', 'h_bar': '\\hbar'
+    };
+
+    const KNOWN_COMPOUND_VARS = {
+      'hmax': ['h', 'max'], 'vmax': ['v', 'max'], 'amax': ['a', 'max'],
+      'numin': ['\\nu', 'min'], 'lambdamax': ['\\lambda', 'max'],
+      'lambdaкр': ['\\lambda', 'кр'], 'Eкmax': ['E', 'к,max'],
+      'vкв': ['v', 'кв'], 'vгал': ['v', 'гал'], 'Fтр': ['F', 'тр'],
+      'Fупр': ['F', 'упр'], 'Aст': ['A', 'ст'], 'Aвых': ['A', 'вых'],
+      'Aв': ['A', 'в'], 'Agas': ['A', 'gas'], 'Aext': ['A', 'ext'],
+      'Eк': ['E', 'к'], 'Ek': ['E', 'к'], 'Ep': ['E', 'p'],
+      'Eсв': ['E', 'св'], 'Ekin': ['E', 'kin'], 'vres': ['v', 'res'],
+      'm0C': ['m', '0\\text{C}'], 'NA': ['N', 'A'], 'Mr': ['M', 'r'],
+      'Vm': ['V', 'm'], 'WR': ['W', 'R'], 'Mя': ['M', 'я'],
+      'mp': ['m', 'p'], 'mn': ['m', 'n'], 'me': ['m', 'e'],
+      'vn': ['v', 'n'], 'rn': ['r', 'n'], 'En': ['E', 'n'],
+      'kэл': ['k', 'эл'], 'kэ': ['k', 'э'],
+      'Im': ['I', 'm'], 'Um': ['U', 'm'], 'Em': ['E', 'm'], 'qm': ['q', 'm'],
+      'Iд': ['I', 'д'], 'Uд': ['U', 'д'], 'aц': ['a', 'ц'],
+      'gh': ['g', 'h'], 'vz': ['v', 'z'], 'FL': ['F', 'L'], 'FA': ['F', 'A'],
+      'Wc': ['W', 'c'], 'Wp': ['W', 'p'], 'Cобщ': ['C', 'общ'],
+      'Rобщ': ['R', 'общ'], 'Iкз': ['I', 'кз'], 'Pполн': ['P', 'полн'],
+      'etamax': ['\\eta', 'max'], 'ηmax': ['\\eta', 'max'],
+      'εi': ['\\varepsilon', 'i'], 'epsi': ['\\varepsilon', 'i'],
+      'εси': ['\\varepsilon', 'си'], 'sinα0': ['\\sin\\alpha', '0']
+    };
+
+    const DELTA_VARS = {
+      'dPhi': '\\Delta \\Phi', 'dV': '\\Delta V', 'dT': '\\Delta T',
+      'dI': '\\Delta I', 'dt': '\\Delta t', 'dr': '\\Delta r',
+      'dx': '\\Delta x', 'dm': '\\Delta m', 'dd': '\\Delta d',
+      'dU': '\\Delta U', 'dphi': '\\Delta \\varphi'
+    };
+
+    function formatSubscript(sub) {
+      if (!sub) return '';
+      sub = sub.replace(/^\{|\}$/g, '');
+      if (GREEK_LATEX[sub]) return `_{${GREEK_LATEX[sub]}}`;
+      if (/^[0-9]+$/.test(sub) || /^[a-zA-Z]$/.test(sub)) {
+        return sub.length === 1 ? `_${sub}` : `_{${sub}}`;
+      }
+      if (sub === 'max' || sub === 'min') return `_{\\${sub}}`;
+      if (/[а-яА-ЯёЁ]/.test(sub)) return `_{\\text{${sub}}}`;
+      return `_{${sub}}`;
+    }
+
+    function formatIdentifierToLaTeX(ident) {
+      if (!ident) return '';
+      if (GREEK_LATEX[ident]) return GREEK_LATEX[ident];
+      if (ident === 'hb' || ident === 'hbar' || ident === 'h_b' || ident === 'h_bar') return '\\hbar';
+      if (ident === 'hp' || ident === 'hpl' || ident === 'h_p') return 'h';
+      if (ident === 'mu0' || ident === 'μ_0' || ident === 'μ0') return '\\mu_0';
+      if (ident === 'eps0' || ident === 'ε_0' || ident === 'ε0') return '\\varepsilon_0';
+      if (ident === 'c_light') return 'c';
+      if (ident === 'e_charge') return 'e';
+      if (ident === 'R_ryd' || ident === 'Rr' || ident === 'R_r') return 'R';
+
+      if (ident.startsWith('Δ') && ident.length > 1) {
+        return '\\Delta ' + formatIdentifierToLaTeX(ident.slice(1));
+      }
+      if (DELTA_VARS[ident]) return DELTA_VARS[ident];
+      if (KNOWN_COMPOUND_VARS[ident]) {
+        const [b, s] = KNOWN_COMPOUND_VARS[ident];
+        return b + formatSubscript(s);
+      }
+
+      const uIdx = ident.indexOf('_');
+      if (uIdx !== -1) {
+        const base = ident.slice(0, uIdx);
+        const sub = ident.slice(uIdx + 1);
+        const baseLatex = GREEK_LATEX[base] || (base === 'sin' ? '\\sin ' : base);
+        return baseLatex + formatSubscript(sub);
+      }
+
+      const greekDigitMatch = ident.match(/^([a-zA-Zа-яА-ЯёЁα-ωΑ-Ω]+?)([0-9]+)$/);
+      if (greekDigitMatch) {
+        const [, base, digits] = greekDigitMatch;
+        const baseLatex = GREEK_LATEX[base] || base;
+        return baseLatex + formatSubscript(digits);
+      }
+
+      return ident;
+    }
+
+    function preprocessMathString(str) {
+      return String(str)
+        .replace(/·/g, '*')
+        .replace(/×/g, '*')
+        .replace(/÷/g, '/')
+        .replace(/−/g, '-')
+        .replace(/–/g, '-')
+        .replace(/;/g, ',')
+        .replace(/²/g, '^2')
+        .replace(/³/g, '^3')
+        .replace(/⁴/g, '^4')
+        .replace(/⁻¹/g, '^(-1)')
+        .replace(/₀/g, '_0')
+        .replace(/₁/g, '_1')
+        .replace(/₂/g, '_2')
+        .replace(/₃/g, '_3')
+        .replace(/₄/g, '_4')
+        .replace(/√\s*\(/g, 'sqrt(')
+        .replace(/√\s*([a-zA-Zа-яА-ЯёЁα-ωΑ-Ω0-9_]+)/g, 'sqrt($1)');
+    }
+
+    function tokenizeMath(str) {
+      const s = preprocessMathString(str);
+      const tokens = [];
+      let i = 0;
+      while (i < s.length) {
+        const ch = s[i];
+        if (/\s/.test(ch)) { i++; continue; }
+        if (ch === '+' || ch === '-' || ch === '*' || ch === '/' || ch === '^' || ch === '(' || ch === ')' || ch === ',' || ch === '=') {
+          tokens.push({ type: 'op', val: ch });
+          i++;
+          continue;
+        }
+        if (/[0-9]/.test(ch) || (ch === '.' && /[0-9]/.test(s[i + 1] || ''))) {
+          let numStr = '';
+          while (i < s.length && /[0-9.]/.test(s[i])) numStr += s[i++];
+          if (i < s.length && (s[i] === 'e' || s[i] === 'E')) {
+            const next1 = s[i + 1] || '';
+            const next2 = s[i + 2] || '';
+            if (/[0-9]/.test(next1) || ((next1 === '+' || next1 === '-') && /[0-9]/.test(next2))) {
+              numStr += s[i++];
+              if (s[i] === '+' || s[i] === '-') numStr += s[i++];
+              while (i < s.length && /[0-9]/.test(s[i])) numStr += s[i++];
+            }
+          }
+          tokens.push({ type: 'num', val: numStr });
+          continue;
+        }
+        if (/[a-zA-Zа-яА-ЯёЁα-ωΑ-ΩΔℏΦΓ_\{]/.test(ch)) {
+          let idStr = '';
+          while (i < s.length) {
+            if (s[i] === '{') {
+              while (i < s.length && s[i] !== '}') idStr += s[i++];
+              if (i < s.length && s[i] === '}') idStr += s[i++];
+            } else if (/[a-zA-Zа-яА-ЯёЁα-ωΑ-ΩΔℏΦΓ0-9_]/.test(s[i])) {
+              idStr += s[i++];
+            } else {
+              break;
+            }
+          }
+          tokens.push({ type: 'ident', val: idStr });
+          continue;
+        }
+        tokens.push({ type: 'ident', val: ch });
+        i++;
+      }
+      return tokens;
+    }
+
+    function parseMathToAST(str) {
+      const tokens = tokenizeMath(str);
+      let pos = 0;
+
+      function peek() { return tokens[pos] || null; }
+      function consume() { return tokens[pos++] || null; }
+
+      function parseEquation() {
+        const left = parseAddSub();
+        if (peek() && peek().type === 'op' && peek().val === '=') {
+          consume();
+          const right = parseAddSub();
+          return { type: 'eq', left, right };
+        }
+        return left;
+      }
+
+      function parseAddSub() {
+        let node = parseMulDiv();
+        while (peek() && peek().type === 'op' && (peek().val === '+' || peek().val === '-')) {
+          const op = consume().val;
+          const right = parseMulDiv();
+          node = { type: 'binary', op, left: node, right };
+        }
+        return node;
+      }
+
+      function parseMulDiv() {
+        let node = parseUnary();
+        while (peek() && peek().type === 'op' && (peek().val === '*' || peek().val === '/')) {
+          const op = consume().val;
+          const right = parseUnary();
+          node = { type: 'binary', op, left: node, right };
+        }
+        return node;
+      }
+
+      function parseUnary() {
+        if (peek() && peek().type === 'op' && (peek().val === '-' || peek().val === '+')) {
+          const op = consume().val;
+          const arg = parseUnary();
+          if (op === '+') return arg;
+          return { type: 'unary', op: '-', arg };
+        }
+        return parsePower();
+      }
+
+      function parsePower() {
+        let base = parsePrimary();
+        if (peek() && peek().type === 'op' && peek().val === '^') {
+          consume();
+          const exp = parseUnary();
+          return { type: 'pow', base, exp };
+        }
+        return base;
+      }
+
+      function parsePrimary() {
+        const tok = peek();
+        if (!tok) return { type: 'empty' };
+
+        if (tok.type === 'op' && tok.val === '(') {
+          consume();
+          const inner = parseAddSub();
+          if (peek() && peek().type === 'op' && peek().val === ')') consume();
+          return { type: 'paren', expr: inner };
+        }
+
+        if (tok.type === 'num') {
+          consume();
+          return { type: 'num', val: tok.val };
+        }
+
+        if (tok.type === 'ident') {
+          consume();
+          if (peek() && peek().type === 'op' && peek().val === '(' && ALLOWED_FUNCTIONS.has(tok.val.toLowerCase())) {
+            consume();
+            const args = [];
+            if (!(peek() && peek().type === 'op' && peek().val === ')')) {
+              args.push(parseAddSub());
+              while (peek() && peek().type === 'op' && peek().val === ',') {
+                consume();
+                args.push(parseAddSub());
+              }
+            }
+            if (peek() && peek().type === 'op' && peek().val === ')') consume();
+            return { type: 'func', name: tok.val.toLowerCase(), args };
+          }
+          return { type: 'ident', val: tok.val };
+        }
+
+        consume();
+        return { type: 'ident', val: tok.val };
+      }
+
+      return parseEquation();
+    }
+
+    function unwrapParen(node) {
+      while (node && node.type === 'paren') node = node.expr;
+      return node;
+    }
+
+    function formatNumToLaTeX(valStr) {
+      const m = String(valStr).match(/^(-?\d+(?:\.\d+)?)e([+-]?\d+)$/i);
+      if (m) return `${m[1]} \\cdot 10^{${parseInt(m[2], 10)}}`;
+      return valStr;
+    }
+
+    function astToLaTeX(node) {
+      if (!node) return '';
+      switch (node.type) {
+        case 'empty':
+          return '';
+        case 'num':
+          return formatNumToLaTeX(node.val);
+        case 'ident':
+          return formatIdentifierToLaTeX(node.val);
+        case 'eq':
+          return `${astToLaTeX(node.left)} = ${astToLaTeX(node.right)}`;
+        case 'unary':
+          return `-${astToLaTeX(node.arg)}`;
+        case 'paren':
+          return `\\left(${astToLaTeX(node.expr)}\\right)`;
+        case 'pow': {
+          let baseStr = astToLaTeX(node.base);
+          if (node.base.type === 'binary' || node.base.type === 'unary' || node.base.type === 'pow') {
+            baseStr = `\\left(${baseStr}\\right)`;
+          }
+          const expStr = astToLaTeX(unwrapParen(node.exp));
+          return `${baseStr}^{${expStr}}`;
+        }
+        case 'binary': {
+          if (node.op === '+') return `${astToLaTeX(node.left)} + ${astToLaTeX(node.right)}`;
+          if (node.op === '-') return `${astToLaTeX(node.left)} - ${astToLaTeX(node.right)}`;
+          if (node.op === '*') {
+            const leftNode = (node.left.type === 'paren' && node.left.expr && node.left.expr.type === 'binary' && node.left.expr.op === '/') ? node.left.expr : node.left;
+            const rightNode = (node.right.type === 'paren' && node.right.expr && node.right.expr.type === 'binary' && node.right.expr.op === '/') ? node.right.expr : node.right;
+            return `${astToLaTeX(leftNode)} \\cdot ${astToLaTeX(rightNode)}`;
+          }
+          if (node.op === '/') {
+            const num = astToLaTeX(unwrapParen(node.left));
+            const den = astToLaTeX(unwrapParen(node.right));
+            return `\\frac{${num}}{${den}}`;
+          }
+          return '';
+        }
+        case 'func': {
+          const fn = node.name;
+          const a0 = node.args[0] ? astToLaTeX(unwrapParen(node.args[0])) : '';
+          const a1 = node.args[1] ? astToLaTeX(unwrapParen(node.args[1])) : '';
+          if (fn === 'sqrt') return `\\sqrt{${a0}}`;
+          if (fn === 'root') return `\\sqrt[${a0}]{${a1}}`;
+          if (fn === 'log') return `\\log_{${a0}}\\left(${a1}\\right)`;
+          if (fn === 'lg') return `\\lg\\left(${a0}\\right)`;
+          if (fn === 'ln') return `\\ln\\left(${a0}\\right)`;
+          if (fn === 'sin') return `\\sin\\left(${a0}\\right)`;
+          if (fn === 'cos') return `\\cos\\left(${a0}\\right)`;
+          if (fn === 'tan' || fn === 'tg') return `\\tan\\left(${a0}\\right)`;
+          if (fn === 'ctg') return `\\cot\\left(${a0}\\right)`;
+          if (fn === 'abs') return `\\left|${a0}\\right|`;
+          if (fn === 'min') return `\\min\\left(${a0}, ${a1}\\right)`;
+          if (fn === 'max') return `\\max\\left(${a0}, ${a1}\\right)`;
+          return `${fn}\\left(${a0}\\right)`;
+        }
+      }
+      return '';
+    }
+
+    function displayToLaTeX(str) {
+      return astToLaTeX(parseMathToAST(str));
+    }
+
+    function convertToLaTeX(formula) {
+      return astToLaTeX(parseMathToAST(formula));
+    }
+
+    function evalAST(node) {
+      if (!node) return NaN;
+      switch (node.type) {
+        case 'num':
+          return typeof node.numVal === 'number' ? node.numVal : parseFloat(node.val);
+        case 'ident': {
+          if (node.val === 'pi' || node.val === 'π') return Math.PI;
+          if (PHYS_CONSTS[node.val] !== undefined) return PHYS_CONSTS[node.val];
+          return NaN;
+        }
+        case 'paren':
+          return evalAST(node.expr);
+        case 'unary': {
+          const v = evalAST(node.arg);
+          return node.op === '-' ? -v : v;
+        }
+        case 'pow': {
+          const b = evalAST(node.base);
+          const e = evalAST(node.exp);
+          return Math.pow(b, e);
+        }
+        case 'binary': {
+          const l = evalAST(node.left);
+          const r = evalAST(node.right);
+          if (node.op === '+') return l + r;
+          if (node.op === '-') return l - r;
+          if (node.op === '*') return l * r;
+          if (node.op === '/') return r === 0 ? (l === 0 ? NaN : Infinity * Math.sign(l || 1)) : l / r;
+          return NaN;
+        }
+        case 'func': {
+          const fn = node.name;
+          const a0 = node.args[0] ? evalAST(node.args[0]) : NaN;
+          const a1 = node.args[1] ? evalAST(node.args[1]) : NaN;
+          if (fn === 'sqrt') return a0 < 0 ? NaN : Math.sqrt(a0);
+          if (fn === 'root') return a0 === 0 ? NaN : (a1 < 0 && Math.abs(a0 % 2) === 1 ? -Math.pow(-a1, 1 / a0) : Math.pow(a1, 1 / a0));
+          if (fn === 'log') return (a0 <= 0 || a0 === 1 || a1 <= 0) ? NaN : Math.log(a1) / Math.log(a0);
+          if (fn === 'lg') return a0 <= 0 ? NaN : Math.log10(a0);
+          if (fn === 'ln') return a0 <= 0 ? NaN : Math.log(a0);
+          if (fn === 'sin') return Math.sin(a0);
+          if (fn === 'cos') return Math.cos(a0);
+          if (fn === 'tan' || fn === 'tg') return Math.tan(a0);
+          if (fn === 'ctg') return 1 / Math.tan(a0);
+          if (fn === 'abs') return Math.abs(a0);
+          if (fn === 'min') return Math.min(a0, a1);
+          if (fn === 'max') return Math.max(a0, a1);
+          return NaN;
+        }
+        default:
+          return NaN;
+      }
+    }
+
+    function collectAndSimplifyFunctions(node, list) {
+      if (!node) return node;
+      if (node.type === 'func') {
+        const newArgs = node.args.map(arg => collectAndSimplifyFunctions(arg, list));
+        const updatedFunc = { ...node, args: newArgs };
+        const val = evalAST(updatedFunc);
+        const formatted = formatNumber(val);
+        list.push({
+          latex: astToLaTeX(updatedFunc),
+          val,
+          formatted
+        });
+        return { type: 'num', val: formatted, numVal: val };
+      }
+      if (node.type === 'paren') return { ...node, expr: collectAndSimplifyFunctions(node.expr, list) };
+      if (node.type === 'unary') return { ...node, arg: collectAndSimplifyFunctions(node.arg, list) };
+      if (node.type === 'pow') {
+        return {
+          ...node,
+          base: collectAndSimplifyFunctions(node.base, list),
+          exp: collectAndSimplifyFunctions(node.exp, list)
+        };
+      }
+      if (node.type === 'binary') {
+        return {
+          ...node,
+          left: collectAndSimplifyFunctions(node.left, list),
+          right: collectAndSimplifyFunctions(node.right, list)
+        };
+      }
+      return node;
+    }
+
+    /* ==========================================================================
+       КАТАЛОГ ФОРМУЛ И ПОИСК
+       ========================================================================== */
     let currentCategory = 'Все';
     let searchQuery = '';
     const catalogSearch = document.getElementById('catalogSearch');
     const clearSearchBtn = document.getElementById('clearSearchBtn');
 
-    catalogSearch.addEventListener('input', (e) => { 
-      searchQuery = e.target.value.toLowerCase(); 
-      if (searchQuery.length > 0) {
-        clearSearchBtn.classList.remove('hidden');
-      } else {
-        clearSearchBtn.classList.add('hidden');
-      }
-      renderCatalog(); 
+    catalogSearch.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      clearSearchBtn.classList.toggle('hidden', searchQuery.length === 0);
+      renderCatalog();
     });
 
     clearSearchBtn.addEventListener('click', () => {
@@ -1159,36 +1581,61 @@
       const categoriesContainer = document.getElementById('catalogCategories');
       const gridContainer = document.getElementById('catalogGrid');
       const categories = ['Все', ...new Set(physicsFormulas.map(f => f.category))];
-      categoriesContainer.innerHTML = categories.map(cat => `
-        <button class="px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${currentCategory === cat ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600'}" onclick="setCategory('${cat}')">${cat}</button>
-      `).join('');
+      categoriesContainer.innerHTML = categories.map(cat => {
+        const count = cat === 'Все' ? physicsFormulas.length : physicsFormulas.filter(f => f.category === cat).length;
+        const active = currentCategory === cat;
+        return `
+        <button class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 ${active ? 'bg-brand-600 text-white shadow-sm shadow-brand-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'}" onclick="setCategory('${cat}')">
+          <span>${cat}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full ${active ? 'bg-white/20 text-white' : 'bg-slate-200/80 dark:bg-slate-700 text-slate-500 dark:text-slate-400'}">${count}</span>
+        </button>`;
+      }).join('');
+
       const filtered = physicsFormulas.filter(f => {
         const matchCat = currentCategory === 'Все' || f.category === currentCategory;
-        const searchStr = `${f.title} ${f.description} ${f.formula} ${f.inputs.map(i=>i.label).join(' ')}`.toLowerCase();
+        const searchStr = `${f.title} ${f.description} ${f.formula} ${f.inputs.map(i => i.label).join(' ')}`.toLowerCase();
         return matchCat && searchStr.includes(searchQuery);
       });
-      if (filtered.length === 0) { gridContainer.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">Формулы не найдены</div>`; return; }
+
+      if (filtered.length === 0) {
+        gridContainer.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">По вашему запросу формулы не найдены</div>`;
+        return;
+      }
+
       gridContainer.innerHTML = filtered.map(f => {
         const latex = displayToLaTeX(f.formula);
         return `
-        <div class="formula-card bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-gray-200 dark:border-slate-700 hover:border-brand-500 dark:hover:border-brand-500 cursor-pointer transition-all shadow-sm hover:shadow-md flex flex-col h-full group" onclick='selectFormulaById("${f.id}")'>
-          <div class="flex justify-between items-start mb-3"><span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/30 px-2 py-1 rounded-md shrink-0">${f.category}</span></div>
-          <h4 class="font-bold text-gray-900 dark:text-white text-sm sm:text-base mb-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${f.title}</h4>
-          <p class="text-xs text-gray-500 dark:text-slate-400 mb-4 line-clamp-2 flex-grow">${f.description}</p>
-          <div class="mt-auto bg-gray-50 dark:bg-slate-900/50 rounded-xl p-3 flex items-center justify-center overflow-x-auto custom-scrollbar border border-gray-100 dark:border-slate-700/50">
+        <div class="formula-card bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 cursor-pointer transition-all shadow-sm hover:shadow-md hover:-translate-y-0.5 flex flex-col h-full group" onclick='selectFormulaById("${f.id}")'>
+          <div class="flex justify-between items-center mb-2.5 gap-2">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 px-2.5 py-1 rounded-md shrink-0 border border-brand-200/50 dark:border-brand-800/50">${f.category}</span>
+            ${f.unit ? `<span class="text-[11px] font-mono font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2 py-0.5 rounded-md border border-emerald-200/50 dark:border-emerald-800/50">${f.unit}</span>` : ''}
+          </div>
+          <h4 class="font-bold text-slate-900 dark:text-white text-sm sm:text-base mb-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${f.title}</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-3.5 line-clamp-2 flex-grow">${f.description}</p>
+          <div class="mt-auto bg-slate-50 dark:bg-slate-950/70 rounded-xl p-3 flex items-center justify-center overflow-x-auto custom-scrollbar border border-slate-100 dark:border-slate-800/80">
             <div class="math-render" data-latex="${escapeHtmlAttr(latex)}"></div>
           </div>
         </div>`;
       }).join('');
-      document.querySelectorAll('.math-render').forEach(el => {
+
+      renderCatalogMath();
+    }
+
+    function renderCatalogMath() {
+      document.querySelectorAll('#catalogGrid .math-render').forEach(el => {
         if (window.katex) {
           try { katex.render(el.dataset.latex, el, { displayMode: true, throwOnError: false }); }
           catch (e) { el.textContent = el.dataset.latex; }
-        } else { el.textContent = el.dataset.latex; }
+        } else {
+          el.textContent = el.dataset.latex;
+        }
       });
     }
 
-    window.setCategory = function(cat) { currentCategory = cat; renderCatalog(); }
+    window.setCategory = function(cat) {
+      currentCategory = cat;
+      renderCatalog();
+    };
 
     window.selectFormulaById = function(id) {
       const f = physicsFormulas.find(x => x.id === id);
@@ -1197,7 +1644,7 @@
       state.variables = {};
       const parts = f.formula.split('=');
       if (parts.length >= 2) {
-        targetVarInput.value = parts[0].trim().replace(/₀/g, '0').replace(/₁/g, '1').replace(/₂/g, '2').replace(/_([a-zA-Z0-9]+)/g, '$1');
+        targetVarInput.value = normalizeFormula(parts[0]);
         formulaInput.value = normalizeFormula(parts.slice(1).join('='));
       } else {
         formulaInput.value = normalizeFormula(f.formula);
@@ -1205,49 +1652,20 @@
       extractTargetUnit(f);
       closeCatalog();
       onFormulaChange();
-    }
+    };
 
     function extractTargetUnit(f) {
-      let dummyW = {};
-      f.inputs.forEach(inp => dummyW[inp.id] = inp.val);
-      try {
-        let calcRes = f.calc(dummyW);
-        let match = calcRes.match(/\s([а-яА-Яa-zA-Z·/²³]+)$/);
-        targetUnit = match ? match[1] : '';
-      } catch(e) { targetUnit = ''; }
-    }
-
-    function displayToLaTeX(str) {
-      let res = str
-        .replace(/·/g, '\\cdot ')
-        .replace(/²/g, '^2').replace(/³/g, '^3').replace(/⁴/g, '^4')
-        .replace(/√\(([^)]+)\)/g, '\\sqrt{$1}')
-        .replace(/√([a-zA-Z0-9_]+)/g, '\\sqrt{$1}')
-        .replace(/ℏ/g, '\\hbar').replace(/Φ/g, '\\Phi')
-        .replace(/τ/g, '\\tau').replace(/Γ/g, '\\Gamma')
-        .replace(/α/g, '\\alpha').replace(/β/g, '\\beta')
-        .replace(/φ/g, '\\varphi').replace(/λ/g, '\\lambda')
-        .replace(/ν/g, '\\nu').replace(/ρ/g, '\\rho')
-        .replace(/ε/g, '\\varepsilon').replace(/μ/g, '\\mu')
-        .replace(/ω/g, '\\omega').replace(/π/g, '\\pi')
-        .replace(/Δ/g, '\\Delta ')
-        .replace(/₁/g, '_1').replace(/₂/g, '_2').replace(/₃/g, '_3').replace(/₄/g, '_4')
-        .replace(/₀/g, '_0');
-      res = res.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
-      res = res.replace(/\(([^)]+)\)\s*\/\s*([a-zA-Zа-яА-ЯёЁ0-9_^{}\\]+)/g, '\\frac{$1}{$2}');
-      res = res.replace(/([a-zA-Zа-яА-ЯёЁ0-9_^{}\\]+)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
-      res = res.replace(/([a-zA-Zа-яА-ЯёЁ0-9_^{}]+)\s*\/\s*([a-zA-Zа-яА-ЯёЁ0-9_^{}]+)/g, '\\frac{$1}{$2}');
-      return res;
+      targetUnit = (f && f.unit) ? f.unit : '';
     }
 
     function normalizeFormula(str) {
-      return str
+      return String(str)
         .replace(/·/g, '*').replace(/×/g, '*').replace(/÷/g, '/')
         .replace(/−/g, '-').replace(/–/g, '-')
         .replace(/²/g, '^2').replace(/³/g, '^3').replace(/⁴/g, '^4')
         .replace(/⁻¹/g, '^(-1)')
-        .replace(/√\(([^)]*)\)/g, 'sqrt($1)')
-        .replace(/√([a-zA-Z0-9_]+)/g, 'sqrt($1)')
+        .replace(/√\s*\(/g, 'sqrt(')
+        .replace(/√\s*([a-zA-Zа-яА-ЯёЁα-ωΑ-Ω0-9_]+)/g, 'sqrt($1)')
         .replace(/π/g, 'pi').replace(/Δ/g, 'd')
         .replace(/ℏ/g, 'hbar').replace(/Φ/g, 'Phi')
         .replace(/τ/g, 'tau').replace(/Γ/g, 'Gamma')
@@ -1255,11 +1673,12 @@
         .replace(/φ/g, 'phi').replace(/λ/g, 'lambda')
         .replace(/ν/g, 'nu').replace(/ρ/g, 'rho')
         .replace(/ε/g, 'eps').replace(/μ/g, 'mu')
-        .replace(/ω/g, 'w')
+        .replace(/ω/g, 'w').replace(/η/g, 'eta')
         .replace(/₁/g, '1').replace(/₂/g, '2')
         .replace(/₃/g, '3').replace(/₄/g, '4').replace(/₀/g, '0')
+        .replace(/_\{([^}]+)\}/g, '$1')
         .replace(/_([a-zA-Zа-яА-ЯёЁ0-9]+)/g, '$1')
-        .replace(/(\d)([a-zA-Zа-яА-ЯёЁ_])/g, (match, p1, p2) =>
+        .replace(/(?<![a-zA-Zа-яА-ЯёЁ0-9_])(\d+(?:\.\d+)?)([a-zA-Zа-яА-ЯёЁ_])/g, (match, p1, p2) =>
           p2.toLowerCase() === 'e' ? match : `${p1} * ${p2}`)
         .trim();
     }
@@ -1269,54 +1688,57 @@
       return match ? match[1] : '';
     }
 
-    function escapeRegex(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function extractCleanTitleFromLabel(label) {
+      return label.replace(/\s*\([^)]+\)$/, '').trim();
+    }
+
+    function escapeRegex(s) {
+      return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
 
     function escapeHtmlAttr(s) {
       return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     function findInputData(varName, formulaObj) {
-      if (!formulaObj) return null;
+      if (!formulaObj || !formulaObj.inputs) return null;
       for (let inp of formulaObj.inputs) if (inp.id === varName) return inp;
+      const normVar = varName.toLowerCase();
+      const normVarNoU = normVar.replace(/_/g, '');
+      for (let inp of formulaObj.inputs) {
+        const idLower = inp.id.toLowerCase();
+        const idNoU = idLower.replace(/_/g, '');
+        if (idLower === normVar || idNoU === normVar || idNoU === normVarNoU) return inp;
+      }
       for (let inp of formulaObj.inputs) {
         const re = new RegExp(`(?:^|[^a-zA-Zа-яА-ЯёЁ0-9_])${escapeRegex(varName)}(?=[^a-zA-Zа-яА-ЯёЁ0-9_]|$)`);
         if (re.test(inp.label)) return inp;
       }
-      const normVar = varName.toLowerCase();
-      for (let inp of formulaObj.inputs) if (inp.id.toLowerCase() === normVar) return inp;
-      const normVarNoUnderscore = normVar.replace(/_/g, '');
-      for (let inp of formulaObj.inputs) {
-        const idNoU = inp.id.toLowerCase().replace(/_/g, '');
-        if (idNoU === normVar || idNoU === normVarNoUnderscore) return inp;
-      }
       for (let inp of formulaObj.inputs) {
         let normLabel = inp.label
-          .replace(/₀/g, '0').replace(/₁/g, '1').replace(/₂/g, '2')
+          .replace(/₀/g, '0').replace(/₁/g, '1').replace(/₂/g, '2').replace(/₃/g, '3').replace(/₄/g, '4')
           .replace(/Δ/g, 'd').replace(/ℏ/g, 'hbar')
           .replace(/Φ/g, 'Phi').replace(/τ/g, 'tau').replace(/Γ/g, 'Gamma')
           .replace(/ω/g, 'w').replace(/ν/g, 'nu').replace(/λ/g, 'lambda')
           .replace(/ρ/g, 'rho').replace(/ε/g, 'eps').replace(/μ/g, 'mu')
           .replace(/φ/g, 'phi').replace(/α/g, 'alpha').replace(/β/g, 'beta')
-          .replace(/π/g, 'pi').replace(/_/g, '').toLowerCase();
-        const nv = normVar.replace(/_/g, '');
-        if (normLabel.includes(nv + ' ') || normLabel.includes(' ' + nv) || normLabel.startsWith(nv)) return inp;
+          .replace(/π/g, 'pi').replace(/η/g, 'eta').replace(/_/g, '');
+        const re = new RegExp(`(?:^|[^a-zA-Zа-яА-ЯёЁ0-9])${escapeRegex(normVarNoU)}(?=[^a-zA-Zа-яА-ЯёЁ0-9]|$)`, 'i');
+        if (re.test(normLabel)) return inp;
       }
       return null;
     }
 
     function getAngleVars(formulaObj) {
       const set = new Set();
-      if (!formulaObj) return set;
+      if (!formulaObj || !formulaObj.inputs) return set;
       const greekMap = { 'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'δ': 'delta', 'φ': 'phi', 'λ': 'lambda', 'ν': 'nu', 'ρ': 'rho', 'μ': 'mu', 'ω': 'omega' };
       for (const inp of formulaObj.inputs) {
         if (!inp.label) continue;
         if (/градус|\(°\)|\bdeg/i.test(inp.label)) {
           set.add(inp.id);
           const greekMatch = inp.label.match(/[αβγδφλνρμω]/);
-          if (greekMatch) {
-            const greekName = greekMap[greekMatch[0]];
-            if (greekName) set.add(greekName);
-          }
+          if (greekMatch && greekMap[greekMatch[0]]) set.add(greekMap[greekMatch[0]]);
         }
       }
       return set;
@@ -1324,19 +1746,44 @@
 
     function checkAutoMatch() {
       const currentFormula = normalizeFormula(formulaInput.value).replace(/\s+/g, '');
-      if (!currentFormula) { activeFormula = null; targetUnit = ''; return; }
+      if (!currentFormula) {
+        activeFormula = null;
+        targetUnit = '';
+        updateActiveFormulaBadge();
+        return;
+      }
       if (activeFormula) {
         const parts = activeFormula.formula.split('=');
         const rightSide = parts.length >= 2 ? parts.slice(1).join('=') : activeFormula.formula;
-        if (normalizeFormula(rightSide).replace(/\s+/g, '') === currentFormula) return;
+        if (normalizeFormula(rightSide).replace(/\s+/g, '') === currentFormula) {
+          extractTargetUnit(activeFormula);
+          updateActiveFormulaBadge();
+          return;
+        }
       }
       const matched = physicsFormulas.find(f => {
         const parts = f.formula.split('=');
         const rightSide = parts.length >= 2 ? parts.slice(1).join('=') : f.formula;
         return normalizeFormula(rightSide).replace(/\s+/g, '') === currentFormula;
       });
-      if (matched) { activeFormula = matched; extractTargetUnit(matched); }
-      else { activeFormula = null; targetUnit = ''; }
+      if (matched) {
+        activeFormula = matched;
+        extractTargetUnit(matched);
+      } else {
+        activeFormula = null;
+        targetUnit = '';
+      }
+      updateActiveFormulaBadge();
+    }
+
+    function updateActiveFormulaBadge() {
+      if (!activeFormulaBadge) return;
+      if (activeFormula) {
+        activeFormulaBadge.textContent = `${activeFormula.category}: ${activeFormula.title}`;
+        activeFormulaBadge.classList.remove('hidden');
+      } else {
+        activeFormulaBadge.classList.add('hidden');
+      }
     }
 
     function checkForCommaDecimals(formula) {
@@ -1346,14 +1793,19 @@
       const hasCommaBetweenDigits = /\d+,\d+/.test(formula);
       let hasCommaInVars = false;
       const inputs = variablesContainer.getElementsByClassName('var-input');
-      for (let i = 0; i < inputs.length; i++) if (inputs[i].value.includes(',')) { hasCommaInVars = true; break; }
+      for (let i = 0; i < inputs.length; i++) {
+        if (inputs[i].value.includes(',')) { hasCommaInVars = true; break; }
+      }
       decimalWarning.classList.toggle('hidden', !(hasCommaOutsideFuncs || hasCommaBetweenDigits || hasCommaInVars));
     }
 
     function validateFormulaSyntax(formula) {
+      if (!formula) return null;
+      if (/\d+,\d+/.test(formula)) return "Ошибка: Для десятичных дробей используйте точку (3.14).";
       let cleaned = formula;
       while (/\([^()]*\)/.test(cleaned)) cleaned = cleaned.replace(/\([^()]*\)/g, '');
-      if (cleaned.includes(',')) return "Ошибка: Для десятичных дробей используйте точку (3.14).";
+      if (cleaned.includes(',')) return "Ошибка: Запятая допустима только внутри функций log(a, b) или root(n, x).";
+
       let openBrackets = 0;
       for (let i = 0; i < formula.length; i++) {
         if (formula[i] === '(') openBrackets++;
@@ -1361,37 +1813,60 @@
         if (openBrackets < 0) return "Ошибка: Найдена лишняя закрывающая скобка ')'.";
       }
       if (openBrackets > 0) return "Ошибка: Несбалансированные скобки.";
+
       const words = formula.match(/[a-zA-Zа-яА-ЯёЁ_][a-zA-Zа-яА-ЯёЁ0-9_]*/g) || [];
       const target = targetVarInput.value.trim() || 'y';
       for (let word of words) {
         if (word === 'pi') continue;
-        const funcRegex = new RegExp(`\\b${word}\\s*\\(`, 'g');
+        const funcRegex = new RegExp(`(?:^|[^a-zA-Zа-яА-ЯёЁ0-9_])${escapeRegex(word)}\\s*\\(`, 'g');
         if (funcRegex.test(formula)) {
-          if (!ALLOWED_FUNCTIONS.has(word.toLowerCase()))
+          if (!ALLOWED_FUNCTIONS.has(word.toLowerCase())) {
             return `Ошибка: Неизвестная функция "${word}".`;
+          }
         } else {
-          if (ALLOWED_FUNCTIONS.has(word.toLowerCase()) && word !== target)
+          if (ALLOWED_FUNCTIONS.has(word.toLowerCase()) && word !== target) {
             return `Ошибка: Функция "${word}" должна вызываться со скобками.`;
+          }
         }
       }
-      const multiArgFuncs = ['log', 'root'];
-      for (let fn of multiArgFuncs) {
-        const regex = new RegExp(`\\b${fn}\\s*\\(([^)]+)\\)`, 'gi');
-        let match;
-        while ((match = regex.exec(formula)) !== null) {
-          if (!match[1].includes(',') && !match[1].includes(';'))
-            return `Ошибка в функции ${fn}: требуется 2 аргумента через запятую.`;
+
+      const ast = parseMathToAST(formula);
+      function checkAstFunctions(node) {
+        if (!node) return null;
+        if (node.type === 'func') {
+          if (TWO_ARG_FUNCTIONS.has(node.name)) {
+            if (node.args.length !== 2 || node.args[0].type === 'empty' || node.args[1].type === 'empty') {
+              return `Ошибка в функции ${node.name}: требуется 2 аргумента через запятую.`;
+            }
+          } else if (node.args.length !== 1 || node.args[0].type === 'empty') {
+            return `Ошибка в функции ${node.name}: укажите аргумент в скобках.`;
+          }
+          for (const a of node.args) {
+            const err = checkAstFunctions(a);
+            if (err) return err;
+          }
         }
+        if (node.type === 'paren') return checkAstFunctions(node.expr);
+        if (node.type === 'unary') return checkAstFunctions(node.arg);
+        if (node.type === 'pow') return checkAstFunctions(node.base) || checkAstFunctions(node.exp);
+        if (node.type === 'binary') return checkAstFunctions(node.left) || checkAstFunctions(node.right);
+        return null;
       }
-      return null;
+
+      return checkAstFunctions(ast);
     }
 
     function extractVariables(formula, target) {
-      const tokens = formula.match(/[a-zA-Zа-яА-ЯёЁ_][a-zA-Zа-яА-ЯёЁ0-9_]*/g) || [];
+      const tokens = tokenizeMath(formula);
       const vars = new Set();
       for (let i = 0; i < tokens.length; i++) {
         const tok = tokens[i];
-        if (!ALLOWED_FUNCTIONS.has(tok.toLowerCase()) && tok !== target && tok !== 'pi') vars.add(tok);
+        if (tok.type === 'ident') {
+          const isFuncCall = tokens[i + 1] && tokens[i + 1].type === 'op' && tokens[i + 1].val === '(' && ALLOWED_FUNCTIONS.has(tok.val.toLowerCase());
+          if (!isFuncCall && !ALLOWED_FUNCTIONS.has(tok.val.toLowerCase()) && tok.val !== target && tok.val !== 'pi' && tok.val !== 'π') {
+            vars.add(tok.val);
+          }
+        }
       }
       return Array.from(vars);
     }
@@ -1408,7 +1883,7 @@
     }
 
     function renderVariableInputs() {
-      const target = targetVarInput.value.trim() || 'y';
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
       const currentVars = extractVariables(normalizeFormula(formulaInput.value), target);
       const newVarMap = {};
       currentVars.forEach(v => {
@@ -1424,37 +1899,58 @@
       });
       state.variables = newVarMap;
       varsCount.textContent = `${currentVars.length} ${getNounPlural(currentVars.length, 'переменная', 'переменные', 'переменных')}`;
+
       if (currentVars.length === 0) {
-        variablesContainer.innerHTML = `<div class="text-center py-6 text-gray-400 dark:text-slate-500 text-xs sm:text-sm">Переменные не обнаружены.<br>Введите формулу с переменными</div>`;
+        variablesContainer.innerHTML = `<div class="text-center py-8 text-slate-400 dark:text-slate-500 text-xs sm:text-sm">Переменные не обнаружены.<br>Введите формулу с переменными</div>`;
         return;
       }
+
       variablesContainer.innerHTML = currentVars.map(v => {
         let unit = '';
+        let caption = '';
         if (activeFormula) {
           const inpData = findInputData(v, activeFormula);
-          if (inpData) unit = extractUnitFromLabel(inpData.label);
+          if (inpData) {
+            unit = extractUnitFromLabel(inpData.label);
+            caption = extractCleanTitleFromLabel(inpData.label);
+          }
         }
+        if (!unit && CONST_META[v]) unit = CONST_META[v].unit;
+        if (!caption && CONST_META[v]) caption = CONST_META[v].label;
+
         const displayVal = state.variables[v];
+        const varLatex = formatIdentifierToLaTeX(v);
         return `
-        <div class="flex items-center justify-between gap-2 bg-gray-50 dark:bg-slate-900/60 p-2 sm:p-3 rounded-xl border border-gray-200/60 dark:border-slate-700/60">
-          <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base w-7 flex items-center justify-between shrink-0">
-            <span>${v}</span><span class="text-gray-400 dark:text-slate-500 font-normal text-xs sm:text-sm">=</span>
-          </label>
-          <div class="relative w-full flex items-center">
-            <input type="text" inputmode="decimal" data-var="${v}" value="${displayVal}" autocomplete="off" class="var-input w-full pl-3 ${unit ? 'pr-16' : 'pr-10'} py-2 rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white math-font text-left text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-            ${unit ? `<span class="absolute right-7 text-[10px] sm:text-xs text-gray-400 font-medium pointer-events-none select-none">${unit}</span>` : ''}
-            <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
-              <button type="button" aria-label="Увеличить" class="btn-step-up text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1.5 rounded leading-none transition-colors touch-btn" data-var="${v}">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
-              </button>
-              <button type="button" aria-label="Уменьшить" class="btn-step-down text-gray-400 hover:text-brand-600 dark:hover:text-brand-400 p-1.5 rounded leading-none transition-colors touch-btn" data-var="${v}">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
-              </button>
+        <div class="bg-slate-50/90 dark:bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-slate-200/70 dark:border-slate-800/80 transition-colors hover:border-brand-300 dark:hover:border-brand-800/60">
+          ${caption ? `<div class="text-[11px] text-slate-500 dark:text-slate-400 mb-1 truncate font-medium">${caption}</div>` : ''}
+          <div class="flex items-center justify-between gap-2">
+            <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base min-w-[2.2rem] flex items-center justify-between shrink-0">
+              <span class="var-math-sym" data-latex="${escapeHtmlAttr(varLatex)}">${v}</span>
+              <span class="text-slate-400 dark:text-slate-500 font-normal text-xs sm:text-sm ml-1">=</span>
+            </label>
+            <div class="relative w-full flex items-center">
+              <input type="text" inputmode="decimal" data-var="${v}" value="${displayVal}" autocomplete="off" class="var-input w-full pl-3 ${unit ? 'pr-16' : 'pr-10'} py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white math-font text-left text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+              ${unit ? `<span class="absolute right-7 text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium pointer-events-none select-none">${unit}</span>` : ''}
+              <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
+                <button type="button" aria-label="Увеличить" class="btn-step-up text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn" data-var="${v}">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+                </button>
+                <button type="button" aria-label="Уменьшить" class="btn-step-down text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn" data-var="${v}">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+              </div>
             </div>
           </div>
         </div>`;
       }).join('');
-      const debouncedCalc = debounce(calculateResult, 80);
+
+      if (window.katex) {
+        variablesContainer.querySelectorAll('.var-math-sym').forEach(el => {
+          try { katex.render(el.dataset.latex, el, { displayMode: false, throwOnError: false }); } catch (e) {}
+        });
+      }
+
+      const debouncedCalc = debounce(calculateResult, 60);
       variablesContainer.querySelectorAll('.var-input').forEach(input => {
         input.addEventListener('input', (e) => {
           const varName = e.target.dataset.var;
@@ -1474,12 +1970,13 @@
           debouncedCalc();
         });
       });
+
       variablesContainer.querySelectorAll('.btn-step-up').forEach(btn => {
         btn.addEventListener('click', () => {
           const varName = btn.dataset.var;
           const input = variablesContainer.querySelector(`.var-input[data-var="${varName}"]`);
           const n = parseUserNumber(input.value);
-          const val = (isNaN(n) ? 0 : n) + 1;
+          const val = parseFloat(((isNaN(n) ? 0 : n) + 1).toPrecision(12));
           input.value = val;
           input.classList.remove('border-red-400', 'ring-1', 'ring-red-300');
           state.variables[varName] = val;
@@ -1487,12 +1984,13 @@
           calculateResult();
         }, { passive: true });
       });
+
       variablesContainer.querySelectorAll('.btn-step-down').forEach(btn => {
         btn.addEventListener('click', () => {
           const varName = btn.dataset.var;
           const input = variablesContainer.querySelector(`.var-input[data-var="${varName}"]`);
           const n = parseUserNumber(input.value);
-          const val = (isNaN(n) ? 0 : n) - 1;
+          const val = parseFloat(((isNaN(n) ? 0 : n) - 1).toPrecision(12));
           input.value = val;
           input.classList.remove('border-red-400', 'ring-1', 'ring-red-300');
           state.variables[varName] = val;
@@ -1503,52 +2001,16 @@
     }
 
     function getNounPlural(number, one, two, five) {
-      let n = Math.abs(number); n %= 100;
-      if (n >= 5 && n <= 20) return five; n %= 10;
+      let n = Math.abs(number) % 100;
+      if (n >= 5 && n <= 20) return five;
+      n %= 10;
       if (n === 1) return one;
       if (n >= 2 && n <= 4) return two;
       return five;
     }
 
-    function convertToLaTeX(formula) {
-      let res = formula
-        .replace(/\*/g, ' \\cdot ')
-        .replace(/log\s*\(\s*([^,]+)\s*,\s*([^)]+)\)/g, '\\log_{$1}\\left($2\\right)')
-        .replace(/root\s*\(\s*([^,]+)\s*,\s*([^)]+)\)/g, '\\sqrt[$1]{$2}')
-        .replace(/sqrt\s*\(([^)]+)\)/g, '\\sqrt{$1}')
-        .replace(/\blg\(([^)]+)\)/g, '\\lg\\left($1\\right)')
-        .replace(/\bln\(([^)]+)\)/g, '\\ln\\left($1\\right)')
-        .replace(/\bsin\(([^)]+)\)/g, '\\sin\\left($1\\right)')
-        .replace(/\bcos\(([^)]+)\)/g, '\\cos\\left($1\\right)')
-        .replace(/\b(?:tan|tg)\(([^)]+)\)/g, '\\tan\\left($1\\right)')
-        .replace(/\bctg\(([^)]+)\)/g, '\\cot\\left($1\\right)')
-        .replace(/\babs\(([^)]+)\)/g, '\\left|$1\\right|')
-        .replace(/\bmin\(([^,]+),\s*([^)]+)\)/g, '\\min($1, $2)')
-        .replace(/\bmax\(([^,]+),\s*([^)]+)\)/g, '\\max($1, $2)')
-        .replace(/\bpi\b/g, '\\pi');
-
-      res = res.replace(/\(([^)]+)\)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
-      res = res.replace(/\(([^)]+)\)\s*\/\s*([a-zA-Z0-9_^{}\\]+(?:\s*\\cdot\s*[a-zA-Z0-9_^{}\\]+)*)/g, '\\frac{$1}{$2}');
-      res = res.replace(/([a-zA-Z0-9_^{}\\]+(?:\s*\\cdot\s*[a-zA-Z0-9_^{}\\]+)*)\s*\/\s*\(([^)]+)\)/g, '\\frac{$1}{$2}');
-      res = res.replace(/([a-zA-Z0-9_^{}\\]+(?:\s*\\cdot\s*[a-zA-Z0-9_^{}\\]+)*)\s*\/\s*([a-zA-Z0-9_^{}\\]+(?:\s*\\cdot\s*[a-zA-Z0-9_^{}\\]+)*)/g, '\\frac{$1}{$2}');
-
-      res = res
-        .replace(/\balpha\b/g, '\\alpha ')
-        .replace(/\bbeta\b/g, '\\beta ')
-        .replace(/\bgamma\b/g, '\\gamma ')
-        .replace(/\bdelta\b/g, '\\delta ')
-        .replace(/\bphi\b/g, '\\varphi ')
-        .replace(/\blambda\b/g, '\\lambda ')
-        .replace(/\bnu\b/g, '\\nu ')
-        .replace(/\brho\b/g, '\\rho ')
-        .replace(/\beps\b/g, '\\varepsilon ')
-        .replace(/\bmu\b/g, '\\mu ')
-        .replace(/\bomega\b/g, '\\omega ');
-      return res;
-    }
-
     function renderMathPreview(syntaxError) {
-      const target = targetVarInput.value.trim() || 'y';
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
       const rawFormula = formulaInput.value.trim();
       const normalized = normalizeFormula(rawFormula);
       if (syntaxError) {
@@ -1556,39 +2018,17 @@
         mathPreview.innerHTML = `<span class="text-red-600 dark:text-red-400 font-medium text-xs sm:text-sm text-center flex items-center justify-center gap-1.5"><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>${syntaxError}</span>`;
         return;
       }
-      mathPreviewWrapper.className = "w-full min-h-[75px] sm:min-h-[85px] bg-gray-50 dark:bg-slate-900/60 rounded-xl p-3 sm:p-4 flex items-center justify-center overflow-x-auto border border-gray-100 dark:border-slate-800 transition-colors custom-scrollbar";
-      if (!rawFormula) { mathPreview.innerHTML = `<span class="text-gray-400 font-sans text-xs sm:text-sm">Введите формулу...</span>`; return; }
-      const latexExpr = `${target} = ${convertToLaTeX(normalized)}`;
+      mathPreviewWrapper.className = "w-full min-h-[75px] sm:min-h-[85px] bg-slate-50 dark:bg-slate-950/70 rounded-xl p-3 sm:p-4 flex items-center justify-center overflow-x-auto border border-slate-100 dark:border-slate-800/80 transition-colors custom-scrollbar";
+      if (!rawFormula) {
+        mathPreview.innerHTML = `<span class="text-slate-400 font-sans text-xs sm:text-sm">Введите формулу или выберите из базы...</span>`;
+        return;
+      }
+      const latexExpr = `${formatIdentifierToLaTeX(target)} = ${convertToLaTeX(normalized)}`;
       if (window.katex) {
         try { katex.render(latexExpr, mathPreview, { displayMode: true, throwOnError: false }); }
         catch (e) { mathPreview.textContent = `${target} = ${rawFormula}`; }
-      } else { mathPreview.textContent = `${target} = ${rawFormula}`; }
-    }
-
-    function evalExpr(exprStr) {
-      let jsExpr = exprStr
-        .replace(/log\s*\(\s*([^,]+)\s*,\s*([^)]+)\)/g, '(Math.log($2)/Math.log($1))')
-        .replace(/root\s*\(\s*([^,]+)\s*,\s*([^)]+)\)/g, 'Math.pow($2, 1/($1))')
-        .replace(/sqrt\s*\(([^)]+)\)/g, 'Math.sqrt($1)')
-        .replace(/\blg\(([^)]+)\)/g, '(Math.log($1)/Math.LN10)')
-        .replace(/\bln\(([^)]+)\)/g, 'Math.log($1)')
-        .replace(/\bsin\(([^)]+)\)/g, 'Math.sin($1)')
-        .replace(/\bcos\(([^)]+)\)/g, 'Math.cos($1)')
-        .replace(/\b(?:tan|tg)\(([^)]+)\)/g, 'Math.tan($1)')
-        .replace(/\bctg\(([^)]+)\)/g, '(1/Math.tan($1))')
-        .replace(/\babs\(([^)]+)\)/g, 'Math.abs($1)')
-        .replace(/\bmin\(([^,]+),\s*([^)]+)\)/g, 'Math.min($1, $2)')
-        .replace(/\bmax\(([^,]+),\s*([^)]+)\)/g, 'Math.max($1, $2)')
-        .replace(/\bpi\b/g, 'Math.PI')
-        .replace(/\^/g, '**');
-      try {
-        const fn = new Function(
-          'G', 'mu0', 'hbar', 'h_bar', 'c_light', 'e_charge', 'R_ryd',
-          `"use strict"; return (${jsExpr});`
-        );
-        return fn(PHYS_CONSTS.G, PHYS_CONSTS.mu0, PHYS_CONSTS.hbar, PHYS_CONSTS.h_bar, PHYS_CONSTS.c_light, PHYS_CONSTS.e_charge, PHYS_CONSTS.R_ryd);
-      } catch (e) {
-        return NaN;
+      } else {
+        mathPreview.textContent = `${target} = ${rawFormula}`;
       }
     }
 
@@ -1617,18 +2057,28 @@
         if (el.dataset.rendered === '1') return;
         const latex = el.dataset.latex;
         if (!latex) return;
-        try { katex.render(latex, el, { displayMode: false, throwOnError: false }); el.dataset.rendered = '1'; }
-        catch (e) { el.textContent = latex; }
+        try {
+          katex.render(latex, el, { displayMode: false, throwOnError: false });
+          el.dataset.rendered = '1';
+        } catch (e) {
+          el.textContent = latex;
+        }
       });
     }
 
-    function mathSpan(latex) { return `<span class="math-inline" data-latex="${escapeHtmlAttr(latex)}"></span>`; }
+    function mathSpan(latex) {
+      return `<span class="math-inline" data-latex="${escapeHtmlAttr(latex)}"></span>`;
+    }
 
     function adjustResultFontSize() {
       if (!finalResult) return;
       const text = (finalResult.textContent || '').trim();
       const len = text.length;
-      if (len === 0 || text === '—' || text === 'Ошибка') { finalResult.style.fontSize = ''; finalResult.style.lineHeight = ''; return; }
+      if (len === 0 || text === '—' || text === 'Ошибка') {
+        finalResult.style.fontSize = '';
+        finalResult.style.lineHeight = '';
+        return;
+      }
       let baseSize;
       if (len <= 6) baseSize = 36;
       else if (len <= 8) baseSize = 32;
@@ -1649,9 +2099,10 @@
 
     function setErrorState(errorMessage) {
       solutionSteps.innerHTML = `<div class="text-red-500 font-semibold flex items-center gap-2 text-xs sm:text-sm"><svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>${errorMessage}</div>`;
-      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden min-h-[160px] sm:min-h-[200px] h-auto shrink-0 lg:shrink";
+      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-red-50/80 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden min-h-[160px] sm:min-h-[190px] h-auto shrink-0 lg:shrink";
       resultLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-red-500"></span>Ошибка`;
-      targetVarBadge.textContent = `${targetVarInput.value.trim() || 'y'} =`;
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
+      targetVarBadge.textContent = `${target} =`;
       targetVarBadge.className = "px-2.5 py-0.5 sm:py-1 rounded-md bg-red-500/15 text-red-800 dark:text-red-300 font-mono font-bold text-xs sm:text-sm border border-red-500/20";
       finalResult.className = "text-lg sm:text-xl font-bold text-red-700 dark:text-red-300 mt-1 break-words";
       finalResult.textContent = "Ошибка";
@@ -1665,9 +2116,13 @@
     }
 
     function setSuccessState() {
-      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[200px] h-auto shrink-0 lg:shrink";
+      resultBox.className = "order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md min-h-[160px] sm:min-h-[190px] h-auto shrink-0 lg:shrink";
       resultLabel.innerHTML = `<span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>Результат`;
-      targetVarBadge.textContent = `${targetVarInput.value.trim() || 'y'} =`;
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
+      targetVarBadge.textContent = `${target} =`;
+      if (window.katex) {
+        try { katex.render(`${formatIdentifierToLaTeX(target)} =`, targetVarBadge, { displayMode: false, throwOnError: false }); } catch (e) {}
+      }
       targetVarBadge.className = "px-2.5 py-0.5 sm:py-1 rounded-md bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-mono font-bold text-xs sm:text-sm border border-emerald-500/20";
       finalResult.className = "text-2xl sm:text-4xl font-extrabold text-emerald-900 dark:text-emerald-100 tracking-tight font-mono break-all drop-shadow-sm";
       finalResult.style.fontSize = '';
@@ -1681,27 +2136,24 @@
       const abs = Math.abs(rawCalculatedValue);
       const isTinyOrHuge = abs !== 0 && (abs < 1e-4 || abs >= 1e10);
       let formattedVal;
-      
+
       if (precision === '2') formattedVal = isTinyOrHuge ? rawCalculatedValue.toExponential(2) : parseFloat(rawCalculatedValue.toFixed(2)).toString();
       else if (precision === '4') formattedVal = isTinyOrHuge ? rawCalculatedValue.toExponential(4) : parseFloat(rawCalculatedValue.toFixed(4)).toString();
       else formattedVal = formatNumber(rawCalculatedValue);
-      
+
       finalResult.textContent = formattedVal;
       resultUnitEl.textContent = targetUnit ? targetUnit : '';
       adjustResultFontSize();
 
       const eHintBadge = document.getElementById('eHintBadge');
       if (eHintBadge) {
-        if (formattedVal.includes('e')) {
-          eHintBadge.classList.remove('hidden');
-        } else {
-          eHintBadge.classList.add('hidden');
-        }
+        eHintBadge.classList.toggle('hidden', !formattedVal.includes('e'));
       }
     }
 
     function calculateResult() {
-      const target = targetVarInput.value.trim() || 'y';
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
+      const targetLatex = formatIdentifierToLaTeX(target);
       const displayFormula = formulaInput.value.trim();
       const rawFormula = normalizeFormula(displayFormula);
 
@@ -1709,8 +2161,12 @@
       const syntaxError = validateFormulaSyntax(rawFormula);
       renderMathPreview(syntaxError);
 
+      if (syntaxError) {
+        return setErrorState(syntaxError);
+      }
+
       if (!rawFormula) {
-        solutionSteps.innerHTML = '<div class="text-gray-400 text-sm">Введите формулу для расчёта</div>';
+        solutionSteps.innerHTML = '<div class="text-slate-400 text-sm">Введите формулу для расчёта</div>';
         finalResult.textContent = '—';
         resultUnitEl.textContent = '';
         setSuccessState();
@@ -1734,75 +2190,76 @@
           } else {
             replacement = val < 0 ? `(${val})` : String(val);
           }
-          const regex = new RegExp(`(^|[^a-zA-Zа-яА-ЯёЁ0-9_])${v}(?=[^a-zA-Zа-яА-ЯёЁ0-9_]|$)`, 'g');
+          const regex = new RegExp(`(^|[^a-zA-Zа-яА-ЯёЁ0-9_])${escapeRegex(v)}(?=[^a-zA-Zа-яА-ЯёЁ0-9_]|$)`, 'g');
           substitutedStr = substitutedStr.replace(regex, `$1${replacement}`);
         }
 
-        const funcRegex = /(log|root|sqrt|lg|ln|sin|cos|tg|ctg|tan|abs|min|max)\s*\((?:[^)(]+|\([^)(]*\))*\)/gi;
-        const matchedFunctions = substitutedStr.match(funcRegex) || [];
+        const substAst = parseMathToAST(substitutedStr);
+        const fnList = [];
+        const simplifiedAst = collectAndSimplifyFunctions(substAst, fnList);
 
         const stepHtml = [];
 
         stepHtml.push(
           `<div class="solution-line">` +
-            `<span class="text-gray-400">1. Формула:</span> ` +
-            mathSpan(`${target} = ${convertToLaTeX(rawFormula)}`) +
+            `<span class="text-slate-400 font-semibold">1. Формула:</span> ` +
+            mathSpan(`${targetLatex} = ${convertToLaTeX(rawFormula)}`) +
           `</div>`
         );
 
         const substLabel = anglesUsed.length > 0
-          ? `2. Подстановка значений (углы в градусах → в радианах):`
+          ? `2. Подстановка значений (углы ° → рад):`
           : `2. Подстановка значений:`;
 
         stepHtml.push(
           `<div class="solution-line">` +
-            `<span class="text-gray-400">${substLabel}</span> ` +
-            mathSpan(`${target} = ${convertToLaTeX(substitutedStr)}`) +
+            `<span class="text-slate-400 font-semibold">${substLabel}</span> ` +
+            mathSpan(`${targetLatex} = ${astToLaTeX(substAst)}`) +
           `</div>`
         );
 
-        let processedStr = substitutedStr;
         let hasMathError = false;
+        let stepCounter = 3;
 
-        if (matchedFunctions.length > 0) {
-          stepHtml.push(`<div class="text-brand-600 dark:text-brand-400 font-semibold mt-1">3. Промежуточный расчёт функций:</div>`);
-          for (let idx = 0; idx < matchedFunctions.length; idx++) {
-            const fnCall = matchedFunctions[idx];
-            const subVal = evalExpr(fnCall);
-            if (!isFinite(subVal) || isNaN(subVal)) hasMathError = true;
-            const formattedVal = formatNumber(subVal);
-            const latexExpr = `${convertToLaTeX(fnCall)} = ${toLatexNumber(formattedVal)}`;
+        if (fnList.length > 0) {
+          stepHtml.push(`<div class="text-brand-600 dark:text-brand-400 font-semibold mt-1">${stepCounter++}. Промежуточный расчёт функций:</div>`);
+          for (let idx = 0; idx < fnList.length; idx++) {
+            const item = fnList[idx];
+            if (!isFinite(item.val) || isNaN(item.val)) hasMathError = true;
+            const latexExpr = `${item.latex} = ${toLatexNumber(item.formatted)}`;
             stepHtml.push(
               `<div class="solution-line pl-2 sm:pl-3 text-[11px] sm:text-xs">` +
-                `<span class="text-gray-400">• Функция ${idx + 1}:</span> ` +
+                `<span class="text-slate-400">• Шаг ${idx + 1}:</span> ` +
                 mathSpan(latexExpr) +
               `</div>`
             );
-            processedStr = processedStr.replace(fnCall, formattedVal);
           }
-          stepHtml.push(
-            `<div class="solution-line">` +
-              `<span class="text-gray-400">4. Выражение после вычисления функций:</span> ` +
-              mathSpan(`${target} = ${convertToLaTeX(processedStr)}`) +
-            `</div>`
-          );
+          if (simplifiedAst.type !== 'num') {
+            stepHtml.push(
+              `<div class="solution-line">` +
+                `<span class="text-slate-400 font-semibold">${stepCounter++}. После вычисления функций:</span> ` +
+                mathSpan(`${targetLatex} = ${astToLaTeX(simplifiedAst)}`) +
+              `</div>`
+            );
+          }
         }
 
-        const finalVal = evalExpr(processedStr);
+        const finalVal = evalAST(substAst);
         if (!isFinite(finalVal) || isNaN(finalVal)) hasMathError = true;
-        if (hasMathError || !isFinite(finalVal)) return setErrorState("Ошибка вычисления: Деление на ноль или недопустимый аргумент функции.");
+        if (hasMathError) {
+          return setErrorState("Ошибка вычисления: Деление на ноль или недопустимый аргумент функции.");
+        }
 
         rawCalculatedValue = finalVal;
         setSuccessState();
 
         const formattedFinalResult = formatNumber(finalVal);
-        const lastStepNum = matchedFunctions.length > 0 ? 5 : 3;
         const unitHtml = targetUnit ? ` <span class="text-emerald-600 dark:text-emerald-400 font-bold">${targetUnit}</span>` : '';
 
         stepHtml.push(
           `<div class="solution-line">` +
-            `<span class="text-gray-400">${lastStepNum}. Итоговое вычисление:</span> ` +
-            mathSpan(`${target} = \\mathbf{${toLatexNumber(formattedFinalResult)}}`) +
+            `<span class="text-slate-400 font-semibold">${stepCounter}. Итоговое вычисление:</span> ` +
+            mathSpan(`${targetLatex} = \\mathbf{${toLatexNumber(formattedFinalResult)}}`) +
             unitHtml +
           `</div>`
         );
@@ -1824,7 +2281,7 @@
     }
 
     document.getElementById('copyResultBtn').addEventListener('click', () => {
-      const target = targetVarInput.value.trim() || 'y';
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
       const val = finalResult.textContent;
       if (val === '—' || val === 'Ошибка') return;
       const copyText = `${target} = ${val} ${targetUnit}`.trim();
@@ -1866,7 +2323,7 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => { 
+    window.addEventListener('DOMContentLoaded', () => {
       const savedCategory = sessionStorage.getItem('currentCategory');
       if (savedCategory) currentCategory = savedCategory;
 
@@ -1874,17 +2331,14 @@
       if (savedSearch) {
         catalogSearch.value = savedSearch;
         searchQuery = savedSearch.toLowerCase();
-        if (searchQuery.length > 0) {
-          clearSearchBtn.classList.remove('hidden');
-        }
+        if (searchQuery.length > 0) clearSearchBtn.classList.remove('hidden');
       }
 
-      onFormulaChange(); 
+      onFormulaChange();
 
       if (localStorage.getItem('catalogOpen') === 'true') {
         toggleModal(catalogModal, true);
         renderCatalog();
-        
         const catScroll = sessionStorage.getItem('catalogScrollTop');
         if (catScroll) {
           setTimeout(() => {
@@ -1910,14 +2364,20 @@
             toast.classList.remove('-translate-y-[150%]', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
           }, 1000);
-
           let hideTimeout = setTimeout(closeToast, 8000);
-
           document.getElementById('closeToastBtn').addEventListener('click', () => {
             clearTimeout(hideTimeout);
             closeToast();
           });
         }
+      }
+    });
+
+    window.addEventListener('load', () => {
+      onFormulaChange();
+      if (!catalogModal.classList.contains('hidden')) renderCatalogMath();
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').then((reg) => reg.update()).catch(() => {});
       }
     });
 
@@ -1928,9 +2388,6 @@
     }, { passive: true });
 
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then((reg) => reg.update()).catch(() => {});
-      });
       let refreshing = false;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!refreshing) { refreshing = true; window.location.reload(); }
