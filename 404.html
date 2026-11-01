@@ -1,339 +1,1249 @@
 <!DOCTYPE html>
-<html lang="ru" class="light">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>404 — Страница не найдена | PhysCalc</title>
-  <link rel="icon" href="/icon-192.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="description" content="Страница 404 — Квантовая неопределённость. PhysCalc — универсальный онлайн-калькулятор физических формул.">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons8-atom-96.png">
+  <link rel="manifest" href="/manifest.json?v=2">
+  <title>404 — Страница туннелировала | PhysCalc</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script>
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
+        screens: {
+          'sm': '640px',
+          'md': '768px',
+          'lg': { 'raw': '(min-width: 1024px) and (min-height: 820px)' },
+          'xl': '1280px',
+          '2xl': '1536px',
+        },
         extend: {
           colors: {
             brand: {
               50: '#eef2ff',
               100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
               500: '#6366f1',
               600: '#4f46e5',
               700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+              950: '#1e1b4b',
             }
-          },
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
           }
         }
       }
-    }
+    };
   </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     body {
-      font-family: 'Inter', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
     }
-    .physics-shadow {
-      box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.15);
+    .math-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    #mathPreview { font-size: 1.15rem; transition: opacity 0.15s ease-in-out; }
+    @media (min-width: 640px) { #mathPreview { font-size: 1.35rem; } }
+    .katex-display { margin: 0 !important; overflow-x: auto; overflow-y: hidden; padding: 2px 0; -webkit-overflow-scrolling: touch; }
+    .katex-display::-webkit-scrollbar { height: 4px; }
+    .katex-display::-webkit-scrollbar-track { background: transparent; }
+    .katex-display::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.4); border-radius: 4px; }
+    input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    input[type=number] { -moz-appearance: textfield; }
+    .custom-scrollbar { -webkit-overflow-scrolling: touch; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.4); border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(156, 163, 175, 0.7); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(71, 85, 105, 0.55); }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background-color: rgba(100, 116, 139, 0.85); }
+    .touch-btn { touch-action: manipulation; user-select: none; }
+    .solution-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.45rem;
+      line-height: 1.6;
+      min-width: 0;
     }
-    .dark .physics-shadow {
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    .solution-line > * { min-width: 0; }
+    .solution-line .math-inline {
+      display: inline-block;
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      vertical-align: middle;
+      padding: 1px 0;
     }
+    .solution-line + .solution-line {
+      padding-top: 0.45rem;
+      border-top: 1px dashed rgba(148, 163, 184, 0.22);
+    }
+    .dark .solution-line + .solution-line {
+      border-top-color: rgba(71, 85, 105, 0.4);
+    }
+    .quick-tab {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 0.5rem;
+      color: #64748b;
+      background: transparent;
+      transition: all .15s ease;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .quick-tab:hover { background: rgba(99, 102, 241, 0.1); color: #4f46e5; }
+    .quick-tab.active { background: #4f46e5; color: #fff; box-shadow: 0 2px 8px rgba(79, 70, 229, .28); }
+    .dark .quick-tab { color: #94a3b8; }
+    .dark .quick-tab:hover { background: rgba(99, 102, 241, 0.18); color: #a5b4fc; }
+    .dark .quick-tab.active { background: #4f46e5; color: #fff; }
+    .qk {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 0.3rem 0.5rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.65rem;
+      cursor: pointer;
+      transition: all .14s ease;
+      touch-action: manipulation;
+      user-select: none;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+    }
+    .qk:hover { border-color: #818cf8; color: #4f46e5; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(79, 70, 229, 0.12); }
+    .qk:active { transform: translateY(0) scale(.97); background: #eef2ff; }
+    .qk.active-preset { border-color: #4f46e5; background: #eef2ff; color: #4f46e5; }
+    .dark .qk { background: #1e293b; border-color: #334155; color: #cbd5e1; }
+    .dark .qk:hover { border-color: #6366f1; color: #a5b4fc; background: #0f172a; }
+    .dark .qk.active-preset { border-color: #6366f1; background: rgba(79, 70, 229, 0.2); color: #a5b4fc; }
   </style>
+  <script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+      m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+      m[i].l=1*new Date();
+      for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+      k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109650062', 'ym');
+    ym(109650062, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/109650062" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-200">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200 selection:bg-brand-500 selection:text-white">
 
-  <header class="bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-700/80 sticky top-0 z-50 px-4 lg:px-8 py-3.5 transition-colors">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-      
-      <a href="/" class="flex items-center gap-3 group">
-        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-200">
-          <i data-lucide="atom" class="w-6 h-6 animate-spin-slow"></i>
+  <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
+    <div id="support-card" class="absolute bottom-0 right-0 pointer-events-none invisible opacity-0 scale-90 translate-y-4 origin-bottom-right transition-all duration-300 ease-out bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl w-[calc(100vw-2rem)] sm:w-[340px] rounded-2xl p-5 shadow-[0_20px_50px_rgba(15,23,42,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.65)] border border-slate-200/80 dark:border-slate-800 overflow-hidden">
+      <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-500/10 dark:bg-brand-500/15 rounded-full blur-2xl pointer-events-none"></div>
+      <div id="support-drag-handle" class="cursor-move touch-none group/handle relative z-10">
+        <div class="w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-3.5 group-hover/handle:bg-brand-400 dark:group-hover/handle:bg-brand-500 transition-colors"></div>
+        <div class="flex items-start justify-between gap-2 mb-3.5">
+          <div class="flex items-center gap-3 pointer-events-none">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/15 to-indigo-500/10 dark:from-brand-500/20 dark:to-indigo-500/10 border border-brand-200/60 dark:border-brand-800/60 flex items-center justify-center shrink-0 text-brand-600 dark:text-brand-400 shadow-inner">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-slate-900 dark:text-white font-bold text-base tracking-tight leading-tight">Битая ссылка?</h3>
+              <div class="flex items-center gap-1.5 mt-1">
+                <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[11px] font-medium text-slate-400 dark:text-slate-500">На связи • Быстрый ответ</span>
+              </div>
+            </div>
+          </div>
+          <button id="support-minimize-btn" type="button" class="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-100/80 dark:bg-slate-800/80 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition-all outline-none touch-btn shrink-0 cursor-pointer" title="Свернуть">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="relative z-10 bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800/80 rounded-xl p-3 mb-4">
+        <p class="text-slate-600 dark:text-slate-300 text-xs sm:text-[13px] leading-relaxed">
+          Если вы перешли сюда по ссылке с нашего сайта — напишите нам, мы восстановим страницу!
+        </p>
+      </div>
+      <div class="relative z-10 grid grid-cols-2 gap-2.5">
+        <a href="https://vk.com/physcalc" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 bg-[#0077FF]/10 hover:bg-[#0077FF] dark:bg-[#0077FF]/15 dark:hover:bg-[#0077FF] text-[#0077FF] hover:text-white dark:text-[#60a5fa] dark:hover:text-white border border-[#0077FF]/20 hover:border-[#0077FF] py-2.5 px-3 rounded-xl transition-all duration-200 font-semibold text-xs sm:text-[13px] group touch-btn shadow-sm hover:shadow-md hover:shadow-[#0077FF]/25 active:scale-95">
+          <svg class="w-4 h-4 shrink-0 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+            <path d="M13.162 18.994c.609 0 .858-.406.851-.915-.031-1.917.714-2.949 2.059-1.604 1.488 1.488 1.796 2.519 3.603 2.519h3.2c.808 0 1.126-.26 1.126-.668 0-.863-1.421-2.386-2.625-3.504-1.686-1.565-1.765-1.602-.313-3.486 1.801-2.339 4.157-5.336 2.073-5.336h-3.981c-.772 0-.828.435-1.103 1.083-.995 2.347-2.886 5.387-3.604 4.922-.751-.485-.407-2.406-.35-5.261.015-.754.011-1.271-1.141-1.539-.629-.145-1.241-.205-1.809-.205-2.273 0-3.841.953-2.95 1.119 1.571.293 1.42 3.692 1.054 5.16-.638 2.556-3.036-2.024-4.035-4.305-.241-.548-.315-.974-1.175-.974h-3.255c-.492 0-.787.16-.787.516 0 .602 2.96 6.72 5.786 9.77 2.756 2.975 5.48 2.708 7.376 2.708z"/>
+          </svg>
+          <span>ВКонтакте</span>
+        </a>
+        <a href="https://t.me/PhysCalc67" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 bg-[#229ED9]/10 hover:bg-[#229ED9] dark:bg-[#229ED9]/15 dark:hover:bg-[#229ED9] text-[#229ED9] hover:text-white dark:text-[#38bdf8] dark:hover:text-white border border-[#229ED9]/20 hover:border-[#229ED9] py-2.5 px-3 rounded-xl transition-all duration-200 font-semibold text-xs sm:text-[13px] group touch-btn shadow-sm hover:shadow-md hover:shadow-[#229ED9]/25 active:scale-95">
+          <svg class="w-4 h-4 shrink-0 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+          </svg>
+          <span>Telegram</span>
+        </a>
+      </div>
+    </div>
+
+    <button id="support-fab" type="button" class="w-12 h-12 sm:w-14 sm:h-14 bg-white dark:bg-slate-900 rounded-2xl shadow-lg shadow-slate-900/10 dark:shadow-black/40 border border-slate-200/80 dark:border-slate-800 hover:border-brand-400 dark:hover:border-brand-500 flex items-center justify-center hover:scale-105 active:scale-95 transition-all duration-300 cursor-move group touch-none relative z-10" title="Сообщить об ошибке">
+      <div class="relative pointer-events-none">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7 text-slate-600 dark:text-slate-300 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-rose-500 to-red-600 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center shadow-sm">
+          <svg class="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01"></path></svg>
+        </div>
+      </div>
+    </button>
+  </div>
+
+  <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shrink-0 z-30 shadow-sm relative">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between relative">
+      <a href="index.html" class="flex items-center space-x-2.5 sm:space-x-3 group">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center p-1.5 sm:p-2 shadow-md shadow-brand-500/25 shrink-0">
+          <svg class="w-full h-full text-white animate-[spin_8s_linear_infinite] group-hover:animate-[spin_2s_linear_infinite]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
         </div>
         <div>
-          <span class="font-bold text-xl tracking-tight block leading-none text-slate-900 dark:text-white">PhysCalc</span>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block mt-0.5">Инженерный комплекс расчеов</span>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-none">PhysCalc</h1>
+            <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">ERR_404</span>
+          </div>
+          <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Универсальный калькулятор формул</p>
         </div>
       </a>
 
-      <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
-        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-        <input 
-          type="text" 
-          id="searchInput"
-          placeholder="Поиск формулы (нажмие Enter)..." 
-          class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-700/60 border border-transparent dark:border-slate-600/50 rounded-xl text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-slate-100 placeholder-slate-400 transition"
-          onkeydown="if(event.key==='Enter') window.location.href='/'"
-        >
+      <div class="hidden md:block absolute left-1/2 -translate-x-1/2 text-xs text-slate-400 dark:text-slate-500 text-center pointer-events-none whitespace-nowrap">
+        &copy; 2026 PhysCalc. Все права защищены.
       </div>
 
-      <div class="flex items-center gap-2 sm:gap-3">
-        <a href="/index2.html" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium rounded-xl shadow-md shadow-brand-500/20 transition-all active:scale-95">
-          <i data-lucide="calculator" class="w-4 h-4"></i>
-          <span>Калькуляор погрешносей</span>
+      <div class="flex items-center space-x-1.5 sm:space-x-2.5">
+        <a href="index.html" class="min-h-[38px] px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700 text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 touch-btn active:scale-95">
+          <svg class="w-4 h-4 text-brand-600 dark:text-brand-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+          </svg>
+          <span class="hidden sm:inline">На главную</span>
         </a>
 
-        <button id="themeToggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Переключить тему">
-          <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
-          <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+        <a href="index2.html" class="min-h-[38px] px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white shadow-sm shadow-brand-500/20 text-xs font-semibold transition-all duration-200 flex items-center gap-1.5 touch-btn cursor-pointer active:scale-95 group">
+          <svg class="w-4 h-4 opacity-90 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-6 4h6m-6 4h6M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <span class="hidden sm:inline">Калькулятор погрешностей</span>
+        </a>
+
+        <button id="themeToggle" aria-label="Переключить тему" class="min-h-[38px] min-w-[38px] p-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-700 transition-colors text-sm font-medium touch-btn flex items-center justify-center">
+          <svg id="sunIcon" class="w-5 h-5 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="moonIcon" class="w-5 h-5 block dark:hidden text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.03 9.03 0 0012 21a9.03 9.03 0 008.354-5.646z"></path></svg>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-8 md:py-12 flex-1 flex flex-col items-center justify-center">
-    
-    <div class="w-full bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-10 border border-slate-200/80 dark:border-slate-700/80 physics-shadow relative overflow-hidden text-center transition-colors">
-      
-      <div class="relative w-full h-56 sm:h-64 rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-700/50 overflow-hidden mb-8 group cursor-crosshair">
-        <canvas id="physicsCanvas" class="w-full h-full block"></canvas>
-        
-        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 bg-white/80 dark:bg-slate-800/80 backdrop-blur px-3 py-1.5 rounded-full text-xs text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 pointer-events-none select-none flex items-center gap-1.5">
-          <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-brand-500"></i>
-          <span>Кликайте по экрану, чтобы запускать протоны!</span>
+  <main class="flex-grow overflow-y-auto lg:overflow-hidden flex flex-col w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-5">
+    <div class="flex flex-col lg:grid lg:grid-cols-12 lg:grid-rows-[auto_1fr_auto] gap-3 sm:gap-4 lg:h-full lg:min-h-0">
+
+      <div class="order-1 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-1 shrink-0 bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div class="flex items-center justify-between mb-2.5 flex-wrap gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+              </svg>
+              Физическая причина ошибки 404
+            </h2>
+            <span id="theoryBadge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/60">
+              Квантовая физика
+            </span>
+          </div>
+
+          <div class="flex gap-1 bg-slate-100 dark:bg-slate-950 p-1 rounded-xl border border-slate-200/70 dark:border-slate-800 overflow-x-auto custom-scrollbar">
+            <button type="button" data-theory="quantum" class="quick-tab active">Кванты</button>
+            <button type="button" data-theory="relativity" class="quick-tab">Чёрная дыра</button>
+            <button type="button" data-theory="electro" class="quick-tab">Цепь Ома</button>
+            <button type="button" data-theory="thermo" class="quick-tab">Энтропия</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-2.5 items-center">
+          <div class="md:col-span-5 bg-slate-50 dark:bg-slate-950/70 rounded-xl p-3 border border-slate-100 dark:border-slate-800/80 flex flex-col justify-center min-h-[70px]">
+            <div id="theoryTitle" class="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 mb-1">
+              Принцип неопределённости Гейзенберга
+            </div>
+            <p id="theoryDesc" class="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              Мы слишком точно измерили импульс этой страницы, поэтому её координата в адресной строке размылась по всей Вселенной.
+            </p>
+          </div>
+
+          <div class="md:col-span-7 bg-slate-50 dark:bg-slate-950/70 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800/80 flex items-center justify-center min-h-[70px] overflow-x-auto custom-scrollbar">
+            <div id="mathPreview" class="w-full text-center"></div>
+          </div>
         </div>
       </div>
 
-      <div class="max-w-2xl mx-auto">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 dark:text-brand-400 text-xs font-semibold mb-4 border border-brand-100 dark:border-brand-900/50">
-          <i data-lucide="alert-triangle" class="w-4 h-4"></i>
-          <span>Ошибка квантовой запутаности 404</span>
+      <div class="order-2 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-2 flex-grow flex flex-col bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm min-h-[250px] sm:min-h-[290px] lg:min-h-0 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2 gap-2 flex-wrap shrink-0 z-10">
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] sm:text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span class="inline-block w-2 h-2 rounded-full bg-brand-500 animate-ping"></span>
+              Интерактивный полигон «404»
+            </span>
+            <span class="hidden sm:inline-block text-[11px] text-slate-400 dark:text-slate-500">
+              • Хватайте и бросайте блоки «4-0-4» мышкой или пальцем!
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button id="impulseBtn" type="button" class="px-2.5 py-1 rounded-lg bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/70 dark:hover:bg-brand-900/60 text-brand-600 dark:text-brand-300 border border-brand-200/70 dark:border-brand-800/60 text-xs font-semibold transition-all touch-btn active:scale-95 flex items-center gap-1">
+              <span>💥 Импульс</span>
+            </button>
+            <button id="spawnAtomBtn" type="button" class="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200/70 dark:border-slate-700 text-xs font-semibold transition-all touch-btn active:scale-95">
+              + Квант
+            </button>
+            <button id="resetSimBtn" type="button" title="Сбросить координаты" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 border border-slate-200/70 dark:border-slate-700 text-xs font-semibold transition-all touch-btn active:scale-95">
+              ↻
+            </button>
+          </div>
         </div>
 
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
-          Траектория утеряна
-        </h1>
+        <div id="canvasContainer" class="relative flex-grow w-full h-full min-h-[200px] rounded-xl bg-slate-50 dark:bg-slate-950/90 border border-slate-200/70 dark:border-slate-800/90 overflow-hidden select-none">
+          <canvas id="physicsCanvas" class="w-full h-full block cursor-grab active:cursor-grabbing touch-none"></canvas>
 
-        <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-          Ошибочка в расчетах! Похоже, искомая страница распалась в квантовом вакууме или свернулась в дополнительное измерение пространства-времени.
-        </p>
+          <div class="pointer-events-none absolute top-2.5 left-3 right-3 flex items-center justify-between text-[11px] font-mono text-slate-400 dark:text-slate-500">
+            <span id="simStatusOverlay">g = 9.81 м/с² • Земля</span>
+            <span id="collisionCounterOverlay">Ударов: 0</span>
+          </div>
+        </div>
+      </div>
 
-        <div class="flex flex-wrap items-center justify-center gap-3">
-          <a href="/" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-700 text-white font-semibold text-sm rounded-xl shadow-lg shadow-brand-500/25 transition-all hover:scale-[1.02] active:scale-95">
-            <i data-lucide="home" class="w-4 h-4"></i>
-            <span>Вернуться на главную</span>
-          </a>
-
-          <button id="toggleGravityBtn" class="inline-flex items-center gap-2 px-5 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-medium text-sm rounded-xl border border-slate-200 dark:border-slate-600 transition-all active:scale-95">
-            <i data-lucide="orbit" class="w-4 h-4 text-brand-500"></i>
-            <span id="gravityStatusText">Отключить гравитацию</span>
-          </button>
+      <div class="order-3 lg:order-none lg:col-span-4 lg:col-start-1 lg:row-start-1 lg:row-span-3 flex flex-col bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm lg:h-full lg:min-h-0 shrink-0 lg:shrink">
+        <div class="shrink-0 mb-2.5">
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2 whitespace-nowrap">
+              <svg class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+              </svg>
+              Параметры среды
+            </h2>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/60 dark:text-brand-300 font-semibold whitespace-nowrap shrink-0 border border-brand-200/50 dark:border-brand-800/50">
+              4 переменные
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Управляйте константами симуляции 404:</p>
         </div>
 
+        <div class="shrink-0 mb-3 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/60 p-2">
+          <div class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 mb-1.5 px-0.5">Пресеты гравитации:</div>
+          <div class="grid grid-cols-3 gap-1.5">
+            <button type="button" class="qk active-preset" data-planet="Земля" data-g="9.81">🌍 Земля</button>
+            <button type="button" class="qk" data-planet="Луна" data-g="1.62">🌙 Луна</button>
+            <button type="button" class="qk" data-planet="Марс" data-g="3.71">🔴 Марс</button>
+            <button type="button" class="qk" data-planet="Юпитер" data-g="24.79">🪐 Юпитер</button>
+            <button type="button" class="qk" data-planet="Космос" data-g="0">🌌 0g</button>
+            <button type="button" class="qk" data-planet="Антигравитация" data-g="-6.5">🛸 Анти-g</button>
+          </div>
+        </div>
+
+        <div class="flex-grow overflow-y-auto custom-scrollbar pr-1 space-y-2.5">
+          <div class="bg-slate-50/90 dark:bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-slate-200/70 dark:border-slate-800/80 transition-colors hover:border-brand-300 dark:hover:border-brand-800/60">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-1 truncate font-medium">Ускорение свободного падения g</div>
+            <div class="flex items-center justify-between gap-2">
+              <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base min-w-[2.4rem] flex items-center justify-between shrink-0">
+                <span class="katex-var" data-latex="g">g</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-xs sm:text-sm ml-1">=</span>
+              </label>
+              <div class="relative w-full flex items-center">
+                <input type="number" step="0.5" id="inputG" value="9.81" class="w-full pl-3 pr-16 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white math-font text-left text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                <span class="absolute right-7 text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium pointer-events-none select-none">м/с²</span>
+                <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
+                  <button type="button" data-target="inputG" data-step="1" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+                  </button>
+                  <button type="button" data-target="inputG" data-step="-1" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50/90 dark:bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-slate-200/70 dark:border-slate-800/80 transition-colors hover:border-brand-300 dark:hover:border-brand-800/60">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-1 truncate font-medium">Коэффициент упругости удара η</div>
+            <div class="flex items-center justify-between gap-2">
+              <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base min-w-[2.4rem] flex items-center justify-between shrink-0">
+                <span class="katex-var" data-latex="\eta">η</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-xs sm:text-sm ml-1">=</span>
+              </label>
+              <div class="relative w-full flex items-center">
+                <input type="number" step="0.05" min="0.1" max="1.05" id="inputRestitution" value="0.82" class="w-full pl-3 pr-14 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white math-font text-left text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                <span class="absolute right-7 text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium pointer-events-none select-none">ед.</span>
+                <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
+                  <button type="button" data-target="inputRestitution" data-step="0.05" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+                  </button>
+                  <button type="button" data-target="inputRestitution" data-step="-0.05" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50/90 dark:bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-slate-200/70 dark:border-slate-800/80 transition-colors hover:border-brand-300 dark:hover:border-brand-800/60">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-1 truncate font-medium">Масса каждого блока «4-0-4» m</div>
+            <div class="flex items-center justify-between gap-2">
+              <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base min-w-[2.4rem] flex items-center justify-between shrink-0">
+                <span class="katex-var" data-latex="m">m</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-xs sm:text-sm ml-1">=</span>
+              </label>
+              <div class="relative w-full flex items-center">
+                <input type="number" step="1" min="1" max="100" id="inputMass" value="4" class="w-full pl-3 pr-14 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white math-font text-left text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                <span class="absolute right-7 text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium pointer-events-none select-none">кг</span>
+                <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
+                  <button type="button" data-target="inputMass" data-step="1" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+                  </button>
+                  <button type="button" data-target="inputMass" data-step="-1" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-50/90 dark:bg-slate-950/60 p-2.5 sm:p-3 rounded-xl border border-slate-200/70 dark:border-slate-800/80 transition-colors hover:border-brand-300 dark:hover:border-brand-800/60">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 mb-1 truncate font-medium">Темп времени (релятивистский) τ</div>
+            <div class="flex items-center justify-between gap-2">
+              <label class="font-bold text-brand-600 dark:text-brand-400 math-font text-sm sm:text-base min-w-[2.4rem] flex items-center justify-between shrink-0">
+                <span class="katex-var" data-latex="\tau">τ</span>
+                <span class="text-slate-400 dark:text-slate-500 font-normal text-xs sm:text-sm ml-1">=</span>
+              </label>
+              <div class="relative w-full flex items-center">
+                <input type="number" step="0.2" min="0.1" max="2.5" id="inputTimeScale" value="1.0" class="w-full pl-3 pr-14 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white math-font text-left text-sm sm:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                <span class="absolute right-7 text-[10px] sm:text-xs text-slate-400 dark:text-slate-500 font-medium pointer-events-none select-none">×c</span>
+                <div class="absolute right-1 flex flex-col h-full justify-center space-y-0.5 pr-0.5">
+                  <button type="button" data-target="inputTimeScale" data-step="0.2" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7"></path></svg>
+                  </button>
+                  <button type="button" data-target="inputTimeScale" data-step="-0.2" class="step-btn text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 p-1 rounded leading-none transition-colors touch-btn">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="shrink-0 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] sm:text-xs text-slate-400 dark:text-slate-500">
+          * Кликните по пустому месту полигона, чтобы создать гравитационную волну.
+        </div>
+      </div>
+
+      <div class="order-4 lg:order-none lg:col-span-8 lg:col-start-5 lg:row-start-3 shrink-0 flex flex-col bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 dark:border-slate-800 shadow-sm">
+        <div class="shrink-0 flex items-center justify-between mb-2.5 gap-2 flex-wrap">
+          <h2 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            Телеметрия 404 и навигация
+          </h2>
+          <span id="requestedUrlBadge" class="text-[11px] font-mono text-slate-400 dark:text-slate-500 truncate max-w-[260px] sm:max-w-[380px]"></span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 items-stretch">
+          <div class="order-1 md:order-2 md:col-span-5 lg:col-span-4 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent dark:from-emerald-950/40 dark:via-emerald-900/20 dark:to-slate-900 border border-emerald-500/30 dark:border-emerald-500/20 rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 relative overflow-hidden group shadow-sm hover:shadow-md">
+            <div class="absolute -right-8 -top-8 w-28 h-28 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+            <div class="relative z-10 flex flex-col justify-between h-full gap-3">
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <span class="text-[10px] sm:text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Энергия блоков 404
+                  </span>
+                  <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-800 dark:text-emerald-300">LIVE</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span id="liveEnergyBadge" class="px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-800 dark:text-emerald-300 font-mono font-bold text-xs border border-emerald-500/20">E_k =</span>
+                  </div>
+                  <div class="flex items-baseline gap-1.5 flex-wrap">
+                    <div id="liveEnergyValue" class="text-2xl sm:text-3xl font-extrabold text-emerald-900 dark:text-emerald-100 tracking-tight font-mono">0.0</div>
+                    <div class="text-sm sm:text-base font-bold text-emerald-700/80 dark:text-emerald-400/80">Дж</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-2 border-t border-emerald-500/15 dark:border-emerald-500/10">
+                <a href="index.html" class="w-full min-h-[38px] py-2 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 text-xs sm:text-sm shadow-md shadow-emerald-600/20 touch-btn">
+                  <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                  </svg>
+                  <span>Вернуться к формулам</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div id="solutionSteps" class="order-2 md:order-1 md:col-span-7 lg:col-span-8 space-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-950/60 p-3 sm:p-3.5 rounded-2xl border border-slate-100 dark:border-slate-800/80 font-mono flex flex-col justify-center">
+            <div class="solution-line">
+              <span class="text-slate-400 font-semibold">1. Закон сохранения:</span>
+              <span class="katex-step" data-latex="E_{\text{полн}} = \sum \frac{m \cdot v^2}{2} + \sum m \cdot g \cdot h"></span>
+            </div>
+            <div class="solution-line">
+              <span class="text-slate-400 font-semibold">2. Импульс блоков «404»:</span>
+              <span id="liveMomentumStep" class="text-brand-600 dark:text-brand-400 font-bold">p = 0.0 кг·м/с</span>
+              <span class="text-slate-400">|</span>
+              <span id="liveSpeedStep">v_ср = 0.0 м/с</span>
+            </div>
+            <div class="solution-line">
+              <span class="text-slate-400 font-semibold">3. Рекомендация:</span>
+              <span class="font-sans text-xs text-slate-600 dark:text-slate-300">
+                Искомая страница туннелировала. Перейдите в <a href="index.html" class="text-brand-600 dark:text-brand-400 font-semibold underline hover:no-underline">базу 240 формул</a> или <a href="index2.html" class="text-brand-600 dark:text-brand-400 font-semibold underline hover:no-underline">расчёт погрешностей</a>.
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
-
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-      
-      <a href="/" class="group p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-brand-500 dark:hover:border-brand-500 transition-all duration-200 hover:-translate-y-1 shadow-sm">
-        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-          <i data-lucide="layers" class="w-5 h-5"></i>
-        </div>
-        <h3 class="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">Главный калькулятор</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400">Более 225 формул из всех разделов физики с подробным вычислением.</p>
-      </a>
-
-      <a href="/prjamieizmer.html" class="group p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-brand-500 dark:hover:border-brand-500 transition-all duration-200 hover:-translate-y-1 shadow-sm">
-        <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-          <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
-        </div>
-        <h3 class="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Калькулятор погрешностей</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400">Автоматический расчет прямых и косвенных измерений для лабораторок.</p>
-      </a>
-
-      <a href="https://t.me/PhysCalc67" target="_blank" class="group p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 hover:border-brand-500 dark:hover:border-brand-500 transition-all duration-200 hover:-translate-y-1 shadow-sm">
-        <div class="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-          <i data-lucide="send" class="w-5 h-5"></i>
-        </div>
-        <h3 class="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">Поддержка в Telegram</h3>
-        <p class="text-xs text-slate-500 dark:text-slate-400">Нашли ошибку в формуле или расчетах? Напишите нам — быстро исправим.</p>
-      </a>
-
-    </div>
-
   </main>
 
-  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200/80 dark:border-slate-700/80 py-6 px-4 lg:px-8 transition-colors mt-8">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500 dark:text-slate-400">
-      
-      <div class="flex items-center gap-2 text-center md:text-left">
-        <i data-lucide="alert-circle" class="w-4 h-4 text-amber-500 flex-shrink-0"></i>
-        <span>Нашли ошибку в расчетах или интерфейсе? Пожалуйста, <a href="https://t.me/physcalc" target="_blank" class="text-brand-600 dark:text-brand-400 font-medium hover:underline">напишите нам</a> — мы сразу исправим.</span>
-      </div>
+  <script>
+    (function() {
+      const widget = document.getElementById('support-widget');
+      const card = document.getElementById('support-card');
+      const fab = document.getElementById('support-fab');
+      const dragHandle = document.getElementById('support-drag-handle');
+      const minimizeBtn = document.getElementById('support-minimize-btn');
 
-      <div class="flex items-center gap-6">
-        <span>© 2026 <strong>PhysCalc</strong>. Все права защищены.</span>
-        <div class="flex items-center gap-3">
-          <a href="https://t.me/PhysCalc67" target="_blank" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors flex items-center gap-1">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i>
-            <span>Telegram</span>
-          </a>
-          <a href="https://vk.com/physcalc" target="_blank" class="hover:text-brand-600 dark:hover:text-brand-400 transition-colors flex items-center gap-1">
-            <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
-            <span>ВКонтакте</span>
-          </a>
-        </div>
-      </div>
+      let isExpanded = false;
+      let isDragging = false;
+      let startX, startY, initialRight, initialBottom;
+      let hasMoved = false;
 
-    </div>
-  </footer>
+      function checkBounds() {
+        const activeWidth = isExpanded ? card.offsetWidth : fab.offsetWidth;
+        const activeHeight = isExpanded ? card.offsetHeight : fab.offsetHeight;
+        const rect = widget.getBoundingClientRect();
+        let currentRight = widget.style.right ? parseFloat(widget.style.right) : (window.innerWidth - rect.right);
+        let currentBottom = widget.style.bottom ? parseFloat(widget.style.bottom) : (window.innerHeight - rect.bottom);
+        const maxRight = Math.max(16, window.innerWidth - activeWidth - 16);
+        const maxBottom = Math.max(16, window.innerHeight - activeHeight - 16);
+        let newRight = Math.max(16, Math.min(currentRight, maxRight));
+        let newBottom = Math.max(16, Math.min(currentBottom, maxBottom));
+        if (Math.abs(newRight - currentRight) > 1 || Math.abs(newBottom - currentBottom) > 1) {
+          widget.style.transition = 'right 0.3s cubic-bezier(0.25, 1, 0.5, 1), bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1)';
+          widget.style.right = newRight + 'px';
+          widget.style.bottom = newBottom + 'px';
+          widget.style.left = 'auto';
+          widget.style.top = 'auto';
+          setTimeout(() => { if (!isDragging) widget.style.transition = ''; }, 300);
+        }
+      }
+
+      function toggleWidget(e) {
+        if (hasMoved) return;
+        if (e) e.stopPropagation();
+        isExpanded = !isExpanded;
+        if (isExpanded) {
+          checkBounds();
+          card.classList.remove('invisible', 'pointer-events-none', 'opacity-0', 'scale-90', 'translate-y-4');
+          card.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+          fab.classList.add('opacity-0', 'scale-50', 'pointer-events-none');
+        } else {
+          card.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+          card.classList.add('opacity-0', 'scale-90', 'translate-y-4', 'pointer-events-none');
+          setTimeout(() => { if (!isExpanded) card.classList.add('invisible'); }, 300);
+          fab.classList.remove('opacity-0', 'scale-50', 'pointer-events-none');
+          checkBounds();
+        }
+      }
+
+      function onDragStart(e) {
+        if (e.target.closest('a') || e.target.closest('#support-minimize-btn')) {
+          hasMoved = false;
+          return;
+        }
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        startX = clientX;
+        startY = clientY;
+        hasMoved = false;
+        widget.style.transition = '';
+        const rect = widget.getBoundingClientRect();
+        if (!widget.style.right || !widget.style.bottom) {
+          widget.style.right = (window.innerWidth - rect.right) + 'px';
+          widget.style.bottom = (window.innerHeight - rect.bottom) + 'px';
+          widget.style.left = 'auto';
+          widget.style.top = 'auto';
+        }
+        initialRight = parseFloat(widget.style.right);
+        initialBottom = parseFloat(widget.style.bottom);
+        isDragging = true;
+        document.addEventListener('mousemove', onDragMove, { passive: false });
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchend', onDragEnd);
+      }
+
+      function onDragMove(e) {
+        if (!isDragging) return;
+        const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+        const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) hasMoved = true;
+        if (hasMoved) {
+          e.preventDefault();
+          let newRight = initialRight - dx;
+          let newBottom = initialBottom - dy;
+          const activeWidth = isExpanded ? card.offsetWidth : fab.offsetWidth;
+          const activeHeight = isExpanded ? card.offsetHeight : fab.offsetHeight;
+          const maxRight = Math.max(16, window.innerWidth - activeWidth - 16);
+          const maxBottom = Math.max(16, window.innerHeight - activeHeight - 16);
+          widget.style.right = Math.max(16, Math.min(newRight, maxRight)) + 'px';
+          widget.style.bottom = Math.max(16, Math.min(newBottom, maxBottom)) + 'px';
+        }
+      }
+
+      function onDragEnd() {
+        isDragging = false;
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchend', onDragEnd);
+      }
+
+      fab.addEventListener('click', toggleWidget);
+      minimizeBtn.addEventListener('click', toggleWidget);
+      fab.addEventListener('mousedown', onDragStart);
+      fab.addEventListener('touchstart', onDragStart, { passive: false });
+      dragHandle.addEventListener('mousedown', onDragStart);
+      dragHandle.addEventListener('touchstart', onDragStart, { passive: false });
+      window.addEventListener('resize', checkBounds);
+    })();
+  </script>
 
   <script>
-    lucide.createIcons();
+    const urlBadge = document.getElementById('requestedUrlBadge');
+    if (urlBadge) {
+      const path = window.location.pathname && window.location.pathname !== '/' ? window.location.pathname : '/unknown-formula';
+      urlBadge.textContent = `Запрос: ${ decodeURIComponent(path) }`;
+    }
 
-    const themeToggleBtn = document.getElementById('themeToggle');
-    themeToggleBtn.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const htmlEl = document.documentElement;
+      if (htmlEl.classList.contains('dark')) {
+        htmlEl.classList.remove('dark');
+        localStorage.setItem('color-theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        localStorage.setItem('color-theme', 'dark');
+      }
+    }, { passive: true });
+
+    const THEORIES = {
+      quantum: {
+        badge: 'Квантовая физика',
+        title: 'Принцип неопределённости Гейзенберга',
+        desc: 'Мы слишком точно измерили импульс этой страницы, поэтому её координата в адресной строке размылась по всей Вселенной.',
+        latex: '\\Delta x \\cdot \\Delta p_x \\ge \\frac{\\hbar}{2} \\implies P(\\text{URL}) \\to 0'
+      },
+      relativity: {
+        badge: 'ОТО и Астрофизика',
+        title: 'За горизонтом событий Шварцшильда',
+        desc: 'Запрошенный адрес приблизился к гравитационной сингулярности ближе радиуса Шварцшильда — даже свет не может вернуться оттуда.',
+        latex: 'r_{404} < r_s = \\frac{2 \\cdot G \\cdot M}{c^2}'
+      },
+      electro: {
+        badge: 'Электродинамика',
+        title: 'Обрыв участка цепи (Закон Ома)',
+        desc: 'Сопротивление маршрута к этой странице стремится к бесконечности, поэтому сила информационного тока упала до нуля.',
+        latex: 'I_{\\text{данных}} = \\lim_{R \\to \\infty} \\frac{U}{R + r} = 0\\text{ А}'
+      },
+      thermo: {
+        badge: 'Термодинамика',
+        title: 'Второй закон термодинамики (Рост энтропии)',
+        desc: 'Любая замкнутая система ссылок со временем стремится к хаосу. Энтропия данного URL-адреса достигла локального максимума.',
+        latex: '\\Delta S = \\int \\frac{\\delta Q}{T} = k_B \\cdot \\ln(W_{404}) > 0'
+      }
+    };
+
+    let activeTheoryKey = 'quantum';
+
+    function renderTheory() {
+      const t = THEORIES[activeTheoryKey];
+      document.getElementById('theoryBadge').textContent = t.badge;
+      document.getElementById('theoryTitle').textContent = t.title;
+      document.getElementById('theoryDesc').textContent = t.desc;
+      const preview = document.getElementById('mathPreview');
+      if (window.katex) {
+        try {
+          katex.render(t.latex, preview, { displayMode: true, throwOnError: false });
+        } catch (e) {
+          preview.textContent = t.latex;
+        }
+      } else {
+        preview.textContent = t.latex;
+      }
+    }
+
+    function renderStaticKaTeX() {
+      if (!window.katex) return;
+      document.querySelectorAll('.katex-var, .katex-step').forEach(el => {
+        const tex = el.getAttribute('data-latex');
+        if (tex) {
+          try { katex.render(tex, el, { displayMode: false, throwOnError: false }); } catch (e) {}
+        }
+      });
+      const badge = document.getElementById('liveEnergyBadge');
+      if (badge) {
+        try { katex.render('E_k =', badge, { displayMode: false, throwOnError: false }); } catch (e) {}
+      }
+      renderTheory();
+    }
+
+    document.querySelectorAll('[data-theory]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-theory]').forEach(b => b.classList.toggle('active', b === btn));
+        activeTheoryKey = btn.dataset.theory;
+        renderTheory();
+      });
     });
 
     const canvas = document.getElementById('physicsCanvas');
     const ctx = canvas.getContext('2d');
+    const container = document.getElementById('canvasContainer');
 
-    let width, height;
-    let particles = [];
-    let isGravityOn = false;
+    const simParams = {
+      g: 9.81,
+      planet: 'Земля',
+      restitution: 0.82,
+      mass: 4,
+      timeScale: 1.0,
+      collisions: 0
+    };
+
+    const SYMBOLS = ['π', 'ℏ', 'ω', 'Δ', 'λ', 'ν', 'Φ', 'α', 'ε', 'μ', 'ρ', 'η'];
+    let bodies = [];
+    let ripples = [];
+    let draggedBody = null;
+    let pointer = { x: 0, y: 0, vx: 0, vy: 0, lastX: 0, lastY: 0, down: false };
+    let width = 600;
+    let height = 300;
 
     function resizeCanvas() {
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-      width = canvas.width;
-      height = canvas.height;
+      const rect = container.getBoundingClientRect();
+      width = Math.max(280, rect.width);
+      height = Math.max(200, rect.height);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
+    function initBodies() {
+      resizeCanvas();
+      bodies = [];
+      const isMobile = width < 500;
+      const bigRadius = isMobile ? 34 : 46;
+      const centerY = Math.min(height * 0.42, 120);
+      const spacing = bigRadius * 2.45;
+      const centerX = width / 2;
 
-    class Particle {
-      constructor(x, y) {
-        this.x = x || Math.random() * width;
-        this.y = y || Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 4;
-        this.vy = (Math.random() - 0.5) * 4;
-        this.radius = Math.random() * 8 + 4;
-        this.color = Math.random() > 0.3 ? '#6366f1' : '#10b981';
-        this.mass = this.radius;
-      }
+      const mainChars = [
+        { label: '4', x: centerX - spacing, color: 'brand' },
+        { label: '0', x: centerX,           color: 'indigo' },
+        { label: '4', x: centerX + spacing, color: 'brand' }
+      ];
 
-      update() {
-        if (isGravityOn) {
-          this.vy += 0.15; 
-        }
-
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.x - this.radius < 0) {
-          this.x = this.radius;
-          this.vx *= -0.8;
-        }
-        if (this.x + this.radius > width) {
-          this.x = width - this.radius;
-          this.vx *= -0.8;
-        }
-        if (this.y - this.radius < 0) {
-          this.y = this.radius;
-          this.vy *= -0.8;
-        }
-        if (this.y + this.radius > height) {
-          this.y = height - this.radius;
-          this.vy *= -0.7; 
-          this.vx *= 0.95;
-        }
-      }
-
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = this.color;
-      }
-    }
-
-    function initParticles() {
-      particles = [];
-      for (let i = 0; i < 25; i++) {
-        particles.push(new Particle());
-      }
-    }
-    initParticles();
-
-    canvas.addEventListener('click', (e) => {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      for (let i = 0; i < 5; i++) {
-        particles.push(new Particle(x, y));
-      }
-      if (particles.length > 60) particles.splice(0, 5);
-    });
-
-    const gravityBtn = document.getElementById('toggleGravityBtn');
-    const gravityText = document.getElementById('gravityStatusText');
-
-    gravityBtn.addEventListener('click', () => {
-      isGravityOn = !isGravityOn;
-      if (isGravityOn) {
-        gravityText.textContent = "Включена гравитация (9.8 м/с²)";
-        gravityBtn.classList.add('bg-brand-50', 'dark:bg-brand-950', 'border-brand-300');
-      } else {
-        gravityText.textContent = "Включить гравитацию";
-        gravityBtn.classList.remove('bg-brand-50', 'dark:bg-brand-950', 'border-brand-300');
-        particles.forEach(p => {
-          p.vy = (Math.random() - 0.5) * 6;
-          p.vx = (Math.random() - 0.5) * 6;
+      mainChars.forEach((item, idx) => {
+        bodies.push({
+          id: 'main_' + idx,
+          isMain: true,
+          label: item.label,
+          x: item.x,
+          y: centerY + (idx % 2 === 0 ? -10 : 10),
+          vx: (Math.random() - 0.5) * 90,
+          vy: (Math.random() - 0.5) * 40,
+          r: bigRadius,
+          angle: (Math.random() - 0.5) * 0.25,
+          omega: (Math.random() - 0.5) * 1.2,
+          colorType: item.color
         });
+      });
+
+      const count = isMobile ? 6 : 10;
+      for (let i = 0; i < count; i++) {
+        spawnParticle(
+          40 + Math.random() * (width - 80),
+          30 + Math.random() * (height * 0.6)
+        );
       }
-    });
-
-    function drawBig404() {
-      ctx.shadowBlur = 0;
-      ctx.font = 'bold 90px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      const isDark = document.documentElement.classList.contains('dark');
-      ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(79, 70, 229, 0.08)';
-      ctx.fillText('404', width / 2, height / 2);
     }
 
-    function drawConnections() {
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+    function spawnParticle(x, y) {
+      const r = 14 + Math.random() * 6;
+      const sym = SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)];
+      bodies.push({
+        id: 'p_' + Math.random(),
+        isMain: false,
+        label: sym,
+        x: x ?? (width / 2 + (Math.random() - 0.5) * 120),
+        y: y ?? 45,
+        vx: (Math.random() - 0.5) * 260,
+        vy: (Math.random() - 0.5) * 180,
+        r: r,
+        angle: 0,
+        omega: (Math.random() - 0.5) * 3,
+        colorType: Math.random() > 0.5 ? 'emerald' : 'slate'
+      });
+      if (bodies.length > 24) {
+        const idx = bodies.findIndex(b => !b.isMain);
+        if (idx !== -1) bodies.splice(idx, 1);
+      }
+    }
 
-          if (dist < 80) {
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(99, 102, 241, ${1 - dist / 80})`;
-            ctx.lineWidth = 1;
-            ctx.stroke();
+    function applyImpulseToAll() {
+      bodies.forEach(b => {
+        b.vy = -(220 + Math.random() * 260);
+        b.vx += (Math.random() - 0.5) * 380;
+        b.omega = (Math.random() - 0.5) * 6;
+      });
+      ripples.push({ x: width / 2, y: height / 2, r: 10, maxR: Math.max(width, height) * 0.6, alpha: 0.7 });
+    }
+
+    function createShockwave(x, y) {
+      ripples.push({ x, y, r: 6, maxR: 190, alpha: 0.85 });
+      bodies.forEach(b => {
+        const dx = b.x - x;
+        const dy = b.y - y;
+        const dist = Math.hypot(dx, dy) || 1;
+        if (dist < 220) {
+          const force = ((220 - dist) / 220) * 420;
+          b.vx += (dx / dist) * force;
+          b.vy += (dy / dist) * force - 80;
+          b.omega += (Math.random() - 0.5) * 4;
+        }
+      });
+    }
+
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function onPointerDown(e) {
+      const pos = getPointerPos(e);
+      pointer.down = true;
+      pointer.x = pointer.lastX = pos.x;
+      pointer.y = pointer.lastY = pos.y;
+      pointer.vx = 0;
+      pointer.vy = 0;
+
+      for (let i = bodies.length - 1; i >= 0; i--) {
+        const b = bodies[i];
+        if (Math.hypot(pos.x - b.x, pos.y - b.y) <= b.r + 6) {
+          draggedBody = b;
+          b.vx = 0;
+          b.vy = 0;
+          break;
+        }
+      }
+
+      if (!draggedBody) {
+        createShockwave(pos.x, pos.y);
+      }
+    }
+
+    function onPointerMove(e) {
+      if (!pointer.down) return;
+      if (e.cancelable && draggedBody) e.preventDefault();
+      const pos = getPointerPos(e);
+      pointer.vx = (pos.x - pointer.lastX) * 45;
+      pointer.vy = (pos.y - pointer.lastY) * 45;
+      pointer.lastX = pointer.x = pos.x;
+      pointer.lastY = pointer.y = pos.y;
+
+      if (draggedBody) {
+        draggedBody.x = Math.max(draggedBody.r, Math.min(width - draggedBody.r, pos.x));
+        draggedBody.y = Math.max(draggedBody.r, Math.min(height - draggedBody.r, pos.y));
+        draggedBody.vx = pointer.vx;
+        draggedBody.vy = pointer.vy;
+      }
+    }
+
+    function onPointerUp() {
+      pointer.down = false;
+      if (draggedBody) {
+        draggedBody.vx = Math.max(-750, Math.min(750, pointer.vx));
+        draggedBody.vy = Math.max(-750, Math.min(750, pointer.vy));
+        draggedBody = null;
+      }
+    }
+
+    canvas.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove, { passive: false });
+    window.addEventListener('mouseup', onPointerUp);
+
+    canvas.addEventListener('touchstart', onPointerDown, { passive: true });
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('touchend', onPointerUp);
+
+    let lastTime = performance.now();
+    let lastTelemetryUpdate = 0;
+
+    function updatePhysics(dt) {
+      const scaledDt = Math.min(dt, 0.035) * simParams.timeScale;
+      const gravityPx = simParams.g * 38; 
+      const rest = simParams.restitution;
+
+      for (let i = 0; i < bodies.length; i++) {
+        const b = bodies[i];
+        if (b === draggedBody) continue;
+
+        b.vy += gravityPx * scaledDt;
+        b.vx *= Math.pow(0.995, scaledDt * 60);
+        b.vy *= Math.pow(0.995, scaledDt * 60);
+
+        b.x += b.vx * scaledDt;
+        b.y += b.vy * scaledDt;
+        b.angle += b.omega * scaledDt;
+        b.omega *= Math.pow(0.985, scaledDt * 60);
+
+        if (b.x - b.r < 0) {
+          b.x = b.r;
+          if (Math.abs(b.vx) > 25) simParams.collisions++;
+          b.vx = Math.abs(b.vx) * rest;
+          b.omega = b.vy * 0.008;
+        } else if (b.x + b.r > width) {
+          b.x = width - b.r;
+          if (Math.abs(b.vx) > 25) simParams.collisions++;
+          b.vx = -Math.abs(b.vx) * rest;
+          b.omega = -b.vy * 0.008;
+        }
+
+        if (b.y - b.r < 0) {
+          b.y = b.r;
+          if (Math.abs(b.vy) > 25) simParams.collisions++;
+          b.vy = Math.abs(b.vy) * rest;
+        } else if (b.y + b.r > height) {
+          b.y = height - b.r;
+          if (Math.abs(b.vy) > 35) simParams.collisions++;
+          b.vy = -Math.abs(b.vy) * rest;
+          b.vx *= 0.96; 
+          b.omega = b.vx * 0.015;
+          if (Math.abs(b.vy) < 12 && simParams.g > 0) b.vy = 0;
+        }
+      }
+
+      for (let i = 0; i < bodies.length; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const a = bodies[i];
+          const b = bodies[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const dist = Math.hypot(dx, dy);
+          const minDist = a.r + b.r;
+
+          if (dist > 0 && dist < minDist) {
+            const nx = dx / dist;
+            const ny = dy / dist;
+            const overlap = minDist - dist;
+
+            const massA = a.isMain ? simParams.mass : 0.6;
+            const massB = b.isMain ? simParams.mass : 0.6;
+            const totalMass = massA + massB;
+
+            if (a !== draggedBody) {
+              a.x -= nx * overlap * (massB / totalMass);
+              a.y -= ny * overlap * (massB / totalMass);
+            }
+            if (b !== draggedBody) {
+              b.x += nx * overlap * (massA / totalMass);
+              b.y += ny * overlap * (massA / totalMass);
+            }
+
+            const rvx = b.vx - a.vx;
+            const rvy = b.vy - a.vy;
+            const velAlongNormal = rvx * nx + rvy * ny;
+
+            if (velAlongNormal < 0) {
+              if (Math.abs(velAlongNormal) > 30) simParams.collisions++;
+              const jImpulse = -(1 + rest) * velAlongNormal / (1 / massA + 1 / massB);
+              const impulseX = jImpulse * nx;
+              const impulseY = jImpulse * ny;
+
+              if (a !== draggedBody) {
+                a.vx -= impulseX / massA;
+                a.vy -= impulseY / massA;
+                a.omega += (Math.random() - 0.5) * 1.5;
+              }
+              if (b !== draggedBody) {
+                b.vx += impulseX / massB;
+                b.vy += impulseY / massB;
+                b.omega += (Math.random() - 0.5) * 1.5;
+              }
+            }
           }
         }
       }
+
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const rp = ripples[i];
+        rp.r += 340 * dt;
+        rp.alpha -= 1.4 * dt;
+        if (rp.alpha <= 0 || rp.r >= rp.maxR) ripples.splice(i, 1);
+      }
     }
 
-    function animate() {
+    function drawRoundedBox(ctx, x, y, size, radius) {
+      const half = size / 2;
+      ctx.beginPath();
+      ctx.roundRect(x - half, y - half, size, size, radius);
+      ctx.closePath();
+    }
+
+    function drawScene(now) {
+      const isDark = document.documentElement.classList.contains('dark');
       ctx.clearRect(0, 0, width, height);
 
-      drawBig404();
-      drawConnections();
+      ctx.save();
+      ctx.strokeStyle = isDark ? 'rgba(51, 65, 85, 0.28)' : 'rgba(203, 213, 225, 0.45)';
+      ctx.lineWidth = 1;
+      const step = 36;
+      for (let x = step; x < width; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = step; y < height; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
 
-      particles.forEach(p => {
-        p.update();
-        p.draw();
+      ripples.forEach(rp => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(rp.x, rp.y, rp.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(99, 102, 241, ${Math.max(0, rp.alpha)})`;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.restore();
       });
 
+      const mains = bodies.filter(b => b.isMain);
+      if (mains.length === 3) {
+        ctx.save();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = isDark ? 'rgba(99, 102, 241, 0.35)' : 'rgba(79, 70, 229, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(mains[0].x, mains[0].y);
+        ctx.lineTo(mains[1].x, mains[1].y);
+        ctx.lineTo(mains[2].x, mains[2].y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      bodies.forEach(b => {
+        ctx.save();
+        ctx.translate(b.x, b.y);
+        ctx.rotate(b.angle);
+
+        if (b.isMain) {
+          const boxSize = b.r * 1.78;
+          ctx.shadowColor = isDark ? 'rgba(79, 70, 229, 0.35)' : 'rgba(79, 70, 229, 0.18)';
+          ctx.shadowBlur = 18;
+          ctx.shadowOffsetY = 4;
+
+          const grad = ctx.createLinearGradient(-b.r, -b.r, b.r, b.r);
+          if (b.label === '0') {
+            grad.addColorStop(0, '#4f46e5');
+            grad.addColorStop(1, '#3730a3');
+          } else {
+            grad.addColorStop(0, isDark ? '#1e293b' : '#ffffff');
+            grad.addColorStop(1, isDark ? '#0f172a' : '#eef2ff');
+          }
+
+          drawRoundedBox(ctx, 0, 0, boxSize, 16);
+          ctx.fillStyle = grad;
+          ctx.fill();
+
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = b.label === '0'
+            ? '#818cf8'
+            : (isDark ? '#4f46e5' : '#6366f1');
+          ctx.stroke();
+
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = b.label === '0'
+            ? '#ffffff'
+            : (isDark ? '#e0e7ff' : '#312e81');
+          ctx.font = `800 ${Math.round(b.r * 1.15)}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(b.label, 0, 2);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0, 0, b.r, 0, Math.PI * 2);
+          if (b.colorType === 'emerald') {
+            ctx.fillStyle = isDark ? 'rgba(16, 185, 129, 0.18)' : 'rgba(16, 185, 129, 0.14)';
+            ctx.strokeStyle = isDark ? 'rgba(52, 211, 153, 0.5)' : 'rgba(16, 185, 129, 0.5)';
+          } else {
+            ctx.fillStyle = isDark ? 'rgba(99, 102, 241, 0.18)' : 'rgba(99, 102, 241, 0.12)';
+            ctx.strokeStyle = isDark ? 'rgba(129, 140, 248, 0.45)' : 'rgba(99, 102, 241, 0.45)';
+          }
+          ctx.lineWidth = 1.5;
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = b.colorType === 'emerald'
+            ? (isDark ? '#6ee7b7' : '#047857')
+            : (isDark ? '#a5b4fc' : '#4338ca');
+          ctx.font = `bold ${Math.round(b.r * 0.95)}px -apple-system, BlinkMacSystemFont, serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(b.label, 0, 1);
+        }
+        ctx.restore();
+      });
+
+      if (now - lastTelemetryUpdate > 100) {
+        lastTelemetryUpdate = now;
+        let totalEk = 0;
+        let totalP = 0;
+        let sumSpeed = 0;
+
+        mains.forEach(b => {
+          const v = Math.hypot(b.vx, b.vy) / 38;
+          sumSpeed += v;
+          totalEk += 0.5 * simParams.mass * v * v;
+          totalP += simParams.mass * v;
+        });
+
+        const avgV = mains.length ? (sumSpeed / mains.length) : 0;
+        document.getElementById('liveEnergyValue').textContent = totalEk.toFixed(1);
+        document.getElementById('liveMomentumStep').textContent = `p = ${totalP.toFixed(1)} кг·м/с`;
+        document.getElementById('liveSpeedStep').textContent = `v_ср = ${avgV.toFixed(1)} м/с`;
+        document.getElementById('collisionCounterOverlay').textContent = `Ударов: ${simParams.collisions}`;
+      }
+    }
+
+    function animate(now) {
+      const dt = (now - lastTime) / 1000;
+      lastTime = now;
+      updatePhysics(dt);
+      drawScene(now);
       requestAnimationFrame(animate);
     }
 
-    animate();
+    const inputG = document.getElementById('inputG');
+    const inputRestitution = document.getElementById('inputRestitution');
+    const inputMass = document.getElementById('inputMass');
+    const inputTimeScale = document.getElementById('inputTimeScale');
+    const simStatusOverlay = document.getElementById('simStatusOverlay');
+
+    function syncSimParams() {
+      const gVal = parseFloat(inputG.value);
+      const rVal = parseFloat(inputRestitution.value);
+      const mVal = parseFloat(inputMass.value);
+      const tVal = parseFloat(inputTimeScale.value);
+
+      if (!isNaN(gVal)) simParams.g = Math.max(-50, Math.min(100, gVal));
+      if (!isNaN(rVal)) simParams.restitution = Math.max(0.05, Math.min(1.05, rVal));
+      if (!isNaN(mVal)) simParams.mass = Math.max(0.5, Math.min(500, mVal));
+      if (!isNaN(tVal)) simParams.timeScale = Math.max(0.05, Math.min(3, tVal));
+
+      simStatusOverlay.textContent = `g = ${simParams.g} м/с² • ${simParams.planet}`;
+    }
+
+    [inputG, inputRestitution, inputMass, inputTimeScale].forEach(inp => {
+      inp.addEventListener('input', () => {
+        if (inp === inputG) {
+          simParams.planet = 'Своё поле';
+          document.querySelectorAll('[data-planet]').forEach(b => b.classList.remove('active-preset'));
+        }
+        syncSimParams();
+      });
+    });
+
+    document.querySelectorAll('.step-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        const step = parseFloat(btn.dataset.step);
+        if (!target) return;
+        let val = parseFloat(target.value) || 0;
+        val = parseFloat((val + step).toFixed(2));
+        if (target.min !== '' && val < parseFloat(target.min)) val = parseFloat(target.min);
+        if (target.max !== '' && val > parseFloat(target.max)) val = parseFloat(target.max);
+        target.value = val;
+        target.dispatchEvent(new Event('input'));
+      });
+    });
+
+    document.querySelectorAll('[data-planet]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-planet]').forEach(b => b.classList.toggle('active-preset', b === btn));
+        simParams.planet = btn.dataset.planet;
+        inputG.value = btn.dataset.g;
+        syncSimParams();
+        bodies.forEach(b => { b.vy -= 90; });
+      });
+    });
+
+    document.getElementById('impulseBtn').addEventListener('click', applyImpulseToAll);
+    document.getElementById('spawnAtomBtn').addEventListener('click', () => spawnParticle());
+    document.getElementById('resetSimBtn').addEventListener('click', () => {
+      simParams.collisions = 0;
+      initBodies();
+    });
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      bodies.forEach(b => {
+        b.x = Math.max(b.r, Math.min(width - b.r, b.x));
+        b.y = Math.max(b.r, Math.min(height - b.r, b.y));
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initBodies();
+      renderStaticKaTeX();
+      requestAnimationFrame(animate);
+    });
+
+    window.addEventListener('load', renderStaticKaTeX);
   </script>
 </body>
 </html>
