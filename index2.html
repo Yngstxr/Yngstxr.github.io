@@ -43,7 +43,7 @@
     });
   </script>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="icon" type="image/png" sizes="32x32" href="icons8-atom-96.png">
   <meta name="description" content="Онлайн-калькулятор погрешности измерений на PhysCalc. Автоматический расчет среднего значения, абсолютной и относительной погрешности для лабораторных работ по физике. Готовые формулы и быстрый результат.">
   <link rel="manifest" href="/manifest.json?v=2">
@@ -54,8 +54,8 @@
   <link rel="canonical" href="https://physcalc.ru/index2.html">
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css"></noscript>
   <script>
     if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
@@ -63,8 +63,7 @@
       document.documentElement.classList.remove('dark');
     }
   </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script> 
   <script>
     tailwind.config = {
       darkMode: 'class',
