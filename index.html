@@ -36,7 +36,7 @@
     }
 
     window.addEventListener('load', function() {
-      setTimeout(loadAnalytics, 3500);
+      setTimeout(loadAnalytics, 7000);
     });
     ['scroll', 'mousemove', 'touchstart', 'click', 'keydown'].forEach(function(evt) {
       window.addEventListener(evt, loadAnalytics, { once: true, passive: true });
@@ -219,6 +219,7 @@
     @media (max-width: 640px) {
       .qk { min-height: 42px; font-size: 0.98rem; }
     }
+    .katex-mathml { position: absolute !important; clip: rect(1px, 1px, 1px, 1px) !important; padding: 0 !important; border: 0 !important; height: 1px !important; width: 1px !important; overflow: hidden !important; }
   </style>
 </head>
 <script defer src="/app.js"></script>
@@ -545,7 +546,7 @@
           </span>
           <span class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500">Предпросмотр</span>
         </div>
-        <div id="mathPreviewWrapper" class="w-full min-h-[75px] sm:min-h-[85px] bg-slate-50 dark:bg-slate-950/70 rounded-xl p-3 sm:p-4 flex items-center justify-center overflow-x-auto custom-scrollbar border border-slate-100 dark:border-slate-800/80 transition-colors">
+        <div id="mathPreviewWrapper" class="w-full min-h-[86px] sm:min-h-[96px] bg-slate-50 dark:bg-slate-950/70 rounded-xl p-3 sm:p-4 flex items-center justify-center overflow-x-auto custom-scrollbar border border-slate-100 dark:border-slate-800/80 transition-colors">
           <div id="mathPreview" class="w-full text-center"></div>
         </div>
       </div>
