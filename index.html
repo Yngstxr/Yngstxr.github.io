@@ -189,16 +189,6 @@
   <noscript><div><img src="https://mc.yandex.ru/watch/109650062" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 h-[100dvh] flex flex-col overflow-hidden transition-colors duration-200 selection:bg-brand-500 selection:text-white">
-
-  <div id="updateToast" class="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-[60] bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-brand-200 dark:border-brand-800 shadow-2xl rounded-2xl p-3 sm:p-4 w-[92%] sm:w-auto sm:min-w-[360px] max-w-md flex items-start gap-3 transition-all duration-500 -translate-y-[150%] opacity-0">
-    <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-900/50 flex items-center justify-center text-xl shrink-0 shadow-inner">🚀</div>
-    <div class="flex-grow pt-0.5">
-      <h4 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Новая версия сайта!</h4>
-      <p class="text-xs text-gray-600 dark:text-slate-300 leading-relaxed">Теперь вы можете ввести свою формулу в поле для ввода или выбрать готовую из базы 240 физических формул.</p>
-    </div>
-    <button id="closeToastBtn" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1.5 -mr-1.5 -mt-1.5 rounded-lg transition-colors touch-btn shrink-0">✕</button>
-  </div>
-
   <div id="support-widget" class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[100] flex items-end justify-end">
     <div id="support-card" class="absolute bottom-0 right-0 pointer-events-none invisible opacity-0 scale-90 translate-y-4 origin-bottom-right transition-all duration-300 ease-out bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl w-[calc(100vw-2rem)] sm:w-[340px] rounded-2xl p-5 shadow-[0_20px_50px_rgba(15,23,42,0.15)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.65)] border border-slate-200/80 dark:border-slate-800 overflow-hidden">
       
@@ -431,10 +421,15 @@
             </h2>
             <span id="activeFormulaBadge" class="hidden text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-brand-50 text-brand-700 dark:bg-brand-950/80 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/60 truncate max-w-[260px]"></span>
           </div>
-          <div class="flex items-center gap-2">
-            <button id="openCatalogBtn" class="px-3.5 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 dark:bg-brand-950/60 dark:text-brand-300 dark:hover:bg-brand-900/60 text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 touch-btn border border-brand-200/80 dark:border-brand-800/60 shadow-sm">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-              База формул
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <button id="openCatalogBtn" class="px-3 sm:px-3.5 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 dark:bg-brand-950/60 dark:text-brand-300 dark:hover:bg-brand-900/60 text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 touch-btn border border-brand-200/80 dark:border-brand-800/60 shadow-sm">
+              <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+              <span>База формул</span>
+            </button>
+            <button id="openHistoryBtn" title="История вычислений" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-600 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-brand-950/60 dark:hover:text-brand-300 text-xs sm:text-sm font-semibold transition-all flex items-center gap-1.5 touch-btn border border-slate-200/80 dark:border-slate-700/70 shadow-sm">
+              <svg class="w-4 h-4 shrink-0 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <span>История</span>
+              <span id="historyCountBadge" class="hidden text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-brand-600 text-white leading-tight">0</span>
             </button>
             <button id="openHelpBtn" aria-label="Справка по записи формул" title="Справка по записи формул" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-100 dark:hover:bg-brand-900/50 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 flex items-center justify-center transition-colors font-bold text-sm touch-btn shrink-0 border border-slate-200/60 dark:border-slate-700/60">?</button>
           </div>
@@ -548,10 +543,16 @@
             <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             Ход решения и ответ
           </h2>
-          <button id="expandSolutionBtn" aria-label="Развернуть ход решения" title="Развернуть" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/60 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-300 text-xs font-semibold transition-colors flex items-center gap-1.5 touch-btn shrink-0 border border-slate-200/60 dark:border-slate-700/60">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
-            <span class="hidden sm:inline">Развернуть</span>
-          </button>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <button id="saveToHistoryBtn" title="Сохранить текущий расчёт в историю" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold transition-colors flex items-center gap-1.5 touch-btn shrink-0 border border-emerald-200/70 dark:border-emerald-800/60">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+              <span>В историю</span>
+            </button>
+            <button id="expandSolutionBtn" aria-label="Развернуть ход решения" title="Развернуть" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-brand-50 dark:hover:bg-brand-950/60 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-300 text-xs font-semibold transition-colors flex items-center gap-1.5 touch-btn shrink-0 border border-slate-200/60 dark:border-slate-700/60">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+              <span class="hidden sm:inline">Развернуть</span>
+            </button>
+          </div>
         </div>
 
         <div class="flex-grow grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 lg:min-h-0 lg:h-full">
@@ -647,6 +648,33 @@
       <div id="solutionModalBody" class="flex-grow p-4 sm:p-6 overflow-y-auto custom-scrollbar text-sm sm:text-base text-slate-700 dark:text-slate-200 bg-slate-50/60 dark:bg-slate-950/50 font-mono space-y-3"></div>
       <div class="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex justify-end gap-2 shrink-0">
         <button id="solutionModalCloseBtn" class="min-h-[42px] px-5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold transition-colors touch-btn">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="historyModal" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm hidden items-center justify-center sm:p-4">
+    <div class="bg-white dark:bg-slate-900 sm:border border-slate-200 dark:border-slate-800 rounded-none sm:rounded-2xl w-full max-w-3xl h-[100dvh] sm:h-[86vh] flex flex-col shadow-2xl relative overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/50 shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-950 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0 border border-brand-200/50 dark:border-brand-800/50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <div class="min-w-0">
+            <h3 class="text-base sm:text-xl font-bold text-slate-900 dark:text-white leading-tight truncate">История вычислений</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">Нажмите на любую запись, чтобы вернуть её в калькулятор</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="clearHistoryBtn" class="px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/60 text-rose-600 dark:text-rose-400 text-xs font-semibold transition-colors touch-btn border border-rose-200/60 dark:border-rose-800/50 hidden">
+            Очистить всё
+          </button>
+          <button id="closeHistoryBtn" aria-label="Закрыть историю" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-lg text-xl touch-btn shrink-0">✕</button>
+        </div>
+      </div>
+      <div id="historyModalBody" class="flex-grow p-4 sm:p-5 overflow-y-auto custom-scrollbar space-y-3 bg-slate-50/70 dark:bg-slate-950/50"></div>
+      <div class="p-3 sm:p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between gap-2 shrink-0">
+        <span class="text-[11px] sm:text-xs text-slate-400 dark:text-slate-500">Хранится до 50 последних расчётов на вашем устройстве</span>
+        <button id="historyModalCloseBtn" class="min-h-[40px] px-5 py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold transition-colors touch-btn">Закрыть</button>
       </div>
     </div>
   </div>
@@ -1015,6 +1043,254 @@
     const solutionModal = document.getElementById('solutionModal');
     const solutionModalBody = document.getElementById('solutionModalBody');
     const solutionModalSubtitle = document.getElementById('solutionModalSubtitle');
+    const historyModal = document.getElementById('historyModal');
+    const historyModalBody = document.getElementById('historyModalBody');
+    const historyCountBadge = document.getElementById('historyCountBadge');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const saveToHistoryBtn = document.getElementById('saveToHistoryBtn');
+
+    const HISTORY_STORAGE_KEY = 'physcalc_history';
+    const MAX_HISTORY_ITEMS = 50;
+    let historyAutoSaveTimer = null;
+
+    function getHistoryList() {
+      try {
+        const raw = localStorage.getItem(HISTORY_STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveHistoryList(list) {
+      try {
+        localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(list.slice(0, MAX_HISTORY_ITEMS)));
+      } catch (e) {}
+      updateHistoryBadge();
+    }
+
+    function updateHistoryBadge() {
+      if (!historyCountBadge) return;
+      const count = getHistoryList().length;
+      if (count > 0) {
+        historyCountBadge.textContent = count > 99 ? '99+' : String(count);
+        historyCountBadge.classList.remove('hidden');
+      } else {
+        historyCountBadge.classList.add('hidden');
+      }
+      if (clearHistoryBtn) {
+        clearHistoryBtn.classList.toggle('hidden', count === 0);
+      }
+    }
+
+    function buildHistorySignature(target, formula, varsObj) {
+      const keys = Object.keys(varsObj || {}).sort();
+      const varsPart = keys.map(k => `${k}:${varsObj[k]}`).join(',');
+      return `${target}|${normalizeFormula(formula).replace(/\s+/g, '')}|${varsPart}`;
+    }
+
+    function saveCurrentCalculationToHistory(forceMoveToTop = false) {
+      const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
+      const displayFormula = formulaInput.value.trim();
+      const rawFormula = normalizeFormula(displayFormula);
+      if (!rawFormula) return false;
+      if (rawCalculatedValue === null || typeof rawCalculatedValue !== 'number' || !isFinite(rawCalculatedValue) || isNaN(rawCalculatedValue)) {
+        return false;
+      }
+
+      const sig = buildHistorySignature(target, displayFormula, state.variables);
+      let list = getHistoryList();
+
+      if (list.length > 0 && list[0].sig === sig) {
+        if (forceMoveToTop) {
+          list[0].timestamp = Date.now();
+          list[0].result = finalResult.textContent || formatNumber(rawCalculatedValue);
+          saveHistoryList(list);
+        }
+        return true;
+      }
+
+      list = list.filter(item => item.sig !== sig);
+
+      const entry = {
+        id: 'h_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+        sig,
+        timestamp: Date.now(),
+        formulaId: activeFormula ? activeFormula.id : null,
+        title: activeFormula ? activeFormula.title : 'Своя формула',
+        category: activeFormula ? activeFormula.category : 'Пользовательская',
+        target: targetVarInput.value.trim() || 'v',
+        formula: displayFormula,
+        variables: { ...state.variables },
+        result: (finalResult && finalResult.textContent && finalResult.textContent !== '—' && finalResult.textContent !== 'Ошибка')
+          ? finalResult.textContent
+          : formatNumber(rawCalculatedValue),
+        rawResult: rawCalculatedValue,
+        unit: targetUnit || ''
+      };
+
+      list.unshift(entry);
+      if (list.length > MAX_HISTORY_ITEMS) list = list.slice(0, MAX_HISTORY_ITEMS);
+      saveHistoryList(list);
+      if (historyModal && !historyModal.classList.contains('hidden')) {
+        renderHistoryModal();
+      }
+      return true;
+    }
+
+    function scheduleHistorySave() {
+      clearTimeout(historyAutoSaveTimer);
+      historyAutoSaveTimer = setTimeout(() => {
+        saveCurrentCalculationToHistory(false);
+      }, 1200);
+    }
+
+    function formatHistoryTimestamp(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      const now = new Date();
+      const isToday = d.toDateString() === now.toDateString();
+      const yesterday = new Date(now);
+      yesterday.setDate(now.getDate() - 1);
+      const isYesterday = d.toDateString() === yesterday.toDateString();
+      const timeStr = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+      if (isToday) return `Сегодня, ${timeStr}`;
+      if (isYesterday) return `Вчера, ${timeStr}`;
+      return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: '2-digit' }) + `, ${timeStr}`;
+    }
+
+    function renderHistoryModal() {
+      if (!historyModalBody) return;
+      const list = getHistoryList();
+      updateHistoryBadge();
+
+      if (list.length === 0) {
+        historyModalBody.innerHTML = `
+          <div class="flex flex-col items-center justify-center py-14 px-4 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center mb-3 shadow-inner">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h4 class="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-200 mb-1">История вычислений пока пуста</h4>
+            <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm leading-relaxed">
+              Измените значения переменных, введите свою формулу или нажмите кнопку «В историю», чтобы сохранить расчёт.
+            </p>
+          </div>`;
+        return;
+      }
+
+      historyModalBody.innerHTML = list.map(item => {
+        const targetNorm = normalizeFormula(item.target || 'y') || 'y';
+        const formulaNorm = normalizeFormula(item.formula || '');
+        const eqLatex = `${formatIdentifierToLaTeX(targetNorm)} = ${convertToLaTeX(formulaNorm)}`;
+        const targetLatex = formatIdentifierToLaTeX(targetNorm);
+        const varsEntries = Object.entries(item.variables || {});
+        const varsPills = varsEntries.length > 0
+          ? varsEntries.map(([k, v]) => {
+              const vLatex = formatIdentifierToLaTeX(k);
+              return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-mono border border-slate-200/70 dark:border-slate-700/70"><span class="hist-math-inline" data-latex="${escapeHtmlAttr(vLatex)}">${escapeHtmlAttr(k)}</span> = <b>${escapeHtmlAttr(String(v))}</b></span>`;
+            }).join('')
+          : `<span class="text-[11px] text-slate-400">Константное выражение</span>`;
+
+        return `
+          <div class="group bg-white dark:bg-slate-900 rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 dark:border-slate-800 hover:border-brand-500 dark:hover:border-brand-500 transition-all shadow-sm hover:shadow-md cursor-pointer" onclick="restoreHistoryItem('${item.id}')">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2 flex-wrap min-w-0">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/70 px-2 py-0.5 rounded-md border border-brand-200/50 dark:border-brand-800/50 shrink-0">${escapeHtmlAttr(item.category || 'Расчёт')}</span>
+                <h4 class="font-bold text-slate-900 dark:text-white text-xs sm:text-sm truncate group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors">${escapeHtmlAttr(item.title || 'Формула')}</h4>
+              </div>
+              <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+                <span class="text-[11px] text-slate-400 dark:text-slate-500 mr-1 hidden sm:inline">${formatHistoryTimestamp(item.timestamp)}</span>
+                <button type="button" onclick="copyHistoryItem('${item.id}', this)" title="Скопировать ответ" class="p-1.5 rounded-lg text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors touch-btn">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                </button>
+                <button type="button" onclick="deleteHistoryItem('${item.id}')" title="Удалить запись" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors touch-btn">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-slate-50 dark:bg-slate-950/70 rounded-xl p-2.5 sm:p-3 border border-slate-100 dark:border-slate-800/80 mb-2.5">
+              <div class="overflow-x-auto custom-scrollbar py-0.5">
+                <span class="hist-math-inline text-sm sm:text-base" data-latex="${escapeHtmlAttr(eqLatex)}">${escapeHtmlAttr(item.target)} = ${escapeHtmlAttr(item.formula)}</span>
+              </div>
+              <div class="flex items-baseline gap-1.5 shrink-0 bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/25 px-3 py-1.5 rounded-xl self-start sm:self-auto">
+                <span class="hist-math-inline text-xs font-bold text-emerald-700 dark:text-emerald-300" data-latex="${escapeHtmlAttr(targetLatex + ' =')}">${escapeHtmlAttr(item.target)} =</span>
+                <span class="font-mono font-extrabold text-sm sm:text-base text-emerald-900 dark:text-emerald-100">${escapeHtmlAttr(String(item.result))}</span>
+                ${item.unit ? `<span class="text-xs font-bold text-emerald-700 dark:text-emerald-400">${escapeHtmlAttr(item.unit)}</span>` : ''}
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2 flex-wrap">
+              <div class="flex flex-wrap gap-1.5">${varsPills}</div>
+              <span class="text-[10px] text-slate-400 dark:text-slate-500 sm:hidden ml-auto">${formatHistoryTimestamp(item.timestamp)}</span>
+            </div>
+          </div>`;
+      }).join('');
+
+      if (window.katex) {
+        historyModalBody.querySelectorAll('.hist-math-inline').forEach(el => {
+          try {
+            katex.render(el.dataset.latex, el, { displayMode: false, throwOnError: false });
+          } catch (e) {}
+        });
+      }
+    }
+
+    window.restoreHistoryItem = function(id) {
+      const list = getHistoryList();
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      clearTimeout(historyAutoSaveTimer);
+      if (item.formulaId) {
+        activeFormula = physicsFormulas.find(f => f.id === item.formulaId) || null;
+      } else {
+        activeFormula = null;
+      }
+
+      targetVarInput.value = item.target || 'v';
+      formulaInput.value = item.formula || '';
+      targetUnit = item.unit || '';
+      state.variables = { ...(item.variables || {}) };
+
+      toggleModal(historyModal, false);
+      onFormulaChange();
+    };
+
+    window.deleteHistoryItem = function(id) {
+      const list = getHistoryList().filter(x => x.id !== id);
+      saveHistoryList(list);
+      renderHistoryModal();
+    };
+
+    window.copyHistoryItem = function(id, btnEl) {
+      const list = getHistoryList();
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+      const target = normalizeFormula(item.target || 'y') || 'y';
+      const copyText = `${target} = ${item.result} ${item.unit || ''}`.trim();
+      const doFeedback = () => {
+        if (!btnEl) return;
+        const orig = btnEl.innerHTML;
+        btnEl.innerHTML = `<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>`;
+        setTimeout(() => { btnEl.innerHTML = orig; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(copyText).then(doFeedback).catch(() => {});
+      } else {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = copyText;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          doFeedback();
+        } catch (e) {}
+      }
+    };
 
     function debounce(func, delay = 100) {
       let timer = null;
@@ -1063,9 +1339,33 @@
     document.getElementById('closeCatalogBtn').addEventListener('click', closeCatalog, { passive: true });
     document.getElementById('closeCatalogBtnDesktop').addEventListener('click', closeCatalog, { passive: true });
 
+    document.getElementById('openHistoryBtn').addEventListener('click', () => {
+      renderHistoryModal();
+      toggleModal(historyModal, true);
+    }, { passive: true });
+
+    document.getElementById('closeHistoryBtn').addEventListener('click', () => toggleModal(historyModal, false), { passive: true });
+    document.getElementById('historyModalCloseBtn').addEventListener('click', () => toggleModal(historyModal, false), { passive: true });
+
+    clearHistoryBtn.addEventListener('click', () => {
+      saveHistoryList([]);
+      renderHistoryModal();
+    }, { passive: true });
+
+    saveToHistoryBtn.addEventListener('click', () => {
+      clearTimeout(historyAutoSaveTimer);
+      const saved = saveCurrentCalculationToHistory(true);
+      if (saved) {
+        const origHtml = saveToHistoryBtn.innerHTML;
+        saveToHistoryBtn.innerHTML = `<svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg><span>Сохранено!</span>`;
+        setTimeout(() => { saveToHistoryBtn.innerHTML = origHtml; }, 1400);
+      }
+    }, { passive: true });
+
     helpModal.addEventListener('click', (e) => { if (e.target === helpModal) toggleModal(helpModal, false); }, { passive: true });
     catalogModal.addEventListener('click', (e) => { if (e.target === catalogModal) closeCatalog(); }, { passive: true });
     solutionModal.addEventListener('click', (e) => { if (e.target === solutionModal) toggleModal(solutionModal, false); }, { passive: true });
+    historyModal.addEventListener('click', (e) => { if (e.target === historyModal) toggleModal(historyModal, false); }, { passive: true });
 
     function openSolutionModal() {
       solutionModalBody.innerHTML = solutionSteps.innerHTML || '<div class="text-slate-400 text-sm">Введите формулу для расчёта</div>';
@@ -1086,6 +1386,7 @@
         toggleModal(helpModal, false);
         closeCatalog();
         toggleModal(solutionModal, false);
+        toggleModal(historyModal, false);
       }
     });
 
@@ -1138,7 +1439,10 @@
     })();
 
     precisionSelect.addEventListener('change', updateResultDisplay, { passive: true });
-    const debouncedOnFormulaChange = debounce(onFormulaChange, 100);
+    const debouncedOnFormulaChange = debounce(() => {
+      onFormulaChange();
+      scheduleHistorySave();
+    }, 100);
     targetVarInput.addEventListener('input', debouncedOnFormulaChange);
     formulaInput.addEventListener('input', debouncedOnFormulaChange);
 
@@ -1662,6 +1966,7 @@
       extractTargetUnit(f);
       closeCatalog();
       onFormulaChange();
+      scheduleHistorySave();
     };
 
     function extractTargetUnit(f) {
@@ -1960,7 +2265,10 @@
         });
       }
 
-      const debouncedCalc = debounce(calculateResult, 60);
+      const debouncedCalc = debounce(() => {
+        calculateResult();
+        scheduleHistorySave();
+      }, 60);
       variablesContainer.querySelectorAll('.var-input').forEach(input => {
         input.addEventListener('input', (e) => {
           const varName = e.target.dataset.var;
@@ -1992,6 +2300,7 @@
           state.variables[varName] = val;
           checkForCommaDecimals(formulaInput.value);
           calculateResult();
+          scheduleHistorySave();
         }, { passive: true });
       });
 
@@ -2006,6 +2315,7 @@
           state.variables[varName] = val;
           checkForCommaDecimals(formulaInput.value);
           calculateResult();
+          scheduleHistorySave();
         }, { passive: true });
       });
     }
@@ -2294,6 +2604,7 @@
       const target = normalizeFormula(targetVarInput.value.trim()) || 'y';
       const val = finalResult.textContent;
       if (val === '—' || val === 'Ошибка') return;
+      saveCurrentCalculationToHistory(true);
       const copyText = `${target} = ${val} ${targetUnit}`.trim();
       const btn = document.getElementById('copyResultBtn');
       const originalHtml = btn.innerHTML;
@@ -2325,14 +2636,6 @@
       sessionStorage.setItem('searchQuery', catalogSearch.value);
     });
 
-    function closeToast() {
-      const toast = document.getElementById('updateToast');
-      if (toast) {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('-translate-y-[150%]', 'opacity-0');
-      }
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
       const savedCategory = sessionStorage.getItem('currentCategory');
       if (savedCategory) currentCategory = savedCategory;
@@ -2344,6 +2647,7 @@
         if (searchQuery.length > 0) clearSearchBtn.classList.remove('hidden');
       }
 
+      updateHistoryBadge();
       onFormulaChange();
 
       if (localStorage.getItem('catalogOpen') === 'true') {
@@ -2362,24 +2666,6 @@
         setTimeout(() => {
           document.querySelector('main').scrollTop = parseInt(mainScroll, 10);
         }, 0);
-      }
-
-      const visits = parseInt(localStorage.getItem('physcalc_visits') || '0', 10) + 1;
-      localStorage.setItem('physcalc_visits', visits);
-
-      if (visits <= 5) {
-        const toast = document.getElementById('updateToast');
-        if (toast) {
-          setTimeout(() => {
-            toast.classList.remove('-translate-y-[150%]', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-          }, 1000);
-          let hideTimeout = setTimeout(closeToast, 8000);
-          document.getElementById('closeToastBtn').addEventListener('click', () => {
-            clearTimeout(hideTimeout);
-            closeToast();
-          });
-        }
       }
     });
 
