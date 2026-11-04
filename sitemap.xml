@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://physcalc.ru/</loc>
+    <Priority>1.0</Priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://physcalc.ru/index2.html</loc>
+    <Priority>0.8</Priority>
+    <changefreq>monthly</changefreq>
+  </url>
+</urlset>
