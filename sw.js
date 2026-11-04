@@ -37,6 +37,10 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
 
+  if (e.request.method !== 'GET' || !url.protocol.startsWith('http') || url.hostname.includes('yandex.ru')) {
+    return;
+  }
+
   if (url.hostname === 'cdn.tailwindcss.com' || url.hostname === 'cdn.jsdelivr.net') {
     e.respondWith(
       caches.match(e.request).then((cachedResponse) => {
