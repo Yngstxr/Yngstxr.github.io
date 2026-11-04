@@ -1932,7 +1932,6 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('load', () => {
-    onFormulaChange();
     if (!catalogModal.classList.contains('hidden')) renderCatalogMath();
     if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').then((reg) => reg.update()).catch(() => {});
